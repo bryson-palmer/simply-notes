@@ -1,3 +1,4 @@
+// Configs taken from this article https://semaphoreci.com/blog/api-layer-react
 import axios from "axios"
 
 export const api = axios.create({
