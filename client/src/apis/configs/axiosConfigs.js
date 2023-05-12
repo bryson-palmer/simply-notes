@@ -2,8 +2,11 @@
 import axios from "axios"
 
 export const api = axios.create({
-  withCredentials: true,
-  baseURL: "https://yourdomain.com/api/v1",
+  // Set to true if cross-site Access-Control requests should be made using credentials
+  withCredentials: false,
+  // Replace with backend host url when it gets hosted somewhere
+  baseURL: "http://localhost:3500",
+  timeout: 1000
 })
 
 // defining a custom error handler for all APIs
