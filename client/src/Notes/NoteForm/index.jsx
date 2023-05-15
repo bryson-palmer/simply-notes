@@ -1,15 +1,14 @@
-import { useCallback, useContext, useEffect, /* useTheme */ } from "react"
+import React, { useCallback, useMemo /* useTheme */ } from "react"
 
 import { useFormik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
-import { v4 as uuid} from 'uuid'
 import * as yup from 'yup'
 
 import { Button } from "@mui/material"
 import { TextField } from "@mui/material"
 
+import { useNotes, useCreateNote } from "@/store/store-selectors"
 import FlexColumn from "@/UI/FlexColumn"
-import { StoreContext } from '@/Providers/store.provider'
 
 const NoteFormComponent = ({ formik }) => {
   // const { palette } = useTheme()
@@ -22,14 +21,17 @@ const NoteFormComponent = ({ formik }) => {
         id='title'
         name='title'
         label='title'
+        variant='standard'
         value={values.title}
         onChange={handleChange}
       />
       <TextField
         fullWidth
+        multiline
         id='body'
         name='body'
-        label='body'
+        // label='body'
+        variant='standard'
         value={values.body}
         onChange={handleChange}
       />
@@ -49,8 +51,7 @@ NoteFormComponent.propTypes = {
       title: PropTypes.string,
       body: PropTypes.string
     })
-  }),
-  setSelectedNote: PropTypes.func
+  })
 }
 
 const validationSchema = yup.object({
@@ -69,29 +70,26 @@ const initialValues = {
   body: ''
 }
 
-const NoteForm = ({ notes, setAddNote, setSelectedNote }) => {
-  const { createNote } = useContext(StoreContext)
+const NoteForm = React.memo(({ setAddNote }) => {
+  const notes = useNotes()
+  const createNote = useCreateNote()
+  const newNoteId = useMemo(() => {
+    // Create new id by grabbing the last note from db by id and add one or 1st note
+    const newId = notes.length ? notes[notes.length -1].id + 1 : 1
+    return newId
+  }, [notes])
   
   const handleSubmit = useCallback(async values => {
-    const newValues = { ...values, id: uuid()}
-  
+    const newValues = { ...values, id: newNoteId}
     await createNote(newValues)
     setAddNote(false)
-  }, [createNote, setAddNote])
+  }, [createNote, newNoteId, setAddNote])
 
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: validationSchema,
     onSubmit: handleSubmit
   })
-
-  useEffect(() => {
-    if (formik.isSubmitting && formik.isValid) {
-      const selectedNote = notes[notes.length - 1]
-
-    setSelectedNote(selectedNote)
-    }
-  }, [formik.isSubmitting, formik.isValid, notes, setSelectedNote])
 
   return (
     <>
@@ -100,7 +98,7 @@ const NoteForm = ({ notes, setAddNote, setSelectedNote }) => {
       </form>
     </>
   )
-}
+})
 
 NoteForm.displayName = '/NoteFormWrapper'
 NoteForm.propTypes = {
@@ -112,7 +110,7 @@ NoteForm.propTypes = {
     })
   })),
   setAddNote: PropTypes.func,
-  setSelectedNote: PropTypes.func
+  selectedNote: PropTypes.func
 }
 
 export default NoteForm
