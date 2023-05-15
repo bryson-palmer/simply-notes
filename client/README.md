@@ -1,7 +1,7 @@
 # Simple ToDo Client Side
-### This servers the front end of this full stack app.
+##### This servers the front end of this full stack app.
 
-##### Run the App
+### Run the App
 - Clone this repo
 - Install app dependencies with yarn
 - Start the front end with yarn dev
@@ -19,7 +19,7 @@
 - React Router Dom
 - Formik
 
-##### MVP Features
+### MVP Features
 - ###### Completed
   - Create a note
   - Get a note by id
