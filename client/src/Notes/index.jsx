@@ -1,22 +1,18 @@
-import React, { useCallback, useContext, useState } from 'react'
-
-import { PropTypes } from 'prop-types/prop-types'
+import React, { useCallback, useState } from 'react'
 
 import { Box, IconButton, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import CreateIcon from '@mui/icons-material/Create'
 import { useTheme } from '@emotion/react'
 
-import { StoreContext } from '@/Providers/store.provider'
 import NoteForm from '@/Notes/NoteForm'
 import NoteList from '@/Notes/NoteList'
 import NoteView from '@/Notes/NoteView'
 import FlexBetween from '@/UI/FlexBetween'
 import FlexColumn from '@/UI/FlexColumn'
 
-const NotesComponent = ({ notes, removeNote }) => {
+const Notes = React.memo(() => {
   const [addNote, setAddNote] = useState(false)
-  const [selectedNote, setSelectedNote] = useState(notes[0])
 
   const { palette } = useTheme()
 
@@ -37,8 +33,8 @@ const NotesComponent = ({ notes, removeNote }) => {
         <FlexBetween>
           <IconButton
             sx={{
-              color: palette.secondary[200],
-              "&:hover": { color: palette.secondary[400] },
+              color: palette.secondary[400],
+              "&:hover": { color: palette.secondary[100] },
             }}
             onClick={handleAddNote}
           >
@@ -48,44 +44,17 @@ const NotesComponent = ({ notes, removeNote }) => {
         </FlexBetween>
       </FlexBetween>
       <Box sx={{ display: { xs: "none", sm: "flex" } }}>
-        <NoteList
-          notes={notes}
-          removeNote={removeNote}
-          setAddNote={setAddNote}
-          setSelectedNote={setSelectedNote}
-        />
+        <NoteList setAddNote={setAddNote} />
         {addNote ? (
-          <NoteForm
-            notes={notes}
-            setAddNote={setAddNote}
-            setSelectedNote={setSelectedNote}
-          />
+          <NoteForm setAddNote={setAddNote} />
         ) : (
-          <NoteView selectedNote={selectedNote} />
+          <NoteView />
         )}
       </Box>
     </FlexColumn>
   );
-}
-
-NotesComponent.displayName = '/Notes'
-NotesComponent.propTypes = {
-  removeNote: PropTypes.func,
-  notes: PropTypes.arrayOf(PropTypes.shape({
-    note: PropTypes.shape({
-      id: PropTypes.string,
-      title: PropTypes.string,
-      body: PropTypes.string
-    })
-  }))
-}
-
-const Notes = React.memo(() => {
-  const { removeNote, store: { notes } } = useContext(StoreContext)
-
-  return (
-    <NotesComponent notes={notes} removeNote={removeNote} />
-  )
 })
+
+Notes.displayName = '/Notes'
 
 export default Notes
