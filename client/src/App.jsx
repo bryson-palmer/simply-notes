@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Box, CssBaseline, ThemeProvider, Typography } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
 
-import StoreProvider from '@/Providers/store.provider'
+import StoreContextProvider from '@/store/store-provider'
 import Navbar from '@/Navbar'
 import Notes from '@/Notes'
 import { themeSettings } from '@/theme'
@@ -16,7 +16,7 @@ const App = () => {
   return (
     <div className='app'>
         <BrowserRouter>
-          <StoreProvider>
+          <StoreContextProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline />
 
@@ -31,7 +31,7 @@ const App = () => {
               </Box>
 
             </ThemeProvider>
-          </StoreProvider>
+          </StoreContextProvider>
         </BrowserRouter>
     </div>
   )
