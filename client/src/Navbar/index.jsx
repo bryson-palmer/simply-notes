@@ -41,7 +41,7 @@ const Navbar = () => {
         </Box>
         <Box sx={{ '&:hover': { color: palette.primary[100] } }}>
           <Link
-            to='#chat'
+            to='/chat'
             onClick={() => setSelected('chat')}
             style={{
               color: selected === 'chat' ? 'inherit' : palette.grey[700],
