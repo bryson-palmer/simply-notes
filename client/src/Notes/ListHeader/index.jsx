@@ -27,6 +27,7 @@ const ListHeader = ({ checked, setChecked }) => {
     //   : checked.map(id => deleteNote(id))
   }, [checked, deleteNote])
 
+  // select or deselect all children
   useEffect(() => {
     const newChecked = allChecked
       ? notes.map(({ id }) => id)
@@ -34,6 +35,7 @@ const ListHeader = ({ checked, setChecked }) => {
     setChecked(newChecked)
   }, [allChecked, notes, setChecked])
 
+  // unselect 'selectAll' checkbox if 0 notes left
   useEffect(() => {
     if (!notes.length) return setAllChecked(false)
   }, [notes.length])

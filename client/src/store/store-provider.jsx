@@ -64,6 +64,7 @@ const useStore = () => {
   //   .catch(error => console.log("🚀 ~ file: store-provider.jsx:48 ~ deleteAll ~ error:", error))
   // }, [])
 
+  // render / load notes on first load ??
   useEffect(() => getAllNotes(), [getAllNotes])
   
   useEffect(() => {
@@ -73,7 +74,7 @@ const useStore = () => {
 
     if (!selectedNote) return setSelectedNote(notes[0])
     setSelectedNote(selectedNote)
-  }, [notes, selectedNote])
+  }, [notes, selectedNote]) // anytime these two variables change, trigger this useEffect
 
   return {
     notes,
