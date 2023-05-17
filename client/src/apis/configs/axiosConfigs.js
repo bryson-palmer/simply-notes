@@ -5,7 +5,7 @@ export const api = axios.create({
   // Set to true if cross-site Access-Control requests should be made using credentials
   withCredentials: false,
   // Replace with backend host url when it gets hosted somewhere
-  baseURL: "http://localhost:3500",
+  baseURL: import.meta.env.VITE_BASE_URL,
   timeout: 1000
 })
 
