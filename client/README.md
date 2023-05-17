@@ -31,13 +31,38 @@
     - Use the select all check box to select all notes
     - Then select the top level delete icon
 - ###### Still ToDo
-  - Update a note
+  Phase 1
+  - Finish CRUD
+    - Update a note
+      - Will have to set `selectedNote` as the formik initial values
+    - Search notes(by title and/or body)
+      - Add Search input (possibly in the <ListHeader /> component)
   - Replace the NoteView with the NoteForm
     - We should always be in an active form state
+    - Form should be aware that it's either a new note or edit note
+  - Form UI needs to be styled
+    - Page lines or no page lines
+    - Probably drop the input outlines
+    - Text color
+  - Create first note automatically:
+    - When there are no notes
   - Refactor the form submit to be a debounced auto save
   - First line of the note (any text before the first page break) automatically:
     - Gets set as the `title`
     - Gets styled with increased font size and weight
-  - Form UI needs to be styled
-  - Create first note:
-    - When there are no notes
+  
+  Phase 2
+  - Add a login/sign up view
+  - Possibly a user account and or global settings (light/dark mode)
+  - Integrate authentication (username/password/tokens)
+    - Start basic and then build better production level auth
+    - Stretch goal! multi factor authentication
+
+  Phase 3
+  - Host the front end somewhere (possibly Vercel)
+
+  Phase 4
+  - Stretch goals!
+    - Integrate ChatGPT
+    - PWA (progressive web app)
+    - Offline mode with localStorage
