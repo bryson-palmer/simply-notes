@@ -6,12 +6,12 @@ Using web based technologies to build a simple yet intuitive note app that aims 
 
 ### The Goal
 Really wanted to gain experience building with the tech stack:
-- ###### Back End
+###### Back End
   - Python
   - Flask
   - SQLite
   - Django
-- ###### Front End
+###### Front End
   - JavaScript
   - React
   - Axios
