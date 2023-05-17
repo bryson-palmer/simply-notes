@@ -19,7 +19,7 @@
 - Formik
 
 ### MVP Features
-- ###### Completed
+###### Completed
   - Create a note
   - Get a note by id
   - Get all notes
@@ -29,7 +29,7 @@
     - Use the check boxes on each item row to select multiple notes or
     - Use the select all check box to select all notes
     - Then select the top level delete icon
-- ###### Still ToDo
+###### Still ToDo
   Phase 1
   - Finish CRUD
     - Update a note
@@ -45,6 +45,11 @@
     - Text color
   - Create first note automatically:
     - When there are no notes
+  - Responsive styling
+    - Fix styling widths for note list and note form
+    - Tablet: turn note list into a mui popover or drawer
+    - Mobile: put note list into a menu icon w/ drop down menu list
+  - Create reusable component for page header (blow nav)
   - Refactor the form submit to be a debounced auto save
   - First line of the note (any text before the first page break) automatically:
     - Gets set as the `title`
