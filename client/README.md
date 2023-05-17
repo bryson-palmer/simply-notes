@@ -1,14 +1,13 @@
 # Simple ToDo Client Side
-##### This servers the front end of this full stack app.
+##### This serves the front end of this full stack app.
 
 ### Run the App
 - Clone this repo
 - Install app dependencies with yarn
-- Start the front end with yarn dev
+- Start a local front end instance with `yarn dev`
   - Check `http://localhost:5173`
-- Start the db.json server with `npx json-server -p 3500 -w mockData/db.json`
-  - Check `localhost:3500`
-  - A temporary mock server to test endpoints
+- Start a local back end instance with `python3 app.py`
+  - Check `http://127.0.0.1:5000`
 
 ###### Front End Stack
 - JavaScript
