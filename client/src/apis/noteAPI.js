@@ -4,7 +4,7 @@ import { defineCancelApiObject } from "./configs/axiosUtils"
 export const noteAPI = {
   getAll: async (cancel = false) => {
     const response = await api.request({
-      url: "/notes/",
+      url: "/notes",
       method: "GET",
       signal: cancel ? cancelApiObject[this.getAll.name].handleRequestCancellation().signal : undefined,
     })
