@@ -35,10 +35,21 @@ const ListHeader = ({ checked, setChecked }) => {
     setChecked(newChecked)
   }, [allChecked, notes, setChecked])
 
-  // unselect 'selectAll' checkbox if 0 notes left
+  // select or deselect allChecked boolean
   useEffect(() => {
-    if (!notes.length) return setAllChecked(false)
-  }, [notes.length])
+    if (checked.length === notes.length) return setAllChecked(true)
+  }, [allChecked, checked.length, notes.length])
+
+  // unselect 'selectAll' checkbox if 0 notes
+  // left or all children are checked and
+  // allChecked is false
+  useEffect(() => {
+    if (!notes.length || (checked.length !== notes.length)) {
+      setAllChecked(false)
+      setChecked([])
+      return
+    }
+  }, [checked.length, notes.length, setChecked])
 
   return (
     <ListItem
