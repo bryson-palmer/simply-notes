@@ -38,4 +38,23 @@ def note(id):
 
 	return {}
 
+@app.route('/notes/<id>', methods=['Delete'])
+def note_delete(id):
+	print('In note_delete')
+	with open(filename, 'r') as f:
+		db = json.load(f)
+		notes = db['notes']
+		print(f'In with statement & db created: notes: {notes}')
+
+	for i, note in enumerate(notes):
+		if note['id'] == int(id):
+			print('In if statement: id == id')
+			del notes[i]
+			with open(filename, 'w') as f:
+				json.dump(db, f)
+
+			return 'Delete success'
+
+	return 'Delete success'
+
 app.run()
