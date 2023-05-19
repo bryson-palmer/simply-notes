@@ -62,7 +62,7 @@ def note(id):
 		notes = db['notes']
 
 		for note in notes:
-			if note['id'] == int(id):
+			if str(note['id']) == id:
 				return note
 
 	return {}
