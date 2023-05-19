@@ -24,7 +24,7 @@ export const noteAPI = {
   },
   create: async (note, cancel = false) => {
     const response = await api.request({
-      url: `/notes/`,
+      url: `/notes`,
       method: "POST",
       data: note,
       signal: cancel ? cancelApiObject[this.create.name].handleRequestCancellation().signal : undefined,

@@ -1,5 +1,6 @@
 import sqlite3
-from flask import Flask
+import uuid
+from flask import Flask, request
 import json
 from flask_cors import CORS
 import os
@@ -15,15 +16,43 @@ filename = os.path.join(dirname, '../client/mockData/db.json')
 def home():
 	return 'Flask app is running!!!'
 
-@app.route('/notes')
+def create_note(request):
+    # read in existing notes
+    try:
+        with open(filename, 'r') as f:
+            db = json.load(f)
+    except Exception as err:  # catch general exception with either file or json
+        print(err)
+        db = {'notes': []}
+    
+    # verify new note has an ID
+    note = request.json
+    id = note['id']
+    if id is None or id == '':
+        id = uuid.uuid4()
+        note['id'] = id
+
+    # add note to our notes json, and write back to file
+    db['notes'].append(note)
+    with open(filename, 'w') as f:
+        json.dump(db, f)
+    print(db)
+    return str(id)  # return string of ID, for front-end
+
+@app.route('/notes', methods=['GET', 'POST'])
 def notes():
-	with open(filename, 'r') as f:
-		try:
-			db = json.load(f)
-			print(f'db: => {db}')
-		except json.decoder.JSONDecodeError:
-			return []
-	return db['notes'] if 'notes' in db else db
+  if request.method == 'POST':
+    # rather than fetching notes, we are creating a new one
+    return create_note(request)
+
+  # if we get here, we are fetching all notes
+  with open(filename, 'r') as f:
+    try:
+      db = json.load(f)
+      print(f'db: => {db}')
+    except json.decoder.JSONDecodeError:
+      return []
+  return db['notes'] if 'notes' in db else db
 
 @app.route('/notes/<id>')
 def note(id):
