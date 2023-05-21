@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { PropTypes } from 'prop-types/prop-types'
 
@@ -8,48 +8,40 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 import { /* useDeleteAll, */ useDeleteNote, useNotes } from '@/store/store-selectors'
 
-const ListHeader = ({ checked, setChecked }) => {
-  const [allChecked, setAllChecked] = useState(false)
-  
+const ListHeader = ({ listState, setListState }) => {
+    const { checkedIds, isAllChecked} = listState
   const { palette } = useTheme()
   // const deleteAll = useDeleteAll()
   const deleteNote = useDeleteNote()
   const notes = useNotes()
   
-  const handleAllNotesChecked = useCallback(() => setAllChecked(!allChecked), [allChecked])
+  const handleAllNotesChecked = useCallback(() => setListState(prevListState => ({
+    ...prevListState,
+    isAllChecked: !prevListState.isAllChecked,
+    checkedIds: prevListState.isAllChecked ? []: notes.map(({ id }) => id)
+  })), [notes, setListState])
   
   const handleDeleteCheckedNotes = useCallback(() => {
-    if (!Array.isArray(checked) || checked.length < 1) return
-    checked.map(id => deleteNote(id))
+    if (!Array.isArray(checkedIds) || checkedIds.length < 1) return
+    
+    // This delete all checked handler is buggin
+    console.log("🚀 ~ file: index.jsx:27 ~ handleDeleteCheckedNotes ~ checkedIds:", checkedIds)
+    checkedIds.map(async id => await  deleteNote(id))
 
     // allChecked
     //   ? deleteAll()
     //   : checked.map(id => deleteNote(id))
-  }, [checked, deleteNote])
+  }, [checkedIds, deleteNote])
 
-  // select or deselect all children
   useEffect(() => {
-    const newChecked = allChecked
-      ? notes.map(({ id }) => id)
-      : []
-    setChecked(newChecked)
-  }, [allChecked, notes, setChecked])
-
-  // select or deselect allChecked boolean
-  useEffect(() => {
-    if (checked.length === notes.length) return setAllChecked(true)
-  }, [allChecked, checked.length, notes.length])
-
-  // unselect 'selectAll' checkbox if 0 notes
-  // left or all children are checked and
-  // allChecked is false
-  useEffect(() => {
-    if (!notes.length || (checked.length !== notes.length)) {
-      setAllChecked(false)
-      setChecked([])
-      return
+    if (!notes.length) {  
+      return setListState(prevListState => ({
+        ...prevListState,
+        isAllChecked: false,
+        checkedIds: []
+      }))
     }
-  }, [checked.length, notes.length, setChecked])
+  }, [isAllChecked, checkedIds.length, notes.length, setListState])
 
   return (
     <ListItem
@@ -60,7 +52,7 @@ const ListHeader = ({ checked, setChecked }) => {
         paddingLeft: "1rem",
       }}
       secondaryAction={
-        checked.length ? (
+        checkedIds.length ? (
           <IconButton
             disableRipple
             onClick={handleDeleteCheckedNotes}
@@ -76,29 +68,32 @@ const ListHeader = ({ checked, setChecked }) => {
         ) : null
       }
     >
-      <IconButton disableRipple size="small" onClick={handleAllNotesChecked}>
-        <ListItemIcon sx={{ "&.MuiListItemIcon-root": { minWidth: "auto" } }}>
-          <Checkbox
-            disableRipple
-            edge="start"
-            checked={allChecked}
-            // tabIndex={-1}
-            inputProps={{ "aria-labelledby": "notes-list-header" }}
-            sx={{
-              color: palette.grey[300],
-              "&:hover": { color: palette.primary[200] },
-            }}
-          />
-        </ListItemIcon>
-      </IconButton>
+      {notes.length ? (
+        <IconButton disableRipple size="small" onClick={handleAllNotesChecked}>
+          <ListItemIcon sx={{ "&.MuiListItemIcon-root": { minWidth: "auto" } }}>
+            <Checkbox
+              disableRipple
+              edge="start"
+              checked={isAllChecked}
+              inputProps={{ "aria-labelledby": "notes-list-header" }}
+              sx={{
+                color: palette.grey[300],
+                "&:hover": { color: palette.primary[200] },
+              }}
+            />
+          </ListItemIcon>
+        </IconButton>
+      ) : null}
     </ListItem>
   );
 }
 
 ListHeader.displayName = '/ListHeader'
 ListHeader.propTypes = {
-  checked: PropTypes.arrayOf(PropTypes.number),
-  setChecked: PropTypes.func
+  listState: PropTypes.shape({
+    isAllChecked: PropTypes.bool,
+    checkedIds: PropTypes.arrayOf(PropTypes.string)}),
+  setListState: PropTypes.func
 }
 
 export default ListHeader
