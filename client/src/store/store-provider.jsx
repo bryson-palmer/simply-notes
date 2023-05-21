@@ -34,7 +34,7 @@ const useStore = () => {
     noteAPI.create(note)
     .then(data => {
       getAllNotes()
-      getNote(data.id)
+      getNote(data)
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:41 ~ createNote ~ error:", error)
