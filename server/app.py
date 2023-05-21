@@ -36,7 +36,7 @@ def create_note(request):
     db['notes'].append(note)
     with open(filename, 'w') as f:
         json.dump(db, f)
-    print(db)
+
     return str(id)  # return string of ID, for front-end
 
 @app.route('/notes', methods=['GET', 'POST'])
@@ -49,14 +49,12 @@ def notes():
   with open(filename, 'r') as f:
     try:
       db = json.load(f)
-      print(f'db: => {db}')
     except json.decoder.JSONDecodeError:
       return []
   return db['notes'] if 'notes' in db else db
 
 @app.route('/notes/<id>')
 def note(id):
-	print('get note by id')
 	with open(filename, 'r') as f:
 		db = json.load(f)
 		notes = db['notes']
@@ -69,15 +67,12 @@ def note(id):
 
 @app.route('/notes/<id>', methods=['Delete'])
 def note_delete(id):
-	print('In note_delete')
 	with open(filename, 'r') as f:
 		db = json.load(f)
 		notes = db['notes']
-		print(f'In with statement & db created: notes: {notes}')
 
 	for i, note in enumerate(notes):
 		if note['id'] == int(id):
-			print('In if statement: id == id')
 			del notes[i]
 			with open(filename, 'w') as f:
 				json.dump(db, f)

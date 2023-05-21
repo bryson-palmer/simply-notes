@@ -18,24 +18,33 @@ import ListHeader from '@/Notes/ListHeader'
 import { useDeleteNote, useGetNote, useNotes } from '@/store/store-selectors'
 
 const NoteList = React.memo(({ setAddNote }) => {
-  const [checked, setChecked] = useState([])
+  const [listState, setListState] = useState({
+    isAllChecked: false,
+    checkedIds: []
+  })
 
   const { palette } = useTheme()
   const notes = useNotes()
   const getNote = useGetNote()
   const deleteNote = useDeleteNote()
-  console.log('🚀 ~ file: index.jsx:27 ~ notes:', notes)
   
   const handleCheckToggle = useCallback(value => () => {
-    const currentIndex = checked.indexOf(value)
-    const newChecked = [...checked]
+    const currentIndex = listState.checkedIds.indexOf(value)
+    const newCheckedIds = [...listState.checkedIds]
 
     currentIndex === -1
-      ? newChecked.push(value)
-      : newChecked.splice(currentIndex, 1)
-
-    setChecked(newChecked)
-  }, [checked])
+      ? newCheckedIds.push(value)
+      : newCheckedIds.splice(currentIndex, 1)
+      
+      setListState(prevListState => {
+        const isNewAllChecked = !prevListState.isAllChecked && newCheckedIds.length === notes.length
+        return ({
+      ...prevListState,
+      checkedIds: newCheckedIds,
+      isAllChecked: isNewAllChecked
+    })
+  })
+  }, [listState.checkedIds, notes.length])
 
   const handleSelectNote = useCallback(value => () => {
     setAddNote(false)
@@ -60,7 +69,7 @@ const NoteList = React.memo(({ setAddNote }) => {
         borderRight: `1px solid ${palette.grey[800]}`,
       }}
     >
-      <ListHeader checked={checked} setChecked={setChecked} />
+      <ListHeader listState={listState} setListState={setListState} />
       <List>
         {notes.map(({ id, title, body }) => {
           const labelId = `notes-list-label-${id}`
@@ -101,7 +110,7 @@ const NoteList = React.memo(({ setAddNote }) => {
                   <Checkbox
                     disableRipple
                     edge='start'
-                    checked={checked.includes(id)}
+                    checked={listState.checkedIds.includes(id)}
                     tabIndex={-1}
                     inputProps={{ 'aria-labelledby': labelId }}
                     sx={{
