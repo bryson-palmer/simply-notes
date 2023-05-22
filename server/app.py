@@ -24,12 +24,12 @@ def create_note(request):
     except Exception as err:  # catch general exception with either file or json
         print(err)
         db = {'notes': []}
-    
+        
     # verify new note has an ID
     note = request.json
     id = note['id']
     if id is None or id == '':
-        id = uuid.uuid4()
+        id = uuid.uuid4().hex # a 32-character lowercase hexadecimal string
         note['id'] = id
 
     # add note to our notes json, and write back to file
@@ -37,7 +37,7 @@ def create_note(request):
     with open(filename, 'w') as f:
         json.dump(db, f)
 
-    return str(id)  # return string of ID, for front-end
+    return id
 
 @app.route('/notes', methods=['GET', 'POST'])
 def notes():
@@ -60,19 +60,19 @@ def note(id):
 		notes = db['notes']
 
 		for note in notes:
-			if str(note['id']) == id:
+			if note['id'] == id:
 				return note
 
 	return {}
 
-@app.route('/notes/<id>', methods=['Delete'])
+@app.route('/notes/<id>', methods=['DELETE'])
 def note_delete(id):
 	with open(filename, 'r') as f:
 		db = json.load(f)
 		notes = db['notes']
 
 	for i, note in enumerate(notes):
-		if note['id'] == int(id):
+		if note['id'] == id:
 			del notes[i]
 			with open(filename, 'w') as f:
 				json.dump(db, f)
