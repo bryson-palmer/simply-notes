@@ -1,18 +1,19 @@
 import React, { useCallback, /* useTheme */ } from "react"
 
-import { useFormik } from 'formik'
+import { Form, Formik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 
 import { Button } from "@mui/material"
 import { TextField } from "@mui/material"
 
-import { useCreateNote } from "@/store/store-selectors"
+import { useCreateNote, useSelectedNote } from "@/store/store-selectors"
 import FlexColumn from "@/UI/FlexColumn"
 
 const NoteFormComponent = ({ formik }) => {
   // const { palette } = useTheme()
-  const { handleChange, values } = formik
+  const { dirty, handleChange, isValid, values } = formik
+  console.log("🚀 ~ file: index.jsx:16 ~ NoteFormComponent ~ values:", values)
 
   return (
     <FlexColumn isNote>
@@ -22,7 +23,7 @@ const NoteFormComponent = ({ formik }) => {
         name='title'
         label='title'
         variant='standard'
-        value={values.title}
+        value={values?.title ?? ''}
         onChange={handleChange}
       />
       <TextField
@@ -31,10 +32,15 @@ const NoteFormComponent = ({ formik }) => {
         id='body'
         name='body'
         variant='standard'
-        value={values.body}
+        value={values?.body ?? ''}
         onChange={handleChange}
       />
-      <Button color="primary" variant="contained" fullWidth type="submit">
+      <Button
+        disabled={!dirty || !isValid}
+        color="primary"
+        variant="contained"
+        type="submit"
+      >
         Submit
       </Button>
     </FlexColumn>
@@ -44,7 +50,9 @@ const NoteFormComponent = ({ formik }) => {
 NoteFormComponent.displayName = '/NoteForm'
 NoteFormComponent.propTypes = {
   formik: PropTypes.shape({
+    dirty: PropTypes.bool,
     handleChange: PropTypes.func,
+    isValid: PropTypes.bool,
     values: PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
@@ -63,32 +71,35 @@ const validationSchema = yup.object({
 
 })
 
-const initialValues = {
-  id: '',
-  title: '',
-  body: ''
+const getInitialValues = ({ isNewNote, selectedNote }) => {
+  return (isNewNote ? { id: '', title: '', body: '' } : selectedNote )
 }
 
-const NoteForm = React.memo(({ setAddNote }) => {
+const NoteForm = React.memo(({ isNewNote=false, setIsNewNote={} }) => {
+  const selectedNote = useSelectedNote()
+  console.log("🚀 ~ file: index.jsx:80 ~ NoteForm ~ selectedNote:", selectedNote)
   const createNote = useCreateNote()
   
   const handleSubmit = useCallback(async values => {
     await createNote(values)
-    setAddNote(false)
-  }, [createNote, setAddNote])
+    setIsNewNote(false)
+  }, [createNote, setIsNewNote])
 
-  const formik = useFormik({
-    initialValues: initialValues,
-    validationSchema: validationSchema,
-    onSubmit: handleSubmit
-  })
+  const initialValues = getInitialValues({ isNewNote, selectedNote })
 
   return (
-    <>
-      <form onSubmit={formik.handleSubmit}>
-        <NoteFormComponent formik={formik} />
-      </form>
-    </>
+    <Formik
+      enableReinitialize
+      initialValues={initialValues ?? {}}
+      onSubmit={handleSubmit}
+      validationSchema={validationSchema}
+    >
+      {formik => (
+        <Form onSubmit={formik.handleSubmit}>
+          <NoteFormComponent formik={formik} />
+        </Form>
+      )}
+    </Formik>
   )
 })
 
@@ -101,7 +112,8 @@ NoteForm.propTypes = {
       body: PropTypes.string
     })
   })),
-  setAddNote: PropTypes.func,
+  isNewNote: PropTypes.bool,
+  setIsNewNote: PropTypes.func,
 }
 
 export default NoteForm

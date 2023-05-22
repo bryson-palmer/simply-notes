@@ -17,7 +17,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import ListHeader from '@/Notes/ListHeader'
 import { useDeleteNote, useGetNote, useNotes } from '@/store/store-selectors'
 
-const NoteList = React.memo(({ setAddNote }) => {
+const NoteList = React.memo(({ setIsNewNote }) => {
   const [listState, setListState] = useState({
     isAllChecked: false,
     checkedIds: []
@@ -47,9 +47,9 @@ const NoteList = React.memo(({ setAddNote }) => {
   }, [listState.checkedIds, notes.length])
 
   const handleSelectNote = useCallback(value => () => {
-    setAddNote(false)
+    setIsNewNote(false)
     getNote(value)
-  }, [getNote, setAddNote])
+  }, [getNote, setIsNewNote])
 
   const handleDeleteNote = useCallback(id => {
     deleteNote(id)
@@ -157,7 +157,7 @@ const NoteList = React.memo(({ setAddNote }) => {
 
 NoteList.displayName = '/NoteList'
 NoteList.propTypes = {
-  setAddNote: PropTypes.func,
+  setIsNewNote: PropTypes.func,
 }
 
 export default NoteList
