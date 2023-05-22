@@ -16,7 +16,7 @@ filename = os.path.join(dirname, '../client/mockData/db.json')
 def home():
 	return 'Flask app is running!!!'
 
-def create_note(request):
+def create_or_modify_note(request):
     # read in existing notes
     try:
         with open(filename, 'r') as f:
@@ -27,13 +27,25 @@ def create_note(request):
         
     # verify new note has an ID
     note = request.json
-    id = note['id']
+    # preferentially use the ID passed in at top of function
+    id = note['id'] # ID from post request, if updating note
     if id is None or id == '':
         id = uuid.uuid4().hex # a 32-character lowercase hexadecimal string
         note['id'] = id
+        is_new_note = True
+    else:
+        is_new_note = False
 
     # add note to our notes json, and write back to file
-    db['notes'].append(note)
+    if is_new_note:
+        db['notes'].append(note)
+    else:
+        # find current note in notes, and update title and body
+        for i, db_note in enumerate(db['notes']):
+            if id == db_note['id']:
+                # this is the note we want to update/replace
+                db['notes'][i] = note
+                break
     with open(filename, 'w') as f:
         json.dump(db, f)
 
@@ -43,7 +55,7 @@ def create_note(request):
 def notes():
   if request.method == 'POST':
     # rather than fetching notes, we are creating a new one
-    return create_note(request)
+    return create_or_modify_note(request)
 
   # if we get here, we are fetching all notes
   with open(filename, 'r') as f:
@@ -53,17 +65,19 @@ def notes():
       return []
   return db['notes'] if 'notes' in db else db
 
-@app.route('/notes/<id>')
+@app.route('/notes/<id>', methods=['GET', 'PUT'])
 def note(id):
-	with open(filename, 'r') as f:
-		db = json.load(f)
-		notes = db['notes']
+  if request.method == 'PUT':
+    return create_or_modify_note(request)
+  with open(filename, 'r') as f:
+    db = json.load(f)
+    notes = db['notes']
 
-		for note in notes:
-			if note['id'] == id:
-				return note
+    for note in notes:
+      if note['id'] == id:
+        return note
 
-	return {}
+  return {}
 
 @app.route('/notes/<id>', methods=['DELETE'])
 def note_delete(id):
