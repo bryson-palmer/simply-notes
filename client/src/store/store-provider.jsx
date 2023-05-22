@@ -6,7 +6,7 @@ import { noteAPI } from '@/apis/noteAPI'
 
 const useStore = () => {
   const [notes, setNotes] = useState([])
-  const [selectedNote, setSelectedNote] = useState(null)
+  const [selectedNote, setSelectedNote] = useState({})
 
   const getAllNotes = useCallback(() => {
     noteAPI.getAll()
@@ -72,7 +72,7 @@ const useStore = () => {
     // if !selectedNote (because deletion), set the first one
     // default set the selectedNote from user click
 
-    if (!selectedNote) return setSelectedNote(notes[0])
+    if (!selectedNote?.id) return setSelectedNote(notes[0])
     setSelectedNote(selectedNote)
   }, [notes, selectedNote]) // anytime these two variables change, trigger this useEffect
 
