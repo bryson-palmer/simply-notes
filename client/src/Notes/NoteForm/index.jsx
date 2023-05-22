@@ -25,7 +25,7 @@ const NoteFormComponent = ({ formik }) => {
         value={values?.title ?? ''}
         onChange={handleChange}
         sx={{
-          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[200] },
+          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
           '& [class*=MuiInputBase-root-MuiInput-root]:before': { borderColor: palette.grey[600] },
           '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { borderColor: palette.secondary[300] },
           '& [class*=MuiInputBase-root-MuiInput-root]:after': { borderColor: palette.secondary[400] },
@@ -41,7 +41,7 @@ const NoteFormComponent = ({ formik }) => {
         value={values?.body ?? ''}
         onChange={handleChange}
         sx={{
-          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[200] },
+          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
           '& [class*=MuiInputBase-root-MuiInput-root]:before': { border: 'none' },
           '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
           '& [class*=MuiInputBase-root-MuiInput-root]:after': { border: 'none' },
