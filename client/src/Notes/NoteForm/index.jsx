@@ -26,9 +26,10 @@ const NoteFormComponent = ({ formik }) => {
         sx={{
           '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
           '& [class*=MuiInputBase-root-MuiInput-root]:before': { borderColor: palette.grey[600] },
-          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { borderColor: palette.secondary[300] },
+          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { borderColor: palette.secondary[200] },
           '& [class*=MuiInputBase-root-MuiInput-root]:after': { borderColor: palette.secondary[400] },
-          '& [class*=MuiFormLabel-root-MuiInputLabel-root]': { color: palette.secondary[300] },
+          '& [class*=MuiFormLabel-root-MuiInputLabel-root]': { color: palette.secondary[200] },
+          '& [class*=MuiFormLabel-root-MuiInputLabel-root].Mui-focused': { color: palette.secondary[400] },
         }}
       />
       <TextField
