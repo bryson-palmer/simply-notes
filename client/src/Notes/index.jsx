@@ -7,18 +7,17 @@ import { useTheme } from '@emotion/react'
 
 import NoteForm from '@/Notes/NoteForm'
 import NoteList from '@/Notes/NoteList'
-import NoteView from '@/Notes/NoteView'
 import FlexBetween from '@/UI/FlexBetween'
 import FlexColumn from '@/UI/FlexColumn'
 
 const Notes = React.memo(() => {
-  const [addNote, setAddNote] = useState(false)
+  const [isNewNote, setIsNewNote] = useState(false)
 
   const { palette } = useTheme()
 
-  const handleAddNote = useCallback(() => {
-    setAddNote(!addNote)
-  }, [addNote])
+  const handleIsNewNote = useCallback(() => {
+    setIsNewNote(!isNewNote)
+  }, [isNewNote])
  
   return (
     <FlexColumn>
@@ -36,7 +35,7 @@ const Notes = React.memo(() => {
               color: palette.secondary[400],
               "&:hover": { color: palette.secondary[100] },
             }}
-            onClick={handleAddNote}
+            onClick={handleIsNewNote}
           >
             <AddIcon sx={{ fontSize: "1rem", marginRight: "-4px" }} />
             <CreateIcon />
@@ -44,12 +43,8 @@ const Notes = React.memo(() => {
         </FlexBetween>
       </FlexBetween>
       <Box sx={{ display: { xs: "none", sm: "flex" } }}>
-        <NoteList setAddNote={setAddNote} />
-        {addNote ? (
-          <NoteForm setAddNote={setAddNote} />
-        ) : (
-          <NoteView />
-        )}
+        <NoteList setIsNewNote={setIsNewNote} />
+        <NoteForm isNewNote={isNewNote} setIsNewNote={setIsNewNote} />
       </Box>
     </FlexColumn>
   );
