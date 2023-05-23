@@ -95,4 +95,4 @@ def note_delete(id):
 
 	return 'Delete success'
 
-app.run()
+app.run(debug=True)

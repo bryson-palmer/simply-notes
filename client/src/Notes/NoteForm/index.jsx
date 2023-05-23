@@ -6,13 +6,12 @@ import * as yup from 'yup'
 
 import { Box, Button, TextField, useTheme } from "@mui/material"
 
-import { useCreateNote, useSelectedNote } from "@/store/store-selectors"
+import { useCreateNote, useSelectedNote, useUpdateNote } from "@/store/store-selectors"
 import FlexColumn from "@/UI/FlexColumn"
 
 const NoteFormComponent = ({ formik }) => {
   const { palette } = useTheme()
   const { dirty, handleChange, isValid, values } = formik
-  console.log("🚀 ~ file: index.jsx:16 ~ NoteFormComponent ~ values:", values)
 
   return (
     <Box display='flex' flexDirection='column' gap='1rem'>
@@ -25,11 +24,12 @@ const NoteFormComponent = ({ formik }) => {
         value={values?.title ?? ''}
         onChange={handleChange}
         sx={{
-          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[200] },
+          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
           '& [class*=MuiInputBase-root-MuiInput-root]:before': { borderColor: palette.grey[600] },
-          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { borderColor: palette.secondary[300] },
+          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { borderColor: palette.secondary[200] },
           '& [class*=MuiInputBase-root-MuiInput-root]:after': { borderColor: palette.secondary[400] },
-          '& [class*=MuiFormLabel-root-MuiInputLabel-root]': { color: palette.secondary[300] },
+          '& [class*=MuiFormLabel-root-MuiInputLabel-root]': { color: palette.secondary[200] },
+          '& [class*=MuiFormLabel-root-MuiInputLabel-root].Mui-focused': { color: palette.secondary[400] },
         }}
       />
       <TextField
@@ -41,7 +41,7 @@ const NoteFormComponent = ({ formik }) => {
         value={values?.body ?? ''}
         onChange={handleChange}
         sx={{
-          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[200] },
+          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
           '& [class*=MuiInputBase-root-MuiInput-root]:before': { border: 'none' },
           '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
           '& [class*=MuiInputBase-root-MuiInput-root]:after': { border: 'none' },
@@ -94,13 +94,16 @@ const getInitialValues = ({ isNewNote, selectedNote }) => {
 
 const NoteForm = React.memo(({ isNewNote=false, setIsNewNote={} }) => {
   const selectedNote = useSelectedNote()
-  console.log("🚀 ~ file: index.jsx:80 ~ NoteForm ~ selectedNote:", selectedNote)
   const createNote = useCreateNote()
+  const updateNote = useUpdateNote()
   
   const handleSubmit = useCallback(async values => {
-    await createNote(values)
+    isNewNote
+      ? await createNote(values)
+      : await updateNote(values)
+    
     setIsNewNote(false)
-  }, [createNote, setIsNewNote])
+  }, [createNote, isNewNote, setIsNewNote, updateNote])
 
   const initialValues = getInitialValues({ isNewNote, selectedNote })
 
