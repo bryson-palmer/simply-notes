@@ -32,13 +32,6 @@ export const noteAPI = {
 
     return response.data
   },
-  // deleteAll: async (cancel = false) => {
-  //   await api.request({
-  //     url: `/notes`,
-  //     method: "DELETE",
-  //     signal: cancel ? cancelApiObject[this.deleteAll.name].handleRequestCancellation().signal : undefined,
-  //   })
-  // },
   delete: async (id, cancel = false) => {
     await api.request({
       url: `/notes/${id}`,

@@ -66,16 +66,6 @@ const useStore = () => {
     })
   }, [getAllNotes])
 
-  // const deleteAll = useCallback(() => {
-  //   console.log('In the deleteAll call')
-  //   noteAPI.deleteAll()
-  //   .then(() => {
-  //     console.log('Made it passed the api call')
-  //     setSelectedNote({})
-  //   })
-  //   .catch(error => console.log("🚀 ~ file: store-provider.jsx:48 ~ deleteAll ~ error:", error))
-  // }, [])
-
   // render / load notes on first load ??
   useEffect(() => getAllNotes(), [getAllNotes])
   
@@ -95,7 +85,6 @@ const useStore = () => {
     createNote: note => createNote(note),
     updateNote: note => updateNote(note),
     deleteNote: id => deleteNote(id),
-    // deleteAll: () => deleteAll()
   }
 }
 
