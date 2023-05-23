@@ -26,11 +26,8 @@ const ListHeader = ({ listState, setListState }) => {
     
     // This delete all checked handler is buggin
     console.log("🚀 ~ file: index.jsx:27 ~ handleDeleteCheckedNotes ~ checkedIds:", checkedIds)
-    checkedIds.map(async id => await  deleteNote(id))
+    deleteNote(checkedIds)
 
-    // allChecked
-    //   ? deleteAll()
-    //   : checked.map(id => deleteNote(id))
   }, [checkedIds, deleteNote])
 
   useEffect(() => {

@@ -81,18 +81,28 @@ def note(id):
 
 @app.route('/notes/<id>', methods=['DELETE'])
 def note_delete(id):
-	with open(filename, 'r') as f:
-		db = json.load(f)
-		notes = db['notes']
+  id_list = id.split(',')
+  # whether a list of id's or a single id, make sure id_list is a list of ID's
+  print(id_list)
+  with open(filename, 'r') as f:
+    db = json.load(f)
+    notes = db['notes']
 
-	for i, note in enumerate(notes):
-		if note['id'] == id:
-			del notes[i]
-			with open(filename, 'w') as f:
-				json.dump(db, f)
+  # find notes that are in our id_list, and create a temporary index for notes to delete
+  to_delete = []
+  for i, note in enumerate(notes):
+    if note['id'] in id_list:
+      to_delete.append(i)
+  if not to_delete:
+     return 'None deleted'
+  
+  # delete notes in reverse order of index, to prevent index shifts from causing undesired behavior
+  for i in reversed(to_delete):
+    del notes[i]
+  # write changes back (outside of for-loop) to file
+  with open(filename, 'w') as f:
+    json.dump(db, f)
 
-			return 'Delete success'
-
-	return 'Delete success'
+  return 'Delete success'
 
 app.run(debug=True)
