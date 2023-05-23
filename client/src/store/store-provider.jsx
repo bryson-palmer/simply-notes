@@ -70,12 +70,16 @@ const useStore = () => {
   useEffect(() => getAllNotes(), [getAllNotes])
   
   useEffect(() => {
-    // if !notes, create newNote (no notes or deleted all notes)
-    // if !selectedNote (because deletion), set the first one
-    // default set the selectedNote from user click
-
-    if (!selectedNote?.id) return setSelectedNote(notes[0])
-    setSelectedNote(selectedNote)
+    // Deleted all notes
+    if (!notes?.length && selectedNote.id) {
+      setSelectedNote({})
+      // Deleted the selectedNote
+    } else if (!selectedNote?.id && notes.length) {
+      setSelectedNote(notes[0])
+      // Default set user selected note
+    } else {
+      setSelectedNote(selectedNote)
+    }
   }, [notes, selectedNote]) // anytime these two variables change, trigger this useEffect
 
   return {
