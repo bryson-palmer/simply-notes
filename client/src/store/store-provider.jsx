@@ -66,18 +66,6 @@ const useStore = () => {
     })
   }, [getAllNotes])
 
-  const updateNote = useCallback(note => {
-    noteAPI.update(note)
-    .then(data => {
-      getAllNotes()
-      getNote(data)
-    })
-    .catch(error => { 
-      console.log("🚀 ~ file: store-provider.jsx:65 ~ updateNote ~ error:", error)
-      return
-    })
-  }, [getAllNotes, getNote])
-
   // const deleteAll = useCallback(() => {
   //   console.log('In the deleteAll call')
   //   noteAPI.deleteAll()
@@ -107,7 +95,6 @@ const useStore = () => {
     createNote: note => createNote(note),
     updateNote: note => updateNote(note),
     deleteNote: id => deleteNote(id),
-    updateNote: note => updateNote(note)
     // deleteAll: () => deleteAll()
   }
 }
