@@ -6,14 +6,13 @@ import { useTheme } from '@emotion/react'
 import { Checkbox, IconButton, ListItem, ListItemIcon } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
-import { /* useDeleteAll, */ useDeleteNote, useNotes } from '@/store/store-selectors'
+import { useDeleteNote, useNotes } from '@/store/store-selectors'
 
 const ListHeader = ({ listState, setListState }) => {
-    const { checkedIds, isAllChecked} = listState
   const { palette } = useTheme()
-  // const deleteAll = useDeleteAll()
   const deleteNote = useDeleteNote()
   const notes = useNotes()
+  const { checkedIds, isAllChecked} = listState
   
   const handleAllNotesChecked = useCallback(() => setListState(prevListState => ({
     ...prevListState,
@@ -23,9 +22,6 @@ const ListHeader = ({ listState, setListState }) => {
   
   const handleDeleteCheckedNotes = useCallback(() => {
     if (!Array.isArray(checkedIds) || checkedIds.length < 1) return
-    
-    // This delete all checked handler is buggin
-    console.log("🚀 ~ file: index.jsx:27 ~ handleDeleteCheckedNotes ~ checkedIds:", checkedIds)
     deleteNote(checkedIds)
 
   }, [checkedIds, deleteNote])

@@ -66,26 +66,20 @@ const useStore = () => {
     })
   }, [getAllNotes])
 
-  // const deleteAll = useCallback(() => {
-  //   console.log('In the deleteAll call')
-  //   noteAPI.deleteAll()
-  //   .then(() => {
-  //     console.log('Made it passed the api call')
-  //     setSelectedNote({})
-  //   })
-  //   .catch(error => console.log("🚀 ~ file: store-provider.jsx:48 ~ deleteAll ~ error:", error))
-  // }, [])
-
   // render / load notes on first load ??
   useEffect(() => getAllNotes(), [getAllNotes])
   
   useEffect(() => {
-    // if !notes, create newNote (no notes or deleted all notes)
-    // if !selectedNote (because deletion), set the first one
-    // default set the selectedNote from user click
-
-    if (!selectedNote?.id) return setSelectedNote(notes[0])
-    setSelectedNote(selectedNote)
+    // Deleted all notes
+    if (!notes?.length && selectedNote.id) {
+      setSelectedNote({})
+      // Deleted the selectedNote
+    } else if (!selectedNote?.id && notes.length) {
+      setSelectedNote(notes[0])
+      // Default set user selected note
+    } else {
+      setSelectedNote(selectedNote)
+    }
   }, [notes, selectedNote]) // anytime these two variables change, trigger this useEffect
 
   return {
@@ -95,7 +89,6 @@ const useStore = () => {
     createNote: note => createNote(note),
     updateNote: note => updateNote(note),
     deleteNote: id => deleteNote(id),
-    // deleteAll: () => deleteAll()
   }
 }
 
