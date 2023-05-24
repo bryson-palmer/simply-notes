@@ -11,6 +11,15 @@ CORS(app)
 dirname = os.path.dirname(__file__)  # removes filename from path to just get directory
 filename = os.path.join(dirname, '../client/mockData/db.json')
 
+db_file = os.path.join(dirname, 'app.db')
+connection = sqlite3.connect(db_file)
+
+cursor = connection.cursor()
+create_notes_table = """
+  CREATE TABLE IF NOT EXISTS NOTES(id, title, body, user_id)
+"""
+cursor.execute(create_notes_table)
+connection.commit()
 
 @app.route('/')
 def home():
@@ -18,36 +27,24 @@ def home():
 
 def create_or_modify_note(request):
     # read in existing notes
-    try:
-        with open(filename, 'r') as f:
-            db = json.load(f)
-    except Exception as err:  # catch general exception with either file or json
-        print(err)
-        db = {'notes': []}
-        
-    # verify new note has an ID
     note = request.json
-    # preferentially use the ID passed in at top of function
-    id = note['id'] # ID from post request, if updating note
+    is_new_note = False
+    id = note.get('id') # ID from post request, if updating note
     if id is None or id == '':
         id = uuid.uuid4().hex # a 32-character lowercase hexadecimal string
         note['id'] = id
         is_new_note = True
-    else:
-        is_new_note = False
-
-    # add note to our notes json, and write back to file
+    
+    title = note['title']
+    body = note['body']
+        
+    connection = sqlite3.connect('app.db')
+    cursor = connection.cursor()
     if is_new_note:
-        db['notes'].append(note)
-    else:
-        # find current note in notes, and update title and body
-        for i, db_note in enumerate(db['notes']):
-            if id == db_note['id']:
-                # this is the note we want to update/replace
-                db['notes'][i] = note
-                break
-    with open(filename, 'w') as f:
-        json.dump(db, f)
+        cursor.execute(f'INSERT INTO NOTES (id, title, body, user_id) VALUES ("{id}", "{title}", "{body}", null)')
+    if not is_new_note:
+        cursor.execute('UPDATE NOTES SET title="%s", body="%s" where id="%s"' % (title, body, id))
+    connection.commit()
 
     return id
 
@@ -58,12 +55,17 @@ def notes():
     return create_or_modify_note(request)
 
   # if we get here, we are fetching all notes
-  with open(filename, 'r') as f:
-    try:
-      db = json.load(f)
-    except json.decoder.JSONDecodeError:
-      return []
-  return db['notes'] if 'notes' in db else db
+  connection = sqlite3.connect('app.db')
+  cursor = connection.cursor()
+  cursor.execute('SELECT * FROM NOTES')
+  results = cursor.fetchall()  # [['uadfsdf', 'title', 'body', None], []...]
+  notes = []
+  for result in results:
+    (id, title, body, user_id) = result
+    note = dict(id=id, title=title, body=body, user_id=user_id)
+    notes.append(note)
+  print(notes)
+  return notes
 
 @app.route('/notes/<id>', methods=['GET', 'PUT'])
 def note(id):
