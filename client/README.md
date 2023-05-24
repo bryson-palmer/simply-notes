@@ -20,40 +20,32 @@
 
 ### MVP Features
 ###### Completed
-  - Create a note
-  - Get a note by id
-  - Get all notes
-  - Delete a note by id
-    - Use delete icon on the item row
-  - Delete all checked notes
-    - Use the check boxes on each item row to select multiple notes or
-    - Use the select all check box to select all notes
-    - Then select the top level delete icon
+  - CRUD
+    - Get all notes
+    - Get a note by id
+    - Update note by id
+    - Delete many notes
+    - Delete a note by id
+  - Selected note is always in the active form state
+  - Set new note (create note) automatically when there are no notes
 ###### Still ToDo
   Phase 1
-  - Finish CRUD
-    - Update a note
-      - Will have to set `selectedNote` as the formik initial values
-    - Search notes(by title and/or body)
-      - Add Search input (possibly in the <ListHeader /> component)
-  - Replace the NoteView with the NoteForm
-    - We should always be in an active form state
-    - Form should be aware that it's either a new note or edit note
+  - Search notes(by title and/or body)
+    - Add Search input (possibly in the <ListHeader /> component)
+  - Refactor the form submit to be a debounced auto save
+  - Convert to using only one TextField `name='body'`.
+    - Split value by `value.split('\n')`
+    - Set value[0] as the `title`
+      - Style title with increased font size and weight
+    - Set value[1] as the `body`
   - Form UI needs to be styled
     - Page lines or no page lines
-    - Probably drop the input outlines
-    - Text color
-  - Create first note automatically:
-    - When there are no notes
+    - Element colors
   - Responsive styling
     - Fix styling widths for note list and note form
     - Tablet: turn note list into a mui popover or drawer
-    - Mobile: put note list into a menu icon w/ drop down menu list
+    - Mobile: put note list into a hamburger menu icon w/ drop down menu list
   - Create reusable component for page header (below nav)
-  - Refactor the form submit to be a debounced auto save
-  - First line of the note (any text before the first page break) automatically:
-    - Gets set as the `title`
-    - Gets styled with increased font size and weight
   
   Phase 2
   - Add a login/sign up view
