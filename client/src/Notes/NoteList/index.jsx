@@ -15,7 +15,7 @@ import {
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 import ListHeader from '@/Notes/ListHeader'
-import { useDeleteNote, useGetNote, useNotes } from '@/store/store-selectors'
+import { useDeleteNote, useGetNote, useNotes, useSelectedNote } from '@/store/store-selectors'
 
 const NoteList = React.memo(({ setIsNewNote }) => {
   const [listState, setListState] = useState({
@@ -25,6 +25,7 @@ const NoteList = React.memo(({ setIsNewNote }) => {
 
   const { palette } = useTheme()
   const notes = useNotes()
+  const selectedNote = useSelectedNote()
   const getNote = useGetNote()
   const deleteNote = useDeleteNote()
   
@@ -57,7 +58,8 @@ const NoteList = React.memo(({ setIsNewNote }) => {
 
   useEffect(() => {
     if (!notes.length) return setIsNewNote(true)
-  }, [notes.length, setIsNewNote])
+    if (selectedNote) return setIsNewNote(false)
+  }, [notes, notes.length, selectedNote, setIsNewNote])
 
   return (
     <div
