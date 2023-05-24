@@ -70,11 +70,12 @@ const useStore = () => {
   useEffect(() => getAllNotes(), [getAllNotes])
   
   useEffect(() => {
+    const isSelectedInNotes = notes.some(note => note.id === selectedNote.id)
     // Deleted all notes
     if (!notes?.length && selectedNote.id) {
       setSelectedNote({})
       // Deleted the selectedNote
-    } else if (!selectedNote?.id && notes.length) {
+    } else if (notes.length && (!selectedNote?.id || !isSelectedInNotes)) {
       setSelectedNote(notes[0])
       // Default set user selected note
     } else {
