@@ -24,7 +24,10 @@ const NoteFormComponent = ({ formik }) => {
         value={values?.title ?? ''}
         onChange={handleChange}
         sx={{
-          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
+          '& [class*=MuiInputBase-root-MuiInput-root]': {
+              color: palette.secondary[400],
+              fontWeight: '700',
+            },
           '& [class*=MuiInputBase-root-MuiInput-root]:before': { borderColor: palette.grey[600] },
           '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { borderColor: palette.secondary[200] },
           '& [class*=MuiInputBase-root-MuiInput-root]:after': { borderColor: palette.secondary[400] },

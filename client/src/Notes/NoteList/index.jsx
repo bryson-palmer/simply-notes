@@ -134,7 +134,7 @@ const NoteList = React.memo(({ setIsNewNote }) => {
                 <ListItemText
                   id={labelId}
                   sx={{
-                    color: palette.grey[200],
+                    color: palette.secondary[400],
                     '&:hover': { color: palette.primary[200] },
                   }}
                   primary={title}
