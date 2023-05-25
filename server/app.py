@@ -64,46 +64,37 @@ def notes():
     (id, title, body, user_id) = result
     note = dict(id=id, title=title, body=body, user_id=user_id)
     notes.append(note)
-  print(notes)
+
   return notes
 
 @app.route('/notes/<id>', methods=['GET', 'PUT'])
 def note(id):
   if request.method == 'PUT':
     return create_or_modify_note(request)
-  with open(filename, 'r') as f:
-    db = json.load(f)
-    notes = db['notes']
+  
+  connection = sqlite3.connect('app.db')
+  cursor = connection.cursor()
+  cursor.execute(f'SELECT * FROM NOTES WHERE id = "{id}"')
+  note = cursor.fetchone()
+  note_dict = dict(id=note[0], title=note[1], body=note[2])
 
-    for note in notes:
-      if note['id'] == id:
-        return note
-
-  return {}
+  return note_dict
 
 @app.route('/notes/<id>', methods=['DELETE'])
 def note_delete(id):
-  id_list = id.split(',')
-  # whether a list of id's or a single id, make sure id_list is a list of ID's
-  print(id_list)
-  with open(filename, 'r') as f:
-    db = json.load(f)
-    notes = db['notes']
+  tuple_ids = tuple(id.split(','))
+  # whether a list of id's or a single id, make sure tuple_ids is a list of ID's
+  print(f'tuple_ids: {tuple_ids}')
 
-  # find notes that are in our id_list, and create a temporary index for notes to delete
-  to_delete = []
-  for i, note in enumerate(notes):
-    if note['id'] in id_list:
-      to_delete.append(i)
-  if not to_delete:
-     return 'None deleted'
+  connection = sqlite3.connect('app.db')
+  cursor = connection.cursor()
+
+  if len(tuple_ids) == 1:
+    cursor.execute(f'DELETE FROM NOTES WHERE id = "{tuple_ids[0]}"')
+  else:
+    cursor.execute(f'DELETE FROM NOTES WHERE id IN {tuple_ids}')
   
-  # delete notes in reverse order of index, to prevent index shifts from causing undesired behavior
-  for i in reversed(to_delete):
-    del notes[i]
-  # write changes back (outside of for-loop) to file
-  with open(filename, 'w') as f:
-    json.dump(db, f)
+  connection.commit()
 
   return 'Delete success'
 

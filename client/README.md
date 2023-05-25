@@ -21,6 +21,7 @@
 ### MVP Features
 ###### Completed
   - CRUD
+    - Create a note
     - Get all notes
     - Get a note by id
     - Update note by id
