@@ -3,9 +3,11 @@ import { createContext } from 'use-context-selector'
 import { PropTypes } from 'prop-types/prop-types'
 
 import { noteAPI } from '@/apis/noteAPI'
+import { folderAPI } from '@/apis/folderAPI'
 
 const useStore = () => {
   const [notes, setNotes] = useState([])
+  const [folders, setFolders] = useState([])
   const [selectedNote, setSelectedNote] = useState({})
 
   const getAllNotes = useCallback(() => {
@@ -15,6 +17,18 @@ const useStore = () => {
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:18 ~ getAllNotes ~ error:", error)
+      return 
+    })
+  }, [])
+
+  const getAllFolders = useCallback(() => {
+    folderAPI.getAll()
+    .then(data => {
+      console.log("folder data:", data)
+      setFolders(data)
+    })
+    .catch(error => {
+      console.log("🚀 ~ file: store-provider.jsx ~ getAllFolders ~ error:", error)
       return 
     })
   }, [])
@@ -68,6 +82,7 @@ const useStore = () => {
 
   // render / load notes on first load ??
   useEffect(() => getAllNotes(), [getAllNotes])
+  useEffect(() => getAllFolders(), [getAllFolders])
   
   useEffect(() => {
     const isSelectedInNotes = notes.some(note => note.id === selectedNote.id)
@@ -90,6 +105,7 @@ const useStore = () => {
     createNote: note => createNote(note),
     updateNote: note => updateNote(note),
     deleteNote: id => deleteNote(id),
+    folders,
   }
 }
 

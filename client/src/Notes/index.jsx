@@ -9,6 +9,8 @@ import NoteForm from '@/Notes/NoteForm'
 import NoteList from '@/Notes/NoteList'
 import FlexBetween from '@/UI/FlexBetween'
 import FlexColumn from '@/UI/FlexColumn'
+import FolderList from '@/Folders/FolderList'
+
 
 const Notes = React.memo(() => {
   const [isNewNote, setIsNewNote] = useState(false)
@@ -43,6 +45,7 @@ const Notes = React.memo(() => {
         </FlexBetween>
       </FlexBetween>
       <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+        <FolderList></FolderList>
         <NoteList setIsNewNote={setIsNewNote} />
         <NoteForm isNewNote={isNewNote} setIsNewNote={setIsNewNote} />
       </Box>

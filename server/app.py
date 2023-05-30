@@ -98,4 +98,8 @@ def note_delete(id):
 
   return 'Delete success'
 
+@app.route('/folders')
+def folders():
+   return [{'id': 0, 'title': 'unknown'}, {'id': 1, 'title': 'personal'}]
+
 app.run(debug=True)

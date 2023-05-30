@@ -13,3 +13,5 @@ export const useCreateNote = () => useContextSelector(StoreContext, store => sto
 export const useDeleteNote = () => useContextSelector(StoreContext, store => store.deleteNote)
 
 export const useUpdateNote = () => useContextSelector(StoreContext, store => store.updateNote)
+
+export const useFolders = () => useContextSelector(StoreContext, store => store.folders)
