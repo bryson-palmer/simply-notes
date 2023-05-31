@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useEffect } from "react"
 
 import { Form, Formik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
@@ -9,17 +9,33 @@ import { Box, Button, TextField, useTheme } from "@mui/material"
 import { useCreateNote, useSelectedNote, useUpdateNote } from "@/store/store-selectors"
 import FlexColumn from "@/UI/FlexColumn"
 
-const NoteFormComponent = ({ formik }) => {
+const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
   const { dirty, handleChange, isValid, values } = formik
 
+  const titleInput = document.getElementById('title')
+
+  useEffect(() => {
+    if (Boolean(titleInput) && isNewNote) return titleInput.focus({ focusVisible: true })
+  }, [isNewNote, titleInput, values.title])
+  
+  useEffect(() => {
+    if (titleInput) {
+      titleInput.addEventListener("keypress", e => {
+        if (e.key === "Enter") {
+          document.getElementById("body").focus({ focusVisible: true })
+        }
+      })
+    }
+  }, [titleInput])
+  
   return (
     <Box display='flex' flexDirection='column' gap='1rem'>
       <TextField
         fullWidth
+        multiline
         id='title'
         name='title'
-        label='Title'
         variant='standard'
         value={values?.title ?? ''}
         onChange={handleChange}
@@ -27,10 +43,11 @@ const NoteFormComponent = ({ formik }) => {
           '& [class*=MuiInputBase-root-MuiInput-root]': {
               color: palette.secondary[400],
               fontWeight: '700',
+              fontSize: '1.25rem'
             },
-          '& [class*=MuiInputBase-root-MuiInput-root]:before': { borderColor: palette.grey[600] },
-          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { borderColor: palette.secondary[200] },
-          '& [class*=MuiInputBase-root-MuiInput-root]:after': { borderColor: palette.secondary[400] },
+          '& [class*=MuiInputBase-root-MuiInput-root]:before': { border: 'none' },
+          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
+          '& [class*=MuiInputBase-root-MuiInput-root]:after': { border: 'none' },
           '& [class*=MuiFormLabel-root-MuiInputLabel-root]': { color: palette.secondary[200] },
           '& [class*=MuiFormLabel-root-MuiInputLabel-root].Mui-focused': { color: palette.secondary[400] },
         }}
@@ -41,8 +58,9 @@ const NoteFormComponent = ({ formik }) => {
         id='body'
         name='body'
         variant='standard'
-        value={values?.body ?? ''}
+        value={values.body?.trimStart() ?? ''}
         onChange={handleChange}
+        disabled={!values.title}
         sx={{
           '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
           '& [class*=MuiInputBase-root-MuiInput-root]:before': { border: 'none' },
@@ -78,7 +96,8 @@ NoteFormComponent.propTypes = {
       title: PropTypes.string,
       body: PropTypes.string
     })
-  })
+  }),
+  isNewNote: PropTypes.bool
 }
 
 const validationSchema = yup.object({
@@ -120,7 +139,10 @@ const NoteForm = React.memo(({ isNewNote=false, setIsNewNote={} }) => {
       {formik => (
         <FlexColumn isNote>
           <Form onSubmit={formik.handleSubmit}>
-            <NoteFormComponent formik={formik} />
+            <NoteFormComponent
+              formik={formik}
+              isNewNote={isNewNote}
+            />
           </Form>
         </FlexColumn>
       )}
