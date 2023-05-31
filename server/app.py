@@ -83,8 +83,6 @@ def note(id):
 @app.route('/notes/<id>', methods=['DELETE'])
 def note_delete(id):
   tuple_ids = tuple(id.split(','))
-  # whether a list of id's or a single id, make sure tuple_ids is a list of ID's
-  print(f'tuple_ids: {tuple_ids}')
 
   connection = sqlite3.connect('app.db')
   cursor = connection.cursor()
