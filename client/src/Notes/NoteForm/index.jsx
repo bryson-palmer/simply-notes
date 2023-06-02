@@ -4,14 +4,19 @@ import { Form, Formik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 
-import { Box, Button, TextField, useTheme } from "@mui/material"
+import { Box, /* Button, */ TextField, useTheme } from "@mui/material"
 
 import { useCreateNote, useSelectedNote, useUpdateNote } from "@/store/store-selectors"
 import FlexColumn from "@/UI/FlexColumn"
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
-  const { dirty, handleChange, isValid, values } = formik
+  const { dirty, handleChange, isSubmitting, isValid, setSubmitting, submitForm, touched, values } = formik
+  // console.log("🚀 ~ file: index.jsx:15 ~ NoteFormComponent ~ isSubmitting:", isSubmitting)
+  // console.log("🚀 ~ file: index.jsx:15 ~ NoteFormComponent ~ formik:", formik)
+  // console.log("🚀 ~ file: index.jsx:15 ~ NoteFormComponent ~ values:", values)
+  // console.log("🚀 ~ file: index.jsx:16 ~ NoteFormComponent ~ isValid:", isValid)
+  // console.log("🚀 ~ file: index.jsx:17 ~ NoteFormComponent ~ dirty:", dirty)
 
   const titleInput = document.getElementById('title')
 
@@ -28,6 +33,27 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
       })
     }
   }, [titleInput])
+
+  const debouncedSubmit = useCallback(fn => {
+    let timer
+    return (async () => {
+      clearTimeout(timer)
+      timer = await setTimeout(() => fn(), 2000)
+      setSubmitting(false)
+    })()
+  }, [setSubmitting])
+
+  useEffect(() => {
+    if (dirty && isValid && !isSubmitting) {
+      debouncedSubmit(submitForm)
+    }
+  }, [debouncedSubmit, dirty, isSubmitting, isValid, submitForm])
+
+  useEffect(() => {
+    if (Object.keys(touched).length) {
+      return setSubmitting(true)
+    }
+  }, [setSubmitting, touched])
   
   return (
     <Box display='flex' flexDirection='column' gap='1rem'>
@@ -68,7 +94,7 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
           '& [class*=MuiInputBase-root-MuiInput-root]:after': { border: 'none' },
         }}
       />
-      <Button
+      {/* <Button
         disabled={!dirty || !isValid}
         // color="primary"
         variant="contained"
@@ -80,7 +106,7 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
         }}
       >
         Submit
-      </Button>
+      </Button> */}
     </Box>
   )
 }
@@ -90,7 +116,15 @@ NoteFormComponent.propTypes = {
   formik: PropTypes.shape({
     dirty: PropTypes.bool,
     handleChange: PropTypes.func,
+    isSubmitting: PropTypes.bool,
     isValid: PropTypes.bool,
+    setSubmitting: PropTypes.func,
+    submitForm: PropTypes.func,
+    touched: PropTypes.shape({
+      id: PropTypes.bool,
+      title: PropTypes.bool,
+      body: PropTypes.bool
+    }),
     values: PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
