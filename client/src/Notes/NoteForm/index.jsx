@@ -11,12 +11,7 @@ import FlexColumn from "@/UI/FlexColumn"
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
-  const { dirty, handleChange, isSubmitting, isValid, setSubmitting, submitForm, touched, values } = formik
-  // console.log("🚀 ~ file: index.jsx:15 ~ NoteFormComponent ~ isSubmitting:", isSubmitting)
-  // console.log("🚀 ~ file: index.jsx:15 ~ NoteFormComponent ~ formik:", formik)
-  // console.log("🚀 ~ file: index.jsx:15 ~ NoteFormComponent ~ values:", values)
-  // console.log("🚀 ~ file: index.jsx:16 ~ NoteFormComponent ~ isValid:", isValid)
-  // console.log("🚀 ~ file: index.jsx:17 ~ NoteFormComponent ~ dirty:", dirty)
+  const { dirty, handleChange, isSubmitting, isValid, submitForm, values } = formik
 
   const titleInput = document.getElementById('title')
 
@@ -36,27 +31,20 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
 
   const debouncedSubmit = useCallback(fn => {
     let timer
-    return (async () => {
+    return (() => {
       clearTimeout(timer)
-      timer = await setTimeout(() => fn(), 2000)
-      setSubmitting(false)
+      timer = setTimeout(() => fn(), 2500)
     })()
-  }, [setSubmitting])
+  }, [])
 
   useEffect(() => {
     if (dirty && isValid && !isSubmitting) {
       debouncedSubmit(submitForm)
     }
   }, [debouncedSubmit, dirty, isSubmitting, isValid, submitForm])
-
-  useEffect(() => {
-    if (Object.keys(touched).length) {
-      return setSubmitting(true)
-    }
-  }, [setSubmitting, touched])
   
   return (
-    <Box display='flex' flexDirection='column' gap='1rem'>
+    <Box display='flex' flexDirection='column'>
       <TextField
         fullWidth
         multiline
@@ -78,22 +66,25 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
           '& [class*=MuiFormLabel-root-MuiInputLabel-root].Mui-focused': { color: palette.secondary[400] },
         }}
       />
-      <TextField
-        fullWidth
-        multiline
-        id='body'
-        name='body'
-        variant='standard'
-        value={values.body?.trimStart() ?? ''}
-        onChange={handleChange}
-        disabled={!values.title}
-        sx={{
-          '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
-          '& [class*=MuiInputBase-root-MuiInput-root]:before': { border: 'none' },
-          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
-          '& [class*=MuiInputBase-root-MuiInput-root]:after': { border: 'none' },
-        }}
-      />
+
+      {isNewNote && !values.title ? null : (
+        <TextField
+          fullWidth
+          multiline
+          id='body'
+          name='body'
+          variant='standard'
+          value={values.body?.trimStart() ?? ''}
+          onChange={handleChange}
+          sx={{
+            '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
+            '& [class*=MuiInputBase-root-MuiInput-root]:before': { border: 'none' },
+            '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
+            '& [class*=MuiInputBase-root-MuiInput-root]:after': { border: 'none' },
+          }}
+        />
+      )}
+
       {/* <Button
         disabled={!dirty || !isValid}
         // color="primary"
@@ -153,10 +144,10 @@ const NoteForm = React.memo(({ isNewNote=false, setIsNewNote={} }) => {
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
   
-  const handleSubmit = useCallback(async values => {
+  const handleSubmit = useCallback(values => {
     isNewNote
-      ? await createNote(values)
-      : await updateNote(values)
+      ? createNote(values)
+      : updateNote(values)
     
     setIsNewNote(false)
   }, [createNote, isNewNote, setIsNewNote, updateNote])
