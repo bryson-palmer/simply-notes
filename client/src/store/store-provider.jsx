@@ -16,7 +16,7 @@ const useStore = () => {
       setNotes(data)
     })
     .catch(error => {
-      console.log("🚀 ~ file: store-provider.jsx:18 ~ getAllNotes ~ error:", error)
+      console.log("🚀 ~ file: store-provider.jsx:19 ~ getAllNotes ~ error:", error)
       return 
     })
   }, [])
@@ -24,11 +24,11 @@ const useStore = () => {
   const getAllFolders = useCallback(() => {
     folderAPI.getAll()
     .then(data => {
-      console.log("folder data:", data)
+      // console.log("folder data:", data)
       setFolders(data)
     })
     .catch(error => {
-      console.log("🚀 ~ file: store-provider.jsx ~ getAllFolders ~ error:", error)
+      console.log("🚀 ~ file: store-provider.jsx:31 ~ getAllFolders ~ error:", error)
       return 
     })
   }, [])
@@ -39,7 +39,7 @@ const useStore = () => {
       setSelectedNote(data)
     })
     .catch(error => {
-      console.log("🚀 ~ file: store-provider.jsx:29 ~ getNote ~ error:", error)
+      console.log("🚀 ~ file: store-provider.jsx:42 ~ getNote ~ error:", error)
       return 
     })
   }, [])
@@ -51,7 +51,7 @@ const useStore = () => {
       getNote(data)
     })
     .catch(error => {
-      console.log("🚀 ~ file: store-provider.jsx:41 ~ createNote ~ error:", error)
+      console.log("🚀 ~ file: store-provider.jsx:54 ~ createNote ~ error:", error)
       return 
     })
   }, [getAllNotes, getNote])
@@ -63,7 +63,7 @@ const useStore = () => {
       getNote(data)
     })
     .catch(error => { 
-      console.log("🚀 ~ file: store-provider.jsx:65 ~ updateNote ~ error:", error)
+      console.log("🚀 ~ file: store-provider.jsx:66 ~ updateNote ~ error:", error)
       return
     })
   }, [getAllNotes, getNote])
@@ -75,7 +75,7 @@ const useStore = () => {
       getAllNotes()
     })
     .catch(error => {
-      console.log("🚀 ~ file: store-provider.jsx:53 ~ deleteNote ~ error:", error)
+      console.log("🚀 ~ file: store-provider.jsx:78 ~ deleteNote ~ error:", error)
       return 
     })
   }, [getAllNotes])
