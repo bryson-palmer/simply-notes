@@ -70,7 +70,6 @@ const NoteList = React.memo(({ setIsNewNote }) => {
         overflowY: 'auto',
         overflowX: 'hidden',
         paddingTop: 0,
-        paddingRight: '1rem',
         bgcolor: 'transparent',
         borderRight: `1px solid ${palette.grey[800]}`,
       }}
@@ -86,9 +85,9 @@ const NoteList = React.memo(({ setIsNewNote }) => {
               disablePadding
               key={labelId}
               sx={{
-                borderRadius: '1rem',
+                borderRadius: '0.5rem',
                 paddingLeft: '1rem',
-                '&:hover': { backgroundColor: palette.background.light },
+                backgroundColor: id === selectedNote.id ? palette.background.light : 'inherit',
               }}
               secondaryAction={
                 <IconButton
