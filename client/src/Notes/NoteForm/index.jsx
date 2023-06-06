@@ -1,19 +1,36 @@
-import React, { useCallback, useEffect } from "react"
+import React, { useCallback, useEffect, useRef } from "react"
 
 import { Form, Formik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 
-import { Box, /* Button, */ TextField, useTheme } from "@mui/material"
+import { Box, TextField, useTheme } from "@mui/material"
 
 import { useCreateNote, useSelectedNote, useUpdateNote } from "@/store/store-selectors"
 import FlexColumn from "@/UI/FlexColumn"
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
-  const { dirty, handleChange, isSubmitting, isValid, submitForm, values } = formik
+  const {handleChange, submitForm, values } = formik
 
+  const form = document.getElementById('form')
   const titleInput = document.getElementById('title')
+
+  let timer = useRef(0)
+
+  useEffect(() => {
+    const handleKeyPress = () => clearTimeout(timer.current)
+
+    const handleKeyUp = () => {
+      clearTimeout(timer.current)
+      timer.current = setTimeout(() => submitForm(), 300)
+    }
+
+    if (form) {
+      form.addEventListener('keypress', () => handleKeyPress(timer))
+      form.addEventListener('keyup', () => handleKeyUp(timer))
+    }
+  }, [form, submitForm])
 
   useEffect(() => {
     if (Boolean(titleInput) && isNewNote) return titleInput.focus({ focusVisible: true })
@@ -28,29 +45,16 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
       })
     }
   }, [titleInput])
-
-  const debouncedSubmit = useCallback(fn => {
-    let timer
-    return (() => {
-      clearTimeout(timer)
-      timer = setTimeout(() => fn(), 2500)
-    })()
-  }, [])
-
-  useEffect(() => {
-    if (dirty && isValid && !isSubmitting) {
-      debouncedSubmit(submitForm)
-    }
-  }, [debouncedSubmit, dirty, isSubmitting, isValid, submitForm])
   
   return (
-    <Box display='flex' flexDirection='column'>
+    <Box id='form' display='flex' flexDirection='column'>
       <TextField
         fullWidth
         multiline
         id='title'
         name='title'
         variant='standard'
+        placeholder='What would you like ToDo?'
         value={values?.title ?? ''}
         onChange={handleChange}
         sx={{
@@ -84,20 +88,6 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
           }}
         />
       )}
-
-      {/* <Button
-        disabled={!dirty || !isValid}
-        // color="primary"
-        variant="contained"
-        type="submit"
-        sx={{
-          // '& [class*=MuiButtonBase-root-MuiButton-root]:hover': {
-          //   backgroundColor: palette.tertiary[200]
-          // }
-        }}
-      >
-        Submit
-      </Button> */}
     </Box>
   )
 }
