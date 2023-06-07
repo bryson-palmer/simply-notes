@@ -9,7 +9,7 @@ const FlexColumn = styled(Box, {
   gap: '1rem',
   width: isNote ? '80%' : 'inherit',
   minHeight: isNote ? '100%' : 'inherit',
-  paddingLeft: isNote ? '2rem' : 'inherit',
+  paddingLeft: isNote ? '2rem' : 0,
 }))
 
 export default FlexColumn

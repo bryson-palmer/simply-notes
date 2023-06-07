@@ -40,7 +40,10 @@ const FolderList = () => {
       }}
     >
       {/* Folder List Header */}
-      <ListItem>
+      <ListItem
+        disablePadding
+        dense
+      >
         <IconButton onClick={handleNewFolder}>
           <CreateNewFolder
             sx={{
@@ -60,7 +63,6 @@ const FolderList = () => {
             disablePadding
             sx={{
               borderRadius: '1rem',
-              paddingLeft: '1rem',
               '&:hover': { backgroundColor: palette.background.light },
             }}
           >
@@ -83,11 +85,11 @@ const FolderList = () => {
               key={labelId}
               sx={{
                 borderRadius: '1rem',
-                paddingLeft: '1rem',
                 '&:hover': { backgroundColor: palette.background.light },
               }}
             >
               <ListItemButton
+                disableGutters
                 onClick={handleFolderClick(id)}
               >
                 <ListItemIcon>
