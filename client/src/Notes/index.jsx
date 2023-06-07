@@ -45,7 +45,7 @@ const Notes = React.memo(() => {
         </FlexBetween>
       </FlexBetween>
       <Box sx={{ display: { xs: "none", sm: "flex" } }}>
-        <FolderList></FolderList>
+        <FolderList/>
         <NoteList setIsNewNote={setIsNewNote} />
         <NoteForm isNewNote={isNewNote} setIsNewNote={setIsNewNote} />
       </Box>

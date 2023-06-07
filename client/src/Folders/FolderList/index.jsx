@@ -9,6 +9,7 @@ import {
   useTheme,
   IconButton,
   TextField,
+  Box,
 } from '@mui/material'
 
 import { FolderOpen, CreateNewFolder } from '@mui/icons-material'
@@ -26,10 +27,11 @@ const FolderList = () => {
   const handleFolderClick = useCallback(() => {}, [])
   const folders = useFolders()
   return (
-    <div
-      style={{
+    <Box
+      sx={{
+        // if window gets to small, hide folders
+        display: { sm: "none", md: "block" },
         width: '10%',
-        //minWidth: 100,
         height: '75vh',
         overflowY: 'auto',
         overflowX: 'hidden',
@@ -105,7 +107,7 @@ const FolderList = () => {
           )
         })}
       </List>
-    </div>
+    </Box>
   )
 }
 
