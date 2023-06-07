@@ -95,7 +95,10 @@ const FolderList = () => {
               >
                 <ListItemIcon>
                   <FolderOpen />
-                  <ListItemText primary={title} />
+                  <ListItemText
+                    sx={{paddingLeft: '.3rem'}}
+                    primary={title} 
+                  />
                 </ListItemIcon>
               </ListItemButton>
             </ListItem>
