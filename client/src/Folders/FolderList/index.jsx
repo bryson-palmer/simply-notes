@@ -86,6 +86,7 @@ const FolderList = () => {
               sx={{
                 borderRadius: '1rem',
                 '&:hover': { backgroundColor: palette.background.light },
+                '& [class*=MuiListItemIcon-root]': {color: palette.secondary[400]}
               }}
             >
               <ListItemButton
