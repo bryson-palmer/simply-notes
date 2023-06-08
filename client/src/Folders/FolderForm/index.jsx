@@ -1,26 +1,26 @@
 import { Form, Formik } from 'formik'
 import { ListItem, ListItemIcon, TextField, useTheme } from '@mui/material'
 import { FolderOpen } from '@mui/icons-material'
-import { useEffect } from 'react'
+// import { useEffect } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 import { useCreateFolder } from '@/store/store-selectors'
 
 const FolderFormComponent = ({ formik }) => {
-    const {handleChange, values, submitForm} = formik
+    const {handleChange, values /*, submitForm */} = formik
     console.log(formik)
     const {palette} = useTheme()
 
-    const folderName = document.getElementById('folderName')
-    useEffect(() => {
-        if (folderName) {
-            folderName.addEventListener("keyup", e => {
-            if ((e.key === "Enter") || (e.key === "Tab")) {
-                submitForm()
-            }
-            })
-        }
-    }, [folderName, submitForm])  
+    // const folderName = document.getElementById('folderName')
+    // useEffect(() => {
+    //     if (folderName) {
+    //         folderName.addEventListener("keyup", e => {
+    //         if (/*(e.key === "Enter") || */ (e.key === "Tab")) {
+    //             submitForm()
+    //         }
+    //         })
+    //     }
+    // }, [folderName, submitForm])  
 
     return (
           <ListItem
@@ -91,7 +91,6 @@ const FolderForm = () => {
   const createFolder = useCreateFolder()
   const handleFolderSubmit = (folder) => {
     createFolder(folder)
-    // folderAPI.create(folder)
   }
 
   return (
