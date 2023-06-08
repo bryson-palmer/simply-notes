@@ -64,12 +64,12 @@ const NoteList = React.memo(({ setIsNewNote }) => {
   return (
     <div
       style={{
-        width: '30%',
-        minWidth: 200,
+        width: 'clamp(200px, 30%, 40%)',
         height: '75vh',
         overflowY: 'auto',
         overflowX: 'hidden',
         paddingTop: 0,
+        paddingRight: '0.5rem',
         bgcolor: 'transparent',
         borderRight: `1px solid ${palette.grey[800]}`,
       }}
@@ -110,7 +110,9 @@ const NoteList = React.memo(({ setIsNewNote }) => {
                 onClick={handleCheckToggle(id)}
               >
                 <ListItemIcon
-                  sx={{ '&.MuiListItemIcon-root': { minWidth: 'auto' } }}
+                  sx={{
+                    '&.MuiListItemIcon-root': { minWidth: 'auto' }
+                  }}
                 >
                   <Checkbox
                     disableRipple
@@ -120,6 +122,7 @@ const NoteList = React.memo(({ setIsNewNote }) => {
                     inputProps={{ 'aria-labelledby': labelId }}
                     sx={{
                       color: palette.grey[300],
+                      padding: '9px 3px 9px 9px',
                       '&:hover': { color: palette.primary[200] },
                     }}
                   />
@@ -128,7 +131,10 @@ const NoteList = React.memo(({ setIsNewNote }) => {
               <ListItemButton
                 role={undefined}
                 onClick={handleSelectNote(id)}
-                sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+                sx={{
+                  padding: '0 38px 0 0 !important',
+                  '&:hover': { backgroundColor: 'transparent'},
+                }}
               >
                 <ListItemText
                   id={labelId}
