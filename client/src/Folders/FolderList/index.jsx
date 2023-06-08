@@ -14,7 +14,6 @@ import {
 
 import { FolderOpen, CreateNewFolder } from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
-// import { Form } from 'react-router-dom'
 
 const FolderList = () => {
   const { palette } = useTheme()
@@ -31,30 +30,30 @@ const FolderList = () => {
       sx={{
         // if window gets to small, hide folders
         display: { sm: "none", md: "block" },
-        width: '10%',
+        width: 'clamp(160px, 15%, 240px)',
         height: '75vh',
         overflowY: 'auto',
         overflowX: 'hidden',
-        paddingTop: 0,
-        paddingRight: '1rem',
+        paddingTop: '1rem',
+        marginRight: '0.5rem',
         bgcolor: 'transparent',
         borderRight: `1px solid ${palette.grey[800]}`,
       }}
     >
       {/* Folder List Header */}
       <ListItem
-        disablePadding
-        dense
+        sx={{ marginBottom: '1rem' }}
+        secondaryAction={
+          <IconButton onClick={handleNewFolder}>
+            <CreateNewFolder
+              sx={{
+                color: palette.secondary[400],
+                '&:hover': { color: palette.secondary[100] },
+              }}
+            />
+          </IconButton>
+        }
       >
-        <IconButton onClick={handleNewFolder}>
-          <CreateNewFolder
-            sx={{
-              color: palette.secondary[400],
-              '&:hover': { color: palette.secondary[100] },
-            }}
-            size='large'
-          />
-        </IconButton>
       </ListItem>
 
       {/* Folder List */}
@@ -62,18 +61,43 @@ const FolderList = () => {
         {isNewFolder ? (
           <ListItem
             dense
-            disablePadding
             sx={{
-              borderRadius: '1rem',
+              height: '41px',
+              borderRadius: '0.5rem',
               '&:hover': { backgroundColor: palette.background.light },
+              '& [class*=MuiListItemIcon-root]': {
+                color: palette.secondary[400],
+                minWidth: 'auto',
+                paddingRight: '1rem'
+              }
             }}
           >
-            <ListItemButton>
-              <ListItemIcon>
-                <FolderOpen />
-                <TextField autoFocus id='folderName' />
-              </ListItemIcon>
-            </ListItemButton>
+            <ListItemIcon>
+              <FolderOpen />
+            </ListItemIcon>
+            <TextField
+              autoFocus
+              id='folderName'
+              name='folderName'
+              placeholder='Folder Name'
+              size='small'
+              variant='standard'
+              sx={{
+                '& [class*=MuiInputBase-root-MuiInput-root]': {
+                  color: palette.secondary[400],
+                  fontSize: '0.75rem'
+                },
+                '& [class*=MuiInputBase-root-MuiInput-root]:before': {
+                  borderBottom: 'none'
+                },
+                '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': {
+                  borderBottom: 'none'
+                },
+                '& [class*=MuiInputBase-root-MuiInput-root]:after': {
+                  borderColor: palette.secondary[400]
+                }
+              }}
+            />
           </ListItem>
         ) : null}
 
@@ -83,12 +107,15 @@ const FolderList = () => {
           return (
             <ListItem
               dense
-              disablePadding
               key={labelId}
               sx={{
-                borderRadius: '1rem',
+                borderRadius: '0.5rem',
                 '&:hover': { backgroundColor: palette.background.light },
-                '& [class*=MuiListItemIcon-root]': {color: palette.secondary[400]}
+                '& [class*=MuiListItemIcon-root]': {
+                  color: palette.secondary[400],
+                  minWidth: 'auto',
+                  paddingRight: '1rem'
+                }
               }}
             >
               <ListItemButton
@@ -97,11 +124,12 @@ const FolderList = () => {
               >
                 <ListItemIcon>
                   <FolderOpen />
-                  <ListItemText
-                    sx={{paddingLeft: '.3rem'}}
-                    primary={title} 
-                  />
                 </ListItemIcon>
+                <ListItemText
+                  primaryTypographyProps={{ noWrap: true }}
+                  sx={{ color: palette.secondary[400] }}
+                  primary={title} 
+                />
               </ListItemButton>
             </ListItem>
           )
