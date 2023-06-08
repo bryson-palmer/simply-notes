@@ -18,7 +18,11 @@ cursor = connection.cursor()
 create_notes_table = """
   CREATE TABLE IF NOT EXISTS NOTES(id, title, body, user_id)
 """
+create_folders_table = """
+  CREATE TABLE IF NOT EXISTS FOLDERS(id, folderName)
+"""
 cursor.execute(create_notes_table)
+cursor.execute(create_folders_table)
 connection.commit()
 
 @app.route('/')
@@ -96,8 +100,23 @@ def note_delete(id):
 
   return 'Delete success'
 
-@app.route('/folders')
+@app.route('/folders', methods=['GET', 'POST'])
 def folders():
-   return [{'id': 0, 'title': 'unknown'}, {'id': 1, 'title': 'personal'}]
+    connection = sqlite3.connect('app.db')
+    cursor = connection.cursor()
+    if request.method == 'GET':
+        cursor.execute('SELECT * FROM FOLDERS')
+        results = cursor.fetchall()
+
+        folders=[]
+        for result in results:
+          (id, folderName) = result
+          folder = dict(id=id, folderName=folderName)
+          folders.append(folder)
+        
+        return folders
+    
+    if request.method == 'POST':
+       cursor.execute('')
 
 app.run(debug=True)
