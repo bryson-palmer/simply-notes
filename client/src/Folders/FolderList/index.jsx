@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import {
   List,
@@ -8,13 +8,12 @@ import {
   ListItemText,
   useTheme,
   IconButton,
-  TextField,
   Box,
 } from '@mui/material'
 
 import { FolderOpen, CreateNewFolder } from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
-import { Form, Formik } from 'formik'
+import FolderForm from '@/Folders/FolderForm'
 
 const FolderList = () => {
   const { palette } = useTheme()
@@ -61,6 +60,7 @@ const FolderList = () => {
 
       {/* Folder List */}
       <List>
+        <FolderForm/>
 
         {folders?.map(({ id, title }) => {
           const labelId = `folders-list-label-${id}`

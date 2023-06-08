@@ -58,15 +58,14 @@ const useStore = () => {
 
   const createFolder = useCallback(folder => {
     folderAPI.create(folder)
-    .then(data => {
-      getAllNotes()
-      getNote(data)
+    .then(() => {
+      getAllFolders()
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:54 ~ createNote ~ error:", error)
       return 
     })
-  }, [getAllNotes, getNote])
+  }, [getAllFolders])
 
   const updateNote = useCallback(note => {
     noteAPI.update(note)

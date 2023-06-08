@@ -1,24 +1,26 @@
 import { Form, Formik } from 'formik'
-import { folderAPI } from '@/apis/folderAPI'
 import { ListItem, ListItemIcon, TextField, useTheme } from '@mui/material'
 import { FolderOpen } from '@mui/icons-material'
 import { useEffect } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
+import * as yup from 'yup'
+import { useCreateFolder } from '@/store/store-selectors'
 
 const FolderFormComponent = ({ formik }) => {
     const {handleChange, values, submitForm} = formik
+    console.log(formik)
     const {palette} = useTheme()
 
     const folderName = document.getElementById('folderName')
     useEffect(() => {
         if (folderName) {
-            folderName.addEventListener("keypress", e => {
+            folderName.addEventListener("keyup", e => {
             if ((e.key === "Enter") || (e.key === "Tab")) {
                 submitForm()
             }
             })
         }
-    }, [folderName])  
+    }, [folderName, submitForm])  
 
     return (
           <ListItem
@@ -44,7 +46,7 @@ const FolderFormComponent = ({ formik }) => {
               placeholder='Folder Name'
               size='small'
               variant='standard'
-              value={values.title ?? ''}
+              value={values.folderName ?? ''}
               onChange={handleChange}
               sx={{
                 '& [class*=MuiInputBase-root-MuiInput-root]': {
@@ -70,21 +72,33 @@ FolderFormComponent.displayName = "/FolderNameForm"
 FolderFormComponent.propTypes = {
     formik: PropTypes.shape({
         submitForm: PropTypes.func,
-        handleChange: 
-        values: 
+        handleChange: PropTypes.func,
+        values: PropTypes.shape({
+            folderName: PropTypes.string,
+        })
     })
 }
 
+const validationSchema = yup.object({
+  // id: yup
+  //   .string('Must be a string'),
+  folderName: yup
+    .string('Enter a folder name'),
+})
+
 const FolderForm = () => {
 
+  const createFolder = useCreateFolder()
   const handleFolderSubmit = (folder) => {
-    folderAPI.CreateNewFolder(folder)
+    createFolder(folder)
+    // folderAPI.create(folder)
   }
+
   return (
     <Formik
-      initialValues={{'folderName':''}}
+      initialValues={{folderName:''}}
       onSubmit={handleFolderSubmit}
-      validationSchema={''}
+      validationSchema={validationSchema}
     >
         {formik => (
             <Form
