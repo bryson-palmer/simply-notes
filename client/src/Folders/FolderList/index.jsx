@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import {
   List,
@@ -14,6 +14,7 @@ import {
 
 import { FolderOpen, CreateNewFolder } from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
+import { Form, Formik } from 'formik'
 
 const FolderList = () => {
   const { palette } = useTheme()
@@ -25,6 +26,8 @@ const FolderList = () => {
   )
   const handleFolderClick = useCallback(() => {}, [])
   const folders = useFolders()
+
+
   return (
     <Box
       sx={{
@@ -58,48 +61,6 @@ const FolderList = () => {
 
       {/* Folder List */}
       <List>
-        {isNewFolder ? (
-          <ListItem
-            dense
-            sx={{
-              height: '41px',
-              borderRadius: '0.5rem',
-              '&:hover': { backgroundColor: palette.background.light },
-              '& [class*=MuiListItemIcon-root]': {
-                color: palette.secondary[400],
-                minWidth: 'auto',
-                paddingRight: '1rem'
-              }
-            }}
-          >
-            <ListItemIcon>
-              <FolderOpen />
-            </ListItemIcon>
-            <TextField
-              autoFocus
-              id='folderName'
-              name='folderName'
-              placeholder='Folder Name'
-              size='small'
-              variant='standard'
-              sx={{
-                '& [class*=MuiInputBase-root-MuiInput-root]': {
-                  color: palette.secondary[400],
-                  fontSize: '0.75rem'
-                },
-                '& [class*=MuiInputBase-root-MuiInput-root]:before': {
-                  borderBottom: 'none'
-                },
-                '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': {
-                  borderBottom: 'none'
-                },
-                '& [class*=MuiInputBase-root-MuiInput-root]:after': {
-                  borderColor: palette.secondary[400]
-                }
-              }}
-            />
-          </ListItem>
-        ) : null}
 
         {folders?.map(({ id, title }) => {
           const labelId = `folders-list-label-${id}`
