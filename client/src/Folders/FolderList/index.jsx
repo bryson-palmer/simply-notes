@@ -62,7 +62,7 @@ const FolderList = () => {
       <List>
         <FolderForm/>
 
-        {folders?.map(({ id, title }) => {
+        {folders?.map(({ id, folderName }) => {
           const labelId = `folders-list-label-${id}`
 
           return (
@@ -89,7 +89,7 @@ const FolderList = () => {
                 <ListItemText
                   primaryTypographyProps={{ noWrap: true }}
                   sx={{ color: palette.secondary[400] }}
-                  primary={title} 
+                  primary={folderName} 
                 />
               </ListItemButton>
             </ListItem>
