@@ -117,6 +117,16 @@ def folders():
         return folders
     
     if request.method == 'POST':
-       cursor.execute('')
+        folder = request.json
+        is_new_folder = True
+        folder_name = folder['folderName']
+        id = uuid.uuid4().hex
+        if is_new_folder:
+            cursor.execute(f'INSERT INTO FOLDERS (id, folderName) VALUES ("{id}", "{folder_name}")')
+        if not is_new_folder:
+            cursor.execute('UPDATE FOLDERS SET folderName="%s" where id="%s"' % (folder_name, id))
+        connection.commit()
+
+        return id
 
 app.run(debug=True)
