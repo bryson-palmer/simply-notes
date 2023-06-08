@@ -80,13 +80,13 @@ FolderFormComponent.propTypes = {
 }
 
 const validationSchema = yup.object({
-  // id: yup
-  //   .string('Must be a string'),
+  id: yup
+    .string('Must be a string'),
   folderName: yup
     .string('Enter a folder name'),
 })
 
-const FolderForm = () => {
+const FolderForm = ({id, folderName}) => {
 
   const createFolder = useCreateFolder()
   const handleFolderSubmit = (folder) => {
@@ -95,7 +95,7 @@ const FolderForm = () => {
 
   return (
     <Formik
-      initialValues={{folderName:''}}
+      initialValues={{folderName:folderName ?? '', id: id ?? ''}}
       onSubmit={handleFolderSubmit}
       validationSchema={validationSchema}
     >

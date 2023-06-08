@@ -25,7 +25,17 @@ const FolderList = () => {
   )
   const handleFolderClick = useCallback(() => {}, [])
   const folders = useFolders()
+  const [editableFolderID, setEditableFolderID] = useState('')
 
+  const handleFolderDoubleClick = useCallback(
+    // using useCallback makes it re-render?
+    (id) => {
+      console.log('clicked!', id)
+      setEditableFolderID(id)
+    },
+    []
+  )
+  console.log('editableFolderID', editableFolderID)
 
   return (
     <Box
@@ -65,10 +75,16 @@ const FolderList = () => {
         {folders?.map(({ id, folderName }) => {
           const labelId = `folders-list-label-${id}`
 
-          return (
+
+
+          return id == editableFolderID? (
+              <FolderForm key={labelId} id={id} folderName={folderName}/>
+            ) : (
             <ListItem
               dense
               key={labelId}
+              id={id}
+              onDoubleClick={() => handleFolderDoubleClick(id) }
               sx={{
                 borderRadius: '0.5rem',
                 '&:hover': { backgroundColor: palette.background.light },
