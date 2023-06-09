@@ -118,9 +118,15 @@ def folders():
     
     if request.method == 'POST':
         folder = request.json
-        is_new_folder = True
+        is_new_folder = False
         folder_name = folder['folderName']
-        id = uuid.uuid4().hex
+        id = folder.get('id')
+
+        if id is None or id == '':
+            id = uuid.uuid4().hex # a 32-character lowercase hexadecimal string
+            folder['id'] = id
+            is_new_folder = True
+
         if is_new_folder:
             cursor.execute(f'INSERT INTO FOLDERS (id, folderName) VALUES ("{id}", "{folder_name}")')
         if not is_new_folder:
