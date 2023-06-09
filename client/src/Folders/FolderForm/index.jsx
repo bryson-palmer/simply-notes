@@ -7,111 +7,125 @@ import * as yup from 'yup'
 import { useCreateFolder } from '@/store/store-selectors'
 
 const FolderFormComponent = ({ formik }) => {
-    const {handleChange, values /*, submitForm */} = formik
-    console.log(formik)
-    const {palette} = useTheme()
+  const { handleChange, values /*, submitForm */ } = formik
+  console.log(formik)
+  const { palette } = useTheme()
 
-    // const folderName = document.getElementById('folderName')
-    // useEffect(() => {
-    //     if (folderName) {
-    //         folderName.addEventListener("keyup", e => {
-    //         if (/*(e.key === "Enter") || */ (e.key === "Tab")) {
-    //             submitForm()
-    //         }
-    //         })
-    //     }
-    // }, [folderName, submitForm])  
+  // const folderName = document.getElementById('folderName')
+  // useEffect(() => {
+  //     if (folderName) {
+  //         folderName.addEventListener('keyup', e => {
+  //         if (/*(e.key === 'Enter') || */ (e.key === 'Tab')) {
+  //             submitForm()
+  //         }
+  //         })
+  //     }
+  // }, [folderName, submitForm])
 
-    return (
-          <ListItem
-            dense
-            sx={{
-              height: '41px',
-              borderRadius: '0.5rem',
-              '&:hover': { backgroundColor: palette.background.light },
-              '& [class*=MuiListItemIcon-root]': {
-                color: palette.secondary[400],
-                minWidth: 'auto',
-                paddingRight: '1rem'
-              }
-            }}
-          >
-            <ListItemIcon>
-              <FolderOpen />
-            </ListItemIcon>
-            <TextField
-              autoFocus
-              id='folderName'
-              name='folderName'
-              placeholder='Folder Name'
-              size='small'
-              variant='standard'
-              value={values.folderName ?? ''}
-              onChange={handleChange}
-              sx={{
-                '& [class*=MuiInputBase-root-MuiInput-root]': {
-                  color: palette.secondary[400],
-                  fontSize: '0.75rem'
-                },
-                '& [class*=MuiInputBase-root-MuiInput-root]:before': {
-                  borderBottom: 'none'
-                },
-                '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': {
-                  borderBottom: 'none'
-                },
-                '& [class*=MuiInputBase-root-MuiInput-root]:after': {
-                  borderColor: palette.secondary[400]
-                }
-              }}
-            />
-          </ListItem>
-    )
+  // useEffect(() => {
+  //   if (dirty && isValid) {
+  //     submitForm()
+  //   }
+  // }, [dirty, isValid, submitForm])
+
+  return (
+    <ListItem
+      dense
+      sx={{
+        height: '41px',
+        borderRadius: '0.5rem',
+        '&:hover': { backgroundColor: palette.background.light },
+        '& [class*=MuiListItemIcon-root]': {
+          color: palette.secondary[400],
+          minWidth: 'auto',
+          paddingRight: '1rem',
+        },
+      }}
+    >
+      <ListItemIcon>
+        <FolderOpen />
+      </ListItemIcon>
+      <TextField
+        autoFocus
+        id='folderName'
+        name='folderName'
+        placeholder='Folder Name'
+        size='small'
+        variant='standard'
+        value={values.folderName ?? ''}
+        onChange={handleChange}
+        sx={{
+          '& [class*=MuiInputBase-root-MuiInput-root]': {
+            color: palette.secondary[400],
+            fontSize: '0.75rem',
+          },
+          '& [class*=MuiInputBase-root-MuiInput-root]:before': {
+            borderBottom: 'none',
+          },
+          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before':
+            {
+              borderBottom: 'none',
+            },
+          '& [class*=MuiInputBase-root-MuiInput-root]:after': {
+            borderColor: palette.secondary[400],
+          },
+        }}
+      />
+    </ListItem>
+  )
 }
 
-FolderFormComponent.displayName = "/FolderNameForm"
+FolderFormComponent.displayName = '/FolderNameForm'
 FolderFormComponent.propTypes = {
-    formik: PropTypes.shape({
-        submitForm: PropTypes.func,
-        handleChange: PropTypes.func,
-        values: PropTypes.shape({
-            folderName: PropTypes.string,
-        })
-    })
+  formik: PropTypes.shape({
+    submitForm: PropTypes.func,
+    handleChange: PropTypes.func,
+    values: PropTypes.shape({
+      folderName: PropTypes.string,
+    }),
+  }),
 }
 
 const validationSchema = yup.object({
-  id: yup
-    .string('Must be a string'),
-  folderName: yup
-    .string('Enter a folder name'),
+  id: yup.string('Must be a string'),
+  folderName: yup.string('Enter a folder name'),
 })
 
-const FolderForm = ({id, folderName}) => {
-
+const FolderForm = ({ id, folderName }) => {
   const createFolder = useCreateFolder()
+
   const handleFolderSubmit = (folder) => {
     createFolder(folder)
   }
 
+  const handleStopFolderSubmit = (e, dirty, handleSubmit) => {
+    console.log("🚀 ~ file: index.jsx:102 ~ handleStopFolderSubmit ~ dirty:", dirty)
+    if (!dirty) {
+      e.preventDefault()
+      return false
+    } else {
+      return handleSubmit()
+    }
+}
+
   return (
     <Formik
-      initialValues={{folderName:folderName ?? '', id: id ?? ''}}
+      initialValues={{ folderName: folderName ?? '', id: id ?? '' }}
       onSubmit={handleFolderSubmit}
       validationSchema={validationSchema}
     >
-        {formik => (
-            <Form
-              onSubmit={formik.handleSubmit}
-            >
-                <FolderFormComponent
-                  formik={formik}
-                />
-            </Form>
-        )}
-
-
+      {(formik) => (
+        <Form onSubmit={e => handleStopFolderSubmit(e, formik.dirty, formik.handleSubmit, formik.isSubmitting)}>
+          <FolderFormComponent formik={formik} />
+        </Form>
+      )}
     </Formik>
   )
+}
+
+FolderForm.propTypes = {
+  id: PropTypes.string,
+  folderName: PropTypes.string,
 }
 
 export default FolderForm
