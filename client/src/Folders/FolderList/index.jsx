@@ -17,15 +17,14 @@ import FolderForm from '@/Folders/FolderForm'
 
 const FolderList = () => {
   const { palette } = useTheme()
+  const folders = useFolders()
+  const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
-  // console.log('isnewfolder:', isNewFolder)
+
   const handleNewFolder = useCallback(
     () => setIsNewFolder(!isNewFolder),
     [isNewFolder]
   )
-  const handleFolderClick = useCallback(() => {}, [])
-  const folders = useFolders()
-  const [editableFolderID, setEditableFolderID] = useState('')
 
   const handleFolderDoubleClick = useCallback(
     // using useCallback makes it re-render?
@@ -75,10 +74,12 @@ const FolderList = () => {
         {folders?.map(({ id, folderName }) => {
           const labelId = `folders-list-label-${id}`
 
-
-
           return id == editableFolderID? (
-              <FolderForm key={labelId} id={id} folderName={folderName}/>
+            <FolderForm
+              key={labelId}
+              id={id}
+              folderName={folderName}
+            />
             ) : (
             <ListItem
               dense
@@ -97,7 +98,7 @@ const FolderList = () => {
             >
               <ListItemButton
                 disableGutters
-                onClick={handleFolderClick(id)}
+                sx={{ '&:hover': { backgroundColor: 'transparent'} }}
               >
                 <ListItemIcon>
                   <FolderOpen />
