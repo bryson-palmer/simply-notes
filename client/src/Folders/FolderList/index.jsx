@@ -69,12 +69,12 @@ const FolderList = () => {
 
       {/* Folder List */}
       <List>
-        <FolderForm/>
+        {isNewFolder ? <FolderForm/> : null}
 
         {folders?.map(({ id, folderName }) => {
           const labelId = `folders-list-label-${id}`
 
-          return id == editableFolderID? (
+          return  id == editableFolderID? (
             <FolderForm
               key={labelId}
               id={id}
