@@ -91,11 +91,12 @@ const validationSchema = yup.object({
   folderName: yup.string('Enter a folder name'),
 })
 
-const FolderForm = ({ id, folderName }) => {
+const FolderForm = ({ id, folderName, setEditableFolderID }) => {
   const createFolder = useCreateFolder()
 
   const handleFolderSubmit = (folder) => {
     createFolder(folder)
+    setEditableFolderID('')
   }
 
   const handleStopFolderSubmit = (e, dirty, handleSubmit) => {
@@ -127,6 +128,7 @@ const FolderForm = ({ id, folderName }) => {
 FolderForm.propTypes = {
   id: PropTypes.string,
   folderName: PropTypes.string,
+  setEditableFolderID: PropTypes.func,
 }
 
 export default FolderForm

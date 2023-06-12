@@ -79,6 +79,7 @@ const FolderList = () => {
               key={labelId}
               id={id}
               folderName={folderName}
+              setEditableFolderID={setEditableFolderID}
             />
             ) : (
             <ListItem
