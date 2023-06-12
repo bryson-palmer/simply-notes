@@ -100,11 +100,12 @@ const FolderForm = ({ id, folderName }) => {
 
   const handleStopFolderSubmit = (e, dirty, handleSubmit) => {
     console.log("🚀 ~ file: index.jsx:102 ~ handleStopFolderSubmit ~ dirty:", dirty)
+    e.preventDefault()
     if (!dirty) {
-      e.preventDefault()
       return false
     } else {
-      return handleSubmit()
+      handleSubmit()
+      return false
     }
 }
 
