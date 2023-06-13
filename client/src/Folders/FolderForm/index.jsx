@@ -1,32 +1,14 @@
 import { Form, Formik } from 'formik'
 import { ListItem, ListItemIcon, TextField, useTheme } from '@mui/material'
 import { FolderOpen } from '@mui/icons-material'
-// import { useEffect } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 import { useCreateFolder } from '@/store/store-selectors'
 
 const FolderFormComponent = ({ formik }) => {
-  const { handleChange, values /*, submitForm */ } = formik
+  const { handleChange, values } = formik
   console.log(formik)
   const { palette } = useTheme()
-
-  // const folderName = document.getElementById('folderName')
-  // useEffect(() => {
-  //     if (folderName) {
-  //         folderName.addEventListener('keyup', e => {
-  //         if (/*(e.key === 'Enter') || */ (e.key === 'Tab')) {
-  //             submitForm()
-  //         }
-  //         })
-  //     }
-  // }, [folderName, submitForm])
-
-  // useEffect(() => {
-  //   if (dirty && isValid) {
-  //     submitForm()
-  //   }
-  // }, [dirty, isValid, submitForm])
 
   return (
     <ListItem
@@ -34,11 +16,10 @@ const FolderFormComponent = ({ formik }) => {
       sx={{
         height: '41px',
         borderRadius: '0.5rem',
-        '&:hover': { backgroundColor: palette.background.light },
         '& [class*=MuiListItemIcon-root]': {
           color: palette.secondary[400],
           minWidth: 'auto',
-          paddingRight: '1rem',
+          paddingRight: '0.25rem',
         },
       }}
     >
@@ -100,7 +81,6 @@ const FolderForm = ({ id, folderName, setEditableFolderID }) => {
   }
 
   const handleStopFolderSubmit = (e, dirty, handleSubmit) => {
-    console.log("🚀 ~ file: index.jsx:102 ~ handleStopFolderSubmit ~ dirty:", dirty)
     e.preventDefault()
     if (!dirty) {
       return false
