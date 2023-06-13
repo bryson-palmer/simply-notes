@@ -9,9 +9,11 @@ import {
   useTheme,
   IconButton,
   Box,
+  Menu,
+  MenuItem,
 } from '@mui/material'
 
-import { FolderOpen, CreateNewFolder } from '@mui/icons-material'
+import { FolderOpen, CreateNewFolder, MoreVert } from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
 import FolderForm from '@/Folders/FolderForm'
 
@@ -20,6 +22,8 @@ const FolderList = () => {
   const folders = useFolders()
   const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
 
   const handleNewFolder = useCallback(
     () => setIsNewFolder(!isNewFolder),
@@ -31,10 +35,9 @@ const FolderList = () => {
     (id) => {
       console.log('clicked!', id)
       setEditableFolderID(id)
-    },
-    []
-  )
-  console.log('editableFolderID', editableFolderID)
+  const handleAnchorElClick = e => setAnchorEl(e.currentTarget)
+
+  const handleAnchorElClose = () => setAnchorEl(null)
 
   return (
     <Box
@@ -87,6 +90,42 @@ const FolderList = () => {
               key={labelId}
               id={id}
               onDoubleClick={() => handleFolderDoubleClick(id) }
+              secondaryAction={
+                selectedFolderID === id ? (
+                  <>
+                    <IconButton
+                      id='anchorEl'
+                      aria-controls="IconButton"
+                      aria-label="IconButton"
+                      aria-expanded={open ? 'true' : undefined}
+                      onClick={handleAnchorElClick}
+                      sx={{
+                        color: palette.grey[400],
+                      }}
+                    >
+                      <MoreVert />
+                    </IconButton>
+                    <Menu
+                      id='menuList'
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleAnchorElClose}
+                      sx={{}}
+                    >
+                      <MenuItem
+                        onClick={() => {setEditableFolderID(id); handleAnchorElClose()}}
+                      >
+                        Edit
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {handleAnchorElClose()}}
+                      >
+                        Delete
+                      </MenuItem>
+                    </Menu>
+                  </>
+                ) : null
+              }
               sx={{
                 borderRadius: '0.5rem',
                 '&:hover': { backgroundColor: palette.background.light },
