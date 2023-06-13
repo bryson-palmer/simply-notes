@@ -138,15 +138,31 @@ const FolderList = () => {
                       anchorEl={anchorEl}
                       open={open}
                       onClose={handleAnchorElClose}
-                      sx={{}}
+                      sx={{
+                        '& [class*=MuiPaper-root-MuiMenu-paper-MuiPopover-paper]': {
+                          backgroundColor: palette.background.default,
+                          color: palette.grey[400],
+                          border: `0.5px solid ${palette.secondary[400]}`,
+                        },
+                      }}
                     >
                       <MenuItem
                         onClick={() => {setEditableFolderID(id); handleAnchorElClose()}}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: palette.background.light
+                          }
+                        }}
                       >
                         Edit
                       </MenuItem>
                       <MenuItem
                         onClick={() => {(handleFolderDelete(id))}}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: palette.background.light
+                          }
+                        }}
                       >
                         Delete
                       </MenuItem>
