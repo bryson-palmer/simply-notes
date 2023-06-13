@@ -20,24 +20,32 @@ import FolderForm from '@/Folders/FolderForm'
 const FolderList = () => {
   const { palette } = useTheme()
   const folders = useFolders()
+
   const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
+  const [selectedFolderID, setSelectedFolderID] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
-  const handleNewFolder = useCallback(
-    () => setIsNewFolder(!isNewFolder),
-    [isNewFolder]
-  )
+  const handleNewFolder = useCallback(() => setIsNewFolder(!isNewFolder), [isNewFolder])
 
-  const handleFolderDoubleClick = useCallback(
     // using useCallback makes it re-render?
-    (id) => {
-      console.log('clicked!', id)
+  const handleFolderDoubleClick = useCallback(id => {
       setEditableFolderID(id)
+    setSelectedFolderID('')
+    handleAnchorElClose()
+  }, [])
+
   const handleAnchorElClick = e => setAnchorEl(e.currentTarget)
 
   const handleAnchorElClose = () => setAnchorEl(null)
+
+  useEffect(() => {
+    if (!editableFolderID || !selectedFolderID) return
+    if (editableFolderID !== selectedFolderID) {
+      setEditableFolderID('')
+    }
+  }, [editableFolderID, selectedFolderID])
 
   return (
     <Box
@@ -89,6 +97,7 @@ const FolderList = () => {
               dense
               key={labelId}
               id={id}
+              onClick={() => setSelectedFolderID(id)}
               onDoubleClick={() => handleFolderDoubleClick(id) }
               secondaryAction={
                 selectedFolderID === id ? (
