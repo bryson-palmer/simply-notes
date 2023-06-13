@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import {
   List,
@@ -26,12 +26,12 @@ const FolderList = () => {
   const [selectedFolderID, setSelectedFolderID] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
-
+ 
   const handleNewFolder = useCallback(() => setIsNewFolder(!isNewFolder), [isNewFolder])
 
-    // using useCallback makes it re-render?
+  // using useCallback makes it re-render?
   const handleFolderDoubleClick = useCallback(id => {
-      setEditableFolderID(id)
+    setEditableFolderID(id)
     setSelectedFolderID('')
     handleAnchorElClose()
   }, [])
@@ -58,15 +58,25 @@ const FolderList = () => {
         overflowX: 'hidden',
         paddingTop: '1rem',
         marginRight: '0.5rem',
+        paddingRight: '0.5rem',
         bgcolor: 'transparent',
         borderRight: `1px solid ${palette.grey[800]}`,
       }}
     >
       {/* Folder List Header */}
       <ListItem
-        sx={{ marginBottom: '1rem' }}
+        sx={{
+          marginBottom: '1rem',
+        }}
         secondaryAction={
-          <IconButton onClick={handleNewFolder}>
+          <IconButton
+            onClick={handleNewFolder}
+            sx={{
+              '& [class*=MuiListItemSecondaryAction-root': {
+                right: 0
+              }
+            }}
+          >
             <CreateNewFolder
               sx={{
                 color: palette.secondary[400],
@@ -137,16 +147,23 @@ const FolderList = () => {
               }
               sx={{
                 borderRadius: '0.5rem',
-                '&:hover': { backgroundColor: palette.background.light },
+                backgroundColor: selectedFolderID === id ? palette.background.light : 'inherit',
+                '& [class*=MuiButtonBase-root-MuiListItemButton-root]': {
+                  paddingRight: 0,
+                  gap: '0.25rem'
+                },
                 '& [class*=MuiListItemIcon-root]': {
                   color: palette.secondary[400],
                   minWidth: 'auto',
-                  paddingRight: '1rem'
-                }
+                },
+                '& [class*=MuiListItemSecondaryAction-root]': {
+                  right: 0
+                },
               }}
             >
               <ListItemButton
                 disableGutters
+                disableRipple
                 sx={{ '&:hover': { backgroundColor: 'transparent'} }}
               >
                 <ListItemIcon>
