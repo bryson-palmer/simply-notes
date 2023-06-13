@@ -56,6 +56,17 @@ const useStore = () => {
     })
   }, [getAllNotes, getNote])
 
+  const createFolder = useCallback(folder => {
+    folderAPI.create(folder)
+    .then(() => {
+      getAllFolders()
+    })
+    .catch(error => {
+      console.log("🚀 ~ file: store-provider.jsx:54 ~ createNote ~ error:", error)
+      return 
+    })
+  }, [getAllFolders])
+
   const updateNote = useCallback(note => {
     noteAPI.update(note)
     .then(data => {
@@ -79,6 +90,18 @@ const useStore = () => {
       return 
     })
   }, [getAllNotes])
+
+
+  const deleteFolder = useCallback(id => {
+    folderAPI.delete(id)
+    .then(() => {
+      getAllFolders()
+    })
+    .catch(error => {
+      console.log("🚀 ~ file: store-provider.jsx:102 ~ deleteFolder ~ error:", error)
+      return 
+    })
+  }, [getAllFolders])
 
   // render / load notes on first load ??
   useEffect(() => getAllNotes(), [getAllNotes])
@@ -106,6 +129,8 @@ const useStore = () => {
     updateNote: note => updateNote(note),
     deleteNote: id => deleteNote(id),
     folders,
+    createFolder: folder => createFolder(folder),
+    deleteFolder: id => deleteFolder(id),
   }
 }
 

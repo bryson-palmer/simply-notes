@@ -18,7 +18,11 @@ cursor = connection.cursor()
 create_notes_table = """
   CREATE TABLE IF NOT EXISTS NOTES(id, title, body, user_id)
 """
+create_folders_table = """
+  CREATE TABLE IF NOT EXISTS FOLDERS(id, folderName)
+"""
 cursor.execute(create_notes_table)
+cursor.execute(create_folders_table)
 connection.commit()
 
 @app.route('/')
@@ -96,8 +100,55 @@ def note_delete(id):
 
   return 'Delete success'
 
-@app.route('/folders')
+@app.route('/folders', methods=['GET', 'POST'])
 def folders():
-   return [{'id': 0, 'title': 'unknown'}, {'id': 1, 'title': 'personal'}]
+    connection = sqlite3.connect('app.db')
+    cursor = connection.cursor()
+    if request.method == 'GET':
+        cursor.execute('SELECT * FROM FOLDERS')
+        results = cursor.fetchall()
+
+        folders=[]
+        for result in results:
+          (id, folderName) = result
+          folder = dict(id=id, folderName=folderName)
+          folders.append(folder)
+        
+        return folders
+    
+    if request.method == 'POST':
+        folder = request.json
+        is_new_folder = False
+        folder_name = folder['folderName']
+        id = folder.get('id')
+
+        if id is None or id == '':
+            id = uuid.uuid4().hex # a 32-character lowercase hexadecimal string
+            folder['id'] = id
+            is_new_folder = True
+
+        if is_new_folder:
+            cursor.execute(f'INSERT INTO FOLDERS (id, folderName) VALUES ("{id}", "{folder_name}")')
+        if not is_new_folder:
+            cursor.execute('UPDATE FOLDERS SET folderName="%s" where id="%s"' % (folder_name, id))
+        connection.commit()
+
+        return id
+
+@app.route('/folders/<id>', methods=['DELETE'])
+def folder_delete(id):
+  tuple_ids = tuple(id.split(','))
+
+  connection = sqlite3.connect('app.db')
+  cursor = connection.cursor()
+
+  if len(tuple_ids) == 1:
+    cursor.execute(f'DELETE FROM FOLDERS WHERE id = "{tuple_ids[0]}"')
+  else:
+    cursor.execute(f'DELETE FROM FOLDERS WHERE id IN {tuple_ids}')
+  
+  connection.commit()
+
+  return 'Delete success'
 
 app.run(debug=True)

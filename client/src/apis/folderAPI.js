@@ -11,22 +11,22 @@ export const folderAPI = {
 
     return response.data
   },
-  /* get: async (id, cancel = false) => {
+  get: async (id, cancel = false) => {
     const response = await api.request({
-      url: `/notes/${id}`,
+      url: `/folders/${id}`,
       method: "GET",
       // retrieving the signal value by using the property name
       signal: cancel ? cancelApiObject[this.get.name].handleRequestCancellation().signal : undefined,
     })
 
-    // returning the note returned by the API
+    // returning the folder returned by the API
     return response.data
   },
-  create: async (note, cancel = false) => {
+  create: async (folder, cancel = false) => {
     const response = await api.request({
-      url: `/notes`,
+      url: `/folders`,
       method: "POST",
-      data: note,
+      data: folder,
       signal: cancel ? cancelApiObject[this.create.name].handleRequestCancellation().signal : undefined,
     })
 
@@ -34,16 +34,16 @@ export const folderAPI = {
   },
   delete: async (id, cancel = false) => {
     await api.request({
-      url: `/notes/${id}`,
+      url: `/folders/${id}`,
       method: "DELETE",
       signal: cancel ? cancelApiObject[this.delete.name].handleRequestCancellation().signal : undefined,
     })
   },
-  update: async (note, cancel = false) => {
+  update: async (folder, cancel = false) => {
     const response = await api.request({
-      url: `/notes/${note.id}`,
+      url: `/folders/${folder.id}`,
       method: "PUT",
-      data: note,
+      data: folder,
       signal: cancel ? cancelApiObject[this.update.name].handleRequestCancellation().signal : undefined,
     })
 
@@ -51,7 +51,7 @@ export const folderAPI = {
   },
   // search: async (title, cancel = false) => {
   //   const response = await api.request({
-  //     url: "/notes/search",
+  //     url: "/folders/search",
   //     method: "GET",
   //     params: {
   //       title: title,
@@ -59,9 +59,8 @@ export const folderAPI = {
   //     signal: cancel ? cancelApiObject[this.search.name].handleRequestCancellation().signal : undefined,
   //   })
 
-  //   return response.data.notes
+  //   return response.data.folders
   // },
-  */
 }
 
 // defining the cancel API object for ProductAPI
