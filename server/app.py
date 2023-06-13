@@ -135,4 +135,20 @@ def folders():
 
         return id
 
+@app.route('/folders/<id>', methods=['DELETE'])
+def folder_delete(id):
+  tuple_ids = tuple(id.split(','))
+
+  connection = sqlite3.connect('app.db')
+  cursor = connection.cursor()
+
+  if len(tuple_ids) == 1:
+    cursor.execute(f'DELETE FROM FOLDERS WHERE id = "{tuple_ids[0]}"')
+  else:
+    cursor.execute(f'DELETE FROM FOLDERS WHERE id IN {tuple_ids}')
+  
+  connection.commit()
+
+  return 'Delete success'
+
 app.run(debug=True)

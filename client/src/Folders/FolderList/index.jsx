@@ -16,10 +16,12 @@ import {
 import { FolderOpen, CreateNewFolder, MoreVert } from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
 import FolderForm from '@/Folders/FolderForm'
+import { useDeleteFolder } from '@/store/store-selectors'
 
 const FolderList = () => {
   const { palette } = useTheme()
   const folders = useFolders()
+  const deleteFolder = useDeleteFolder()
 
   const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
@@ -39,6 +41,13 @@ const FolderList = () => {
   const handleAnchorElClick = e => setAnchorEl(e.currentTarget)
 
   const handleAnchorElClose = () => setAnchorEl(null)
+
+  const handleFolderDelete = (id) => {
+    handleAnchorElClose()
+    setEditableFolderID('')
+    setSelectedFolderID('')
+    deleteFolder(id)
+  }
 
   useEffect(() => {
     if (!editableFolderID || !selectedFolderID) return
@@ -137,7 +146,7 @@ const FolderList = () => {
                         Edit
                       </MenuItem>
                       <MenuItem
-                        onClick={() => {handleAnchorElClose()}}
+                        onClick={() => {(handleFolderDelete(id))}}
                       >
                         Delete
                       </MenuItem>

@@ -91,6 +91,18 @@ const useStore = () => {
     })
   }, [getAllNotes])
 
+
+  const deleteFolder = useCallback(id => {
+    folderAPI.delete(id)
+    .then(() => {
+      getAllFolders()
+    })
+    .catch(error => {
+      console.log("🚀 ~ file: store-provider.jsx:102 ~ deleteFolder ~ error:", error)
+      return 
+    })
+  }, [getAllFolders])
+
   // render / load notes on first load ??
   useEffect(() => getAllNotes(), [getAllNotes])
   useEffect(() => getAllFolders(), [getAllFolders])
@@ -117,7 +129,8 @@ const useStore = () => {
     updateNote: note => updateNote(note),
     deleteNote: id => deleteNote(id),
     folders,
-    createFolder: folder => createFolder(folder)
+    createFolder: folder => createFolder(folder),
+    deleteFolder: id => deleteFolder(id),
   }
 }
 
