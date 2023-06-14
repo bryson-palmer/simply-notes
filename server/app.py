@@ -54,13 +54,14 @@ def create_or_modify_note(request):
     
     title = note['title']
     body = note['body']
+    folder = note.get('folder')
         
     connection = sqlite3.connect('app.db')
     cursor = connection.cursor()
     if is_new_note:
-        cursor.execute(f'INSERT INTO NOTES (id, title, body, user_id) VALUES ("{id}", "{title}", "{body}", null)')
+        cursor.execute(f'INSERT INTO NOTES (id, title, body, user_id, folder_id) VALUES ("{id}", "{title}", "{body}", null, "{folder}")')
     if not is_new_note:
-        cursor.execute('UPDATE NOTES SET title="%s", body="%s" where id="%s"' % (title, body, id))
+        cursor.execute('UPDATE NOTES SET title="%s", body="%s", folder_id="%s" where id="%s"' % (title, body, folder, id))
     connection.commit()
 
     return id
@@ -73,13 +74,15 @@ def notes():
 
   # if we get here, we are fetching all notes
   connection = sqlite3.connect('app.db')
+  connection.row_factory = sqlite3.Row  # results come back as dictionaries
   cursor = connection.cursor()
   cursor.execute('SELECT * FROM NOTES')
   results = cursor.fetchall()  # [['uadfsdf', 'title', 'body', None], []...]
   notes = []
   for result in results:
-    (id, title, body, user_id) = result
-    note = dict(id=id, title=title, body=body, user_id=user_id)
+    note = dict(result)
+    note['folder'] = note['folder_id']  # front end expects 'folder' instead of 'folder_id'
+    del note['folder_id']  # unneccesary cleanup of variables
     notes.append(note)
 
   return notes
