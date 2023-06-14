@@ -96,7 +96,7 @@ def note(id):
   cursor = connection.cursor()
   cursor.execute(f'SELECT * FROM NOTES WHERE id = "{id}"')
   note = cursor.fetchone()
-  note_dict = dict(id=note[0], title=note[1], body=note[2])
+  note_dict = dict(id=note[0], title=note[1], body=note[2], folder=note[4])
 
   return note_dict
 
