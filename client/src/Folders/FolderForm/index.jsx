@@ -7,7 +7,6 @@ import { useCreateFolder } from '@/store/store-selectors'
 
 const FolderFormComponent = ({ formik }) => {
   const { handleChange, values } = formik
-  console.log(formik)
   const { palette } = useTheme()
 
   return (
@@ -72,12 +71,13 @@ const validationSchema = yup.object({
   folderName: yup.string('Enter a folder name'),
 })
 
-const FolderForm = ({ id, folderName, setEditableFolderID }) => {
+const FolderForm = ({ id, folderName, setEditableFolderID, setIsNewFolder }) => {
   const createFolder = useCreateFolder()
 
   const handleFolderSubmit = (folder) => {
     createFolder(folder)
     setEditableFolderID('')
+    setIsNewFolder(false)
   }
 
   const handleStopFolderSubmit = (e, dirty, handleSubmit) => {
@@ -109,6 +109,7 @@ FolderForm.propTypes = {
   id: PropTypes.string,
   folderName: PropTypes.string,
   setEditableFolderID: PropTypes.func,
+  setIsNewFolder: PropTypes.func
 }
 
 export default FolderForm

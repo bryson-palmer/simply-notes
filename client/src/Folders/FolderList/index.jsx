@@ -101,7 +101,12 @@ const FolderList = () => {
 
       {/* Folder List */}
       <List>
-        {isNewFolder ? <FolderForm/> : null}
+        {isNewFolder ? (
+          <FolderForm
+            setEditableFolderID={setEditableFolderID}
+            setIsNewFolder={setIsNewFolder}
+          />
+        ) : null}
 
         {folders?.map(({ id, folderName }) => {
           const labelId = `folders-list-label-${id}`
@@ -112,6 +117,7 @@ const FolderList = () => {
               id={id}
               folderName={folderName}
               setEditableFolderID={setEditableFolderID}
+              setIsNewFolder={setIsNewFolder}
             />
             ) : (
             <ListItem
