@@ -64,7 +64,7 @@ const NoteList = React.memo(({ setIsNewNote }) => {
   return (
     <div
       style={{
-        width: 'clamp(200px, 30%, 40%)',
+        width: 'clamp(200px, 30%, 300px)',
         height: '75vh',
         overflowY: 'auto',
         overflowX: 'hidden',

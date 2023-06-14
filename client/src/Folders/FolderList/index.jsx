@@ -24,7 +24,6 @@ const FolderList = () => {
   const deleteFolder = useDeleteFolder()
   const selectedFolderID = useSelectedFolderID()
   const setSelectedFolderID = useSetSelectedFolderID()
-  // const [selectedFolderID, setSelectedFolderID] = useState('')
 
   const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
@@ -39,7 +38,7 @@ const FolderList = () => {
     setEditableFolderID(id)
     setSelectedFolderID('')
     handleAnchorElClose()
-  }, [])
+  }, [setSelectedFolderID])
 
   const handleAnchorElClick = e => setAnchorEl(e.currentTarget)
 
@@ -64,7 +63,7 @@ const FolderList = () => {
       sx={{
         // if window gets to small, hide folders
         display: { sm: "none", md: "block" },
-        width: 'clamp(160px, 15%, 240px)',
+        width: 'clamp(200px, 15%, 250px)',
         height: '75vh',
         overflowY: 'auto',
         overflowX: 'hidden',
@@ -176,6 +175,7 @@ const FolderList = () => {
               sx={{
                 borderRadius: '0.5rem',
                 backgroundColor: selectedFolderID === id ? palette.background.light : 'inherit',
+                paddingRight: '2rem',
                 '& [class*=MuiButtonBase-root-MuiListItemButton-root]': {
                   paddingRight: 0,
                   gap: '0.25rem'
