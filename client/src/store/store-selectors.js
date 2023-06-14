@@ -19,3 +19,7 @@ export const useFolders = () => useContextSelector(StoreContext, store => store.
 export const useCreateFolder = () => useContextSelector(StoreContext, store => store.createFolder)
 
 export const useDeleteFolder = () => useContextSelector(StoreContext, store => store.deleteFolder)
+
+export const useSelectedFolderID = () => useContextSelector(StoreContext, store => store.selectedFolderID)
+
+export const useSetSelectedFolderID = () => useContextSelector(StoreContext, store => store.setSelectedFolderID)

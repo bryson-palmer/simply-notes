@@ -6,7 +6,7 @@ import * as yup from 'yup'
 
 import { Box, TextField, useTheme } from "@mui/material"
 
-import { useCreateNote, useSelectedNote, useUpdateNote } from "@/store/store-selectors"
+import { useCreateNote, useSelectedNote, useUpdateNote, useSelectedFolderID } from "@/store/store-selectors"
 import FlexColumn from "@/UI/FlexColumn"
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
@@ -121,18 +121,20 @@ const validationSchema = yup.object({
   title: yup
     .string('Enter a title'),
   body: yup
-    .string('Enter a note')
-
+    .string('Enter a note'),
+  folder: yup
+    .string('Must be a string'),
 })
 
-const getInitialValues = ({ isNewNote, selectedNote }) => {
-  return (isNewNote ? { id: '', title: '', body: '' } : selectedNote )
+const getInitialValues = ({ isNewNote, selectedNote, selectedFolderID }) => {
+  return (isNewNote ? { id: '', title: '', body: '', folder: selectedFolderID } : selectedNote )
 }
 
 const NoteForm = React.memo(({ isNewNote=false, setIsNewNote={} }) => {
   const selectedNote = useSelectedNote()
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
+  const selectedFolderID = useSelectedFolderID()
   
   const handleSubmit = useCallback(values => {
     isNewNote
@@ -142,7 +144,7 @@ const NoteForm = React.memo(({ isNewNote=false, setIsNewNote={} }) => {
     setIsNewNote(false)
   }, [createNote, isNewNote, setIsNewNote, updateNote])
 
-  const initialValues = getInitialValues({ isNewNote, selectedNote })
+  const initialValues = getInitialValues({ isNewNote, selectedNote, selectedFolderID })
 
   return (
     <Formik
@@ -171,7 +173,8 @@ NoteForm.propTypes = {
     note: PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
-      body: PropTypes.string
+      body: PropTypes.string,
+      folder: PropTypes.string,
     })
   })),
   isNewNote: PropTypes.bool,

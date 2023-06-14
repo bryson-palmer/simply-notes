@@ -9,6 +9,7 @@ const useStore = () => {
   const [notes, setNotes] = useState([])
   const [folders, setFolders] = useState([])
   const [selectedNote, setSelectedNote] = useState({})
+  const [selectedFolderID, setSelectedFolderID] = useState('')
 
   const getAllNotes = useCallback(() => {
     noteAPI.getAll()
@@ -129,6 +130,8 @@ const useStore = () => {
     updateNote: note => updateNote(note),
     deleteNote: id => deleteNote(id),
     folders,
+    selectedFolderID,
+    setSelectedFolderID,
     createFolder: folder => createFolder(folder),
     deleteFolder: id => deleteFolder(id),
   }

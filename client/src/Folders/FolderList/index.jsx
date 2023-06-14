@@ -16,17 +16,20 @@ import {
 import { FolderOpen, CreateNewFolder, MoreVert } from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
 import FolderForm from '@/Folders/FolderForm'
-import { useDeleteFolder } from '@/store/store-selectors'
+import { useDeleteFolder, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
 
 const FolderList = () => {
   const { palette } = useTheme()
   const folders = useFolders()
   const deleteFolder = useDeleteFolder()
+  const selectedFolderID = useSelectedFolderID()
+  const setSelectedFolderID = useSetSelectedFolderID()
+  // const [selectedFolderID, setSelectedFolderID] = useState('')
 
   const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
-  const [selectedFolderID, setSelectedFolderID] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
+
   const open = Boolean(anchorEl)
  
   const handleNewFolder = useCallback(() => setIsNewFolder(!isNewFolder), [isNewFolder])
