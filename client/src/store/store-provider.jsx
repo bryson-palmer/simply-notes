@@ -11,8 +11,8 @@ const useStore = () => {
   const [selectedNote, setSelectedNote] = useState({})
   const [selectedFolderID, setSelectedFolderID] = useState('')
 
-  const getAllNotes = useCallback(() => {
-    noteAPI.getAll()
+  const getAllNotes = useCallback((folderID) => {
+    noteAPI.getAll(folderID)
     .then(data => {
       setNotes(data)
     })
@@ -105,8 +105,19 @@ const useStore = () => {
   }, [getAllFolders])
 
   // render / load notes on first load ??
-  useEffect(() => getAllNotes(), [getAllNotes])
-  useEffect(() => getAllFolders(), [getAllFolders])
+  useEffect(() => {
+    getAllFolders()
+  }, [getAllFolders])
+  // TODO: revisit this behavior; if you setSelectedFolder after fetching folders, will it
+  // automatically fetch the notes on that folder?
+  useEffect(() => {
+    if (folders.length) {
+      getAllNotes(folders[0].id)
+    } 
+    // else {
+    //   getAllNotes()
+    // }
+  }, [getAllNotes, folders])
   
   useEffect(() => {
     const isSelectedInNotes = notes.some(note => note.id === selectedNote.id)

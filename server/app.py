@@ -4,6 +4,7 @@ from flask import Flask, request
 import json
 from flask_cors import CORS
 import os
+from pprint import pprint
 
 app = Flask(__name__)
 CORS(app)
@@ -72,11 +73,16 @@ def notes():
     # rather than fetching notes, we are creating a new one
     return create_or_modify_note(request)
 
+  folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
+  print('folder_id', folder_id)
   # if we get here, we are fetching all notes
   connection = sqlite3.connect('app.db')
   connection.row_factory = sqlite3.Row  # results come back as dictionaries
   cursor = connection.cursor()
-  cursor.execute('SELECT * FROM NOTES')
+  if folder_id:
+    cursor.execute('SELECT * FROM NOTES WHERE folder_id="%s"' % (folder_id,))
+  else:
+    cursor.execute('SELECT * FROM NOTES')
   results = cursor.fetchall()  # [['uadfsdf', 'title', 'body', None], []...]
   notes = []
   for result in results:

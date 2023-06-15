@@ -2,10 +2,13 @@ import { api } from "./configs/axiosConfigs"
 import { defineCancelApiObject } from "./configs/axiosUtils"
 
 export const noteAPI = {
-  getAll: async (cancel = false) => {
+  getAll: async (folderID, cancel = false) => {
     const response = await api.request({
       url: "/notes",
       method: "GET",
+      params: {
+        folder: folderID,  // backend handles ok if this variable is null
+      },
       signal: cancel ? cancelApiObject[this.getAll.name].handleRequestCancellation().signal : undefined,
     })
 
