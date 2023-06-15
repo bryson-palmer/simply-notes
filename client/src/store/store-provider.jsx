@@ -10,6 +10,7 @@ const useStore = () => {
   const [folders, setFolders] = useState([])
   const [selectedNote, setSelectedNote] = useState({})
   const [selectedFolderID, setSelectedFolderID] = useState('')
+  console.log("🚀 ~ file: store-provider.jsx:13 ~ useStore ~ selectedFolderID:", selectedFolderID)
 
   const getAllNotes = useCallback((folderID) => {
     noteAPI.getAll(folderID)
@@ -25,7 +26,6 @@ const useStore = () => {
   const getAllFolders = useCallback(() => {
     folderAPI.getAll()
     .then(data => {
-      // console.log("folder data:", data)
       setFolders(data)
     })
     .catch(error => {
@@ -104,19 +104,31 @@ const useStore = () => {
     })
   }, [getAllFolders])
 
-  // render / load notes on first load ??
   useEffect(() => {
+    console.log('Get all folders')
     getAllFolders()
   }, [getAllFolders])
   // TODO: revisit this behavior; if you setSelectedFolder after fetching folders, will it
   // automatically fetch the notes on that folder?
+
+  /*
+    Find a way to combine useEffects
+    so that we can reduce the number of rerenders.
+    Also, brush up on react component life cycle
+    useEffect in particular
+  */
+  useEffect(() => {
+    console.log('Set selected useEffect')
+    if (!selectedFolderID && folders.length) {
+      console.log('Set selected folder')
+      setSelectedFolderID(folders[0]?.id)
+    }
+  }, [folders, selectedFolderID])
+
   useEffect(() => {
     if (folders.length) {
       getAllNotes(folders[0].id)
     } 
-    // else {
-    //   getAllNotes()
-    // }
   }, [getAllNotes, folders])
   
   useEffect(() => {
