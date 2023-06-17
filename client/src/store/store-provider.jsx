@@ -104,12 +104,12 @@ const useStore = () => {
     })
   }, [getAllFolders])
 
+  // empty array means trigger only once on load
+  // unless the component is re-rendered
   useEffect(() => {
     console.log('Get all folders')
     getAllFolders()
-  }, [getAllFolders])
-  // TODO: revisit this behavior; if you setSelectedFolder after fetching folders, will it
-  // automatically fetch the notes on that folder?
+  }, [getAllFolders])  // this cannot depend on folders, or else it refetches folders everytime
 
   /*
     Find a way to combine useEffects
@@ -126,10 +126,11 @@ const useStore = () => {
   }, [folders, selectedFolderID])
 
   useEffect(() => {
-    if (folders.length) {
-      getAllNotes(folders[0].id)
-    } 
-  }, [getAllNotes, folders])
+    if (selectedFolderID) {
+      console.log('fetching notes by folder')
+      getAllNotes(selectedFolderID)
+    }
+  }, [getAllNotes, selectedFolderID])
   
   useEffect(() => {
     const isSelectedInNotes = notes.some(note => note.id === selectedNote.id)
