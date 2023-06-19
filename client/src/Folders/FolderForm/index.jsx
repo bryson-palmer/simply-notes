@@ -71,7 +71,7 @@ const validationSchema = yup.object({
   folderName: yup.string('Enter a folder name'),
 })
 
-const FolderForm = ({ id, folderName, setEditableFolderID, setIsNewFolder }) => {
+const FolderForm = ({ id, folderName, setEditableFolderID, setIsNewFolder, onBlur }) => {
   const createFolder = useCreateFolder()
 
   const handleFolderSubmit = (folder) => {
@@ -88,7 +88,12 @@ const FolderForm = ({ id, folderName, setEditableFolderID, setIsNewFolder }) => 
       handleSubmit()
       return false
     }
-}
+  }
+
+  const handleOnBlur = () => {
+    console.log('handle on blur')
+    onBlur()
+  }
 
   return (
     <Formik
@@ -97,7 +102,10 @@ const FolderForm = ({ id, folderName, setEditableFolderID, setIsNewFolder }) => 
       validationSchema={validationSchema}
     >
       {(formik) => (
-        <Form onSubmit={e => handleStopFolderSubmit(e, formik.dirty, formik.handleSubmit, formik.isSubmitting)}>
+        <Form
+          onSubmit={e => handleStopFolderSubmit(e, formik.dirty, formik.handleSubmit, formik.isSubmitting)}
+          onBlur={handleOnBlur}
+        >
           <FolderFormComponent formik={formik} />
         </Form>
       )}
@@ -109,7 +117,8 @@ FolderForm.propTypes = {
   id: PropTypes.string,
   folderName: PropTypes.string,
   setEditableFolderID: PropTypes.func,
-  setIsNewFolder: PropTypes.func
+  setIsNewFolder: PropTypes.func,
+  onBlur: PropTypes.func,
 }
 
 export default FolderForm

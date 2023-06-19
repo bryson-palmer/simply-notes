@@ -58,6 +58,12 @@ const FolderList = () => {
     deleteFolder(id)
   }
 
+  // when editting folder is unfocused, close it (return to list folder item)
+  const handleEditFolderBlur = () => {
+    console.log('editfolder blur')
+    setEditableFolderID('')
+  }
+
   useEffect(() => {
     if (!editableFolderID || !selectedFolderID) return
     if (editableFolderID !== selectedFolderID) {
@@ -125,6 +131,7 @@ const FolderList = () => {
               folderName={folderName}
               setEditableFolderID={setEditableFolderID}
               setIsNewFolder={setIsNewFolder}
+              onBlur={handleEditFolderBlur}
             />
             ) : (
             <ListItem
