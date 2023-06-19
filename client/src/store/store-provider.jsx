@@ -48,14 +48,14 @@ const useStore = () => {
   const createNote = useCallback(note => {
     noteAPI.create(note)
     .then(data => {
-      getAllNotes()
+      getAllNotes(selectedFolderID)  // always fetch by folder ID, it should work if folder id is null too
       getNote(data)
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:54 ~ createNote ~ error:", error)
       return 
     })
-  }, [getAllNotes, getNote])
+  }, [getAllNotes, getNote, selectedFolderID])
 
   const createFolder = useCallback(folder => {
     folderAPI.create(folder)
@@ -71,32 +71,33 @@ const useStore = () => {
   const updateNote = useCallback(note => {
     noteAPI.update(note)
     .then(data => {
-      getAllNotes()
+      getAllNotes(selectedFolderID)  // getAllNotes is purely for updating the note in the list form;
       getNote(data)
     })
     .catch(error => { 
       console.log("🚀 ~ file: store-provider.jsx:66 ~ updateNote ~ error:", error)
       return
     })
-  }, [getAllNotes, getNote])
+  }, [getAllNotes, getNote, selectedFolderID])
 
   const deleteNote = useCallback(id => {
     noteAPI.delete(id)
     .then(() => {
       setSelectedNote({})
-      getAllNotes()
+      getAllNotes(selectedFolderID)
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:78 ~ deleteNote ~ error:", error)
       return 
     })
-  }, [getAllNotes])
+  }, [getAllNotes, selectedFolderID])
 
 
   const deleteFolder = useCallback(id => {
     folderAPI.delete(id)
     .then(() => {
       getAllFolders()
+      setSelectedFolderID(null)  // causes folder 0 to be selected
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:102 ~ deleteFolder ~ error:", error)
@@ -104,19 +105,13 @@ const useStore = () => {
     })
   }, [getAllFolders])
 
-  // empty array means trigger only once on load
-  // unless the component is re-rendered
+  // on first load, fetch all folders
   useEffect(() => {
     console.log('Get all folders')
     getAllFolders()
   }, [getAllFolders])  // this cannot depend on folders, or else it refetches folders everytime
 
-  /*
-    Find a way to combine useEffects
-    so that we can reduce the number of rerenders.
-    Also, brush up on react component life cycle
-    useEffect in particular
-  */
+  // anytime folders are loaded, make sure a folder is selected (defaults to 0)
   useEffect(() => {
     console.log('Set selected useEffect')
     if (!selectedFolderID && folders.length) {
@@ -125,6 +120,7 @@ const useStore = () => {
     }
   }, [folders, selectedFolderID])
 
+  // anytime a folder is selected, fetch all notes for that folder
   useEffect(() => {
     if (selectedFolderID) {
       console.log('fetching notes by folder')
