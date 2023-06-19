@@ -118,6 +118,7 @@ const FolderList = () => {
           <FolderForm
             setEditableFolderID={setEditableFolderID}
             setIsNewFolder={setIsNewFolder}
+            onBlur={() => {/* noop (we want newFolder form to stick around onBlur. Otherwise behavior gets messy) */}}
           />
         ) : null}
 
