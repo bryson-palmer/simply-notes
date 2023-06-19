@@ -31,12 +31,19 @@ const FolderList = () => {
 
   const open = Boolean(anchorEl)
  
-  const handleNewFolder = useCallback(() => setIsNewFolder(!isNewFolder), [isNewFolder])
+  const handleNewFolder = useCallback(() => {
+    // if we are about to add a new folder form, remove form from other folder
+    setIsNewFolder(!isNewFolder)
+    if (isNewFolder) {
+      setEditableFolderID('')
+    }
+  }, [isNewFolder])
 
   // using useCallback makes it re-render?
   const handleFolderDoubleClick = useCallback(id => {
     setEditableFolderID(id)
-    setSelectedFolderID('')
+    setSelectedFolderID(id)
+    setIsNewFolder(false)  // close New Folder form when editting another folder's name
     handleAnchorElClose()
   }, [setSelectedFolderID])
 
@@ -47,7 +54,7 @@ const FolderList = () => {
   const handleFolderDelete = (id) => {
     handleAnchorElClose()
     setEditableFolderID('')
-    setSelectedFolderID('')
+    setSelectedFolderID('')  // this doesn't seem to work?
     deleteFolder(id)
   }
 
