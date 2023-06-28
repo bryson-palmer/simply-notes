@@ -65,7 +65,7 @@ def create_or_modify_note(request):
         cursor.execute('UPDATE NOTES SET title="%s", body="%s", folder_id="%s" where id="%s"' % (title, body, folder, id))
     connection.commit()
 
-    return id
+    return note  # returning full note so it doesn't have to get re-fetched
 
 @app.route('/notes', methods=['GET', 'POST'])
 def notes():

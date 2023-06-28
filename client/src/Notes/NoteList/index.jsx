@@ -142,7 +142,8 @@ const NoteList = React.memo(({ setIsNewNote }) => {
                     color: palette.secondary[400],
                     '&:hover': { color: palette.primary[200] },
                   }}
-                  primary={title}
+                  // take selectedNote as source of truth for title and body, because on update we do not update selectedNote
+                  primary={(selectedNote.title && id === selectedNote.id) ? selectedNote.title : title}
                   primaryTypographyProps={{ noWrap: true }}
                   secondary={
                     <Typography
@@ -153,7 +154,7 @@ const NoteList = React.memo(({ setIsNewNote }) => {
                         display: { sm: 'none', md: 'block' },
                       }}
                     >
-                      {body}
+                      {(selectedNote.body && id === selectedNote.id) ? selectedNote.body : body}
                     </Typography>
                   }
                 />

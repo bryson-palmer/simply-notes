@@ -69,16 +69,18 @@ const useStore = () => {
   }, [getAllFolders])
 
   const updateNote = useCallback(note => {
+    setSelectedNote(note)  // to avoid overwriting user as he continues typing
     noteAPI.update(note)
-    .then(data => {
-      getAllNotes(selectedFolderID)  // getAllNotes is purely for updating the note in the list form;
-      getNote(data)
+    .then(() => {
+      // nothing anymore. We know the note contents already (it's in note variable)
+      // unless... unless it has a newer note modification date, then we need to load the newer data in
+      // TODO: what it says above
     })
     .catch(error => { 
       console.log("🚀 ~ file: store-provider.jsx:66 ~ updateNote ~ error:", error)
       return
     })
-  }, [getAllNotes, getNote, selectedFolderID])
+  }, [])
 
   const deleteNote = useCallback(id => {
     noteAPI.delete(id)
