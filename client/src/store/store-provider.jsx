@@ -46,10 +46,11 @@ const useStore = () => {
   }, [])
 
   const createNote = useCallback(note => {
+    setSelectedNote(note)
     noteAPI.create(note)
     .then(data => {
       getAllNotes(selectedFolderID)  // always fetch by folder ID, it should work if folder id is null too
-      getNote(data)
+      // getNote(data)
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:54 ~ createNote ~ error:", error)
