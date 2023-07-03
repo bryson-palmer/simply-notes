@@ -1,13 +1,21 @@
 import sqlite3
 import uuid
-from flask import Flask, request
+from flask import Flask, request, session
 import json
 from flask_cors import CORS
 import os
 from pprint import pprint
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
+
+# load secret key from .env file (or create it and then load it)
+SECRET_FILE = '.env.local'
+if not os.path.exists(SECRET_FILE):
+    with open(SECRET_FILE, 'w') as f:
+       f.write(f'{os.urandom(24)}')
+with open(SECRET_FILE, 'r') as f:
+    app.secret_key = f.readline()
 
 dirname = os.path.dirname(__file__)  # removes filename from path to just get directory
 filename = os.path.join(dirname, '../client/mockData/db.json')
