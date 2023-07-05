@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import timedelta
 import uuid
 from flask import Flask, request, session
 import json
@@ -8,6 +9,7 @@ from pprint import pprint
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+app.permanent_session_lifetime = timedelta(days=31)  # how long before they must log in again
 
 # load secret key from .env file (or create it and then load it)
 SECRET_FILE = '.env.local'
@@ -28,10 +30,12 @@ create_notes_table = """
   CREATE TABLE IF NOT EXISTS NOTES(id, title, body, user_id, folder_id)
 """
 create_folders_table = """
-  CREATE TABLE IF NOT EXISTS FOLDERS(id, folderName)
+create_user_table = """
+  CREATE TABLE IF NOT EXISTS USERS(id, username, email, password, registered, last_login)
 """
 cursor.execute(create_notes_table)
 cursor.execute(create_folders_table)
+cursor.execute(create_user_table)
 connection.commit()
 
 # adding folder_id to NOTES existing NOTES table
@@ -132,8 +136,34 @@ def note_delete(id):
 
   return 'Delete success'
 
+def get_new_user_id():
+  connection = sqlite3.connect('app.db')
+  cursor = connection.cursor()
+  already_exists = True
+  while already_exists:
+    id = uuid.uuid4().hex
+    cursor.execute('SELECT * FROM USERS WHERE id="%s"' % id)
+    already_exists = cursor.fetchone()
+  # only fill in ID
+  cursor.execute('INSERT INTO USERS (id) VALUES ("%s")' % id)
+  return id
+
+def create_new_user_if_uninitialized(session):
+  print(session.get('user_id'))
+  if session.get('user_id'):
+    return
+  user_id = get_new_user_id()
+  session['user_id'] = user_id
+  session.permanent = True
+  session.modified = True
+  # also handle copying demo data from demo user to this new user's data
+
 @app.route('/folders', methods=['GET', 'POST'])
 def folders():
+    # this is the first thing the app loads on startup. If this is a user who hasn't logged in yet,
+    # give them demo data (but how?)
+    create_new_user_if_uninitialized(session)
+    user_id = session.get('user_id')
     connection = sqlite3.connect('app.db')
     cursor = connection.cursor()
     if request.method == 'GET':
