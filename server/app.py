@@ -30,6 +30,8 @@ create_notes_table = """
   CREATE TABLE IF NOT EXISTS NOTES(id, title, body, user_id, folder_id)
 """
 create_folders_table = """
+  CREATE TABLE IF NOT EXISTS FOLDERS(id, folderName, user_id)
+"""
 create_user_table = """
   CREATE TABLE IF NOT EXISTS USERS(id, username, email, password, registered, last_login)
 """
@@ -50,6 +52,13 @@ if version == 0:
    cursor.execute(add_folder_to_notes_table)
    cursor.execute(f'PRAGMA user_version = {version + 1}')
    connection.commit()
+if version == 1:
+    add_user_to_folders_table = """
+      ALTER TABLE FOLDERS ADD COLUMN user_id
+    """
+    cursor.execute(add_user_to_folders_table)
+    cursor.execute(f'PRAGMA user_version = {version + 1}')
+    connection.commit()
 
 @app.route('/')
 def home():
@@ -167,12 +176,13 @@ def folders():
     connection = sqlite3.connect('app.db')
     cursor = connection.cursor()
     if request.method == 'GET':
-        cursor.execute('SELECT * FROM FOLDERS')
+        cursor.execute('SELECT * FROM FOLDERS WHERE user_id="%s"' % user_id)
         results = cursor.fetchall()
+        print('folders *', results)
 
         folders=[]
         for result in results:
-          (id, folderName) = result
+          (id, folderName, _) = result  # _ is user_id, we don't include that data!!!
           folder = dict(id=id, folderName=folderName)
           folders.append(folder)
         
@@ -190,9 +200,9 @@ def folders():
             is_new_folder = True
 
         if is_new_folder:
-            cursor.execute(f'INSERT INTO FOLDERS (id, folderName) VALUES ("{id}", "{folder_name}")')
+            cursor.execute(f'INSERT INTO FOLDERS (id, folderName, user_id) VALUES ("{id}", "{folder_name}", "{user_id}")')
         if not is_new_folder:
-            cursor.execute('UPDATE FOLDERS SET folderName="%s" where id="%s"' % (folder_name, id))
+            cursor.execute('UPDATE FOLDERS SET folderName="%s" where id="%s" and user_id="%s"' % (folder_name, id, user_id))
         connection.commit()
 
         return id
