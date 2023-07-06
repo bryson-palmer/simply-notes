@@ -67,6 +67,7 @@ def home():
 
 def create_or_modify_note(request):
     # read in existing notes
+    user_id = session.get('user_id')
     note = request.json
     is_new_note = False
     id = note.get('id') # ID from post request, if updating note
@@ -82,9 +83,9 @@ def create_or_modify_note(request):
     connection = sqlite3.connect('app.db')
     cursor = connection.cursor()
     if is_new_note:
-        cursor.execute(f'INSERT INTO NOTES (id, title, body, user_id, folder_id) VALUES ("{id}", "{title}", "{body}", null, "{folder}")')
+        cursor.execute(f'INSERT INTO NOTES (id, title, body, user_id, folder_id) VALUES ("{id}", "{title}", "{body}", "{user_id}", "{folder}")')
     if not is_new_note:
-        cursor.execute('UPDATE NOTES SET title="%s", body="%s", folder_id="%s" where id="%s"' % (title, body, folder, id))
+        cursor.execute('UPDATE NOTES SET title="%s", body="%s", folder_id="%s" where user_id="%s" and id="%s"' % (title, body, folder, user_id, id))
     connection.commit()
     connection.close()
 
