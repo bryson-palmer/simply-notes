@@ -59,6 +59,7 @@ if version == 1:
     cursor.execute(add_user_to_folders_table)
     cursor.execute(f'PRAGMA user_version = {version + 1}')
     connection.commit()
+connection.close()
 
 @app.route('/')
 def home():
@@ -85,6 +86,7 @@ def create_or_modify_note(request):
     if not is_new_note:
         cursor.execute('UPDATE NOTES SET title="%s", body="%s", folder_id="%s" where id="%s"' % (title, body, folder, id))
     connection.commit()
+    connection.close()
 
     return note  # returning full note so it doesn't have to get re-fetched
 
@@ -94,6 +96,8 @@ def notes():
     # rather than fetching notes, we are creating a new one
     return create_or_modify_note(request)
 
+  user_id = session.get('user_id')
+  print(f'Notes: user_id: {user_id}')
   folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
   print('folder_id', folder_id)
   # if we get here, we are fetching all notes
@@ -101,9 +105,9 @@ def notes():
   connection.row_factory = sqlite3.Row  # results come back as dictionaries
   cursor = connection.cursor()
   if folder_id:
-    cursor.execute('SELECT * FROM NOTES WHERE folder_id="%s"' % (folder_id,))
+    cursor.execute('SELECT * FROM NOTES WHERE user_id="%s" and folder_id="%s"' % (user_id, folder_id,))
   else:
-    cursor.execute('SELECT * FROM NOTES')
+    cursor.execute('SELECT * FROM NOTES WHERE user_id="%s"' % (user_id,))
   results = cursor.fetchall()  # [['uadfsdf', 'title', 'body', None], []...]
   notes = []
   for result in results:
@@ -112,6 +116,7 @@ def notes():
     del note['folder_id']  # unneccesary cleanup of variables
     notes.append(note)
 
+  connection.close()
   return notes
 
 @app.route('/notes/<id>', methods=['GET', 'PUT'])
@@ -127,6 +132,7 @@ def note(id):
      return {}  # if ID was invalid
   note_dict = dict(id=note[0], title=note[1], body=note[2], folder=note[4])
 
+  connection.close()
   return note_dict
 
 @app.route('/notes/<id>', methods=['DELETE'])
@@ -142,6 +148,7 @@ def note_delete(id):
     cursor.execute(f'DELETE FROM NOTES WHERE id IN {tuple_ids}')
   
   connection.commit()
+  connection.close()
 
   return 'Delete success'
 
@@ -155,6 +162,8 @@ def get_new_user_id():
     already_exists = cursor.fetchone()
   # only fill in ID
   cursor.execute('INSERT INTO USERS (id) VALUES ("%s")' % id)
+  connection.commit()
+  connection.close()
   return id
 
 def create_new_user_if_uninitialized(session):
@@ -173,6 +182,7 @@ def folders():
     # give them demo data (but how?)
     create_new_user_if_uninitialized(session)
     user_id = session.get('user_id')
+    print(f'folders: user_id: {user_id}')
     connection = sqlite3.connect('app.db')
     cursor = connection.cursor()
     if request.method == 'GET':
@@ -186,6 +196,7 @@ def folders():
           folder = dict(id=id, folderName=folderName)
           folders.append(folder)
         
+        connection.close()
         return folders
     
     if request.method == 'POST':
@@ -204,6 +215,7 @@ def folders():
         if not is_new_folder:
             cursor.execute('UPDATE FOLDERS SET folderName="%s" where id="%s" and user_id="%s"' % (folder_name, id, user_id))
         connection.commit()
+        connection.close()
 
         return id
 
@@ -220,6 +232,7 @@ def folder_delete(id):
     cursor.execute(f'DELETE FROM FOLDERS WHERE id IN {tuple_ids}')
   
   connection.commit()
+  connection.close()
 
   return 'Delete success'
 
