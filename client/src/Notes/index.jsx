@@ -9,6 +9,7 @@ import NoteForm from '@/Notes/NoteForm'
 import NoteList from '@/Notes/NoteList'
 import FlexBetween from '@/UI/FlexBetween'
 import FlexColumn from '@/UI/FlexColumn'
+import StyledTooltip from '@/UI/SyledTooltip'
 import FolderList from '@/Folders/FolderList'
 
 
@@ -32,6 +33,7 @@ const Notes = React.memo(() => {
           Well, hello there. What would you like to do?
         </Typography>
         <FlexBetween>
+          <StyledTooltip arrow title="New note">
           <IconButton
             sx={{
               color: palette.secondary[400],
@@ -42,6 +44,7 @@ const Notes = React.memo(() => {
             <AddIcon sx={{ fontSize: "1rem", marginRight: "-4px" }} />
             <CreateIcon />
           </IconButton>
+          </StyledTooltip>
         </FlexBetween>
       </FlexBetween>
       <Box sx={{ display: { xs: "none", sm: "flex" } }}>
