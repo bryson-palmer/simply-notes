@@ -74,8 +74,6 @@ const FolderList = () => {
   return (
     <Box
       sx={{
-        // if window gets to small, hide folders
-        display: { sm: "none", md: "block" },
         width: 'clamp(200px, 15%, 250px)',
         height: '75vh',
         overflowY: 'auto',
