@@ -10,7 +10,6 @@ const useStore = () => {
   const [folders, setFolders] = useState([])
   const [selectedNote, setSelectedNote] = useState({})
   const [selectedFolderID, setSelectedFolderID] = useState('')
-  console.log("🚀 ~ file: store-provider.jsx:13 ~ useStore ~ selectedFolderID:", selectedFolderID)
 
   const getAllNotes = useCallback((folderID) => {
     noteAPI.getAll(folderID)
