@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 
-import { Box, IconButton, Typography } from '@mui/material'
+import { Box, IconButton, Typography, useMediaQuery } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import CreateIcon from '@mui/icons-material/Create'
 import FolderIcon from '@mui/icons-material/Folder'
@@ -19,7 +19,9 @@ const Notes = React.memo(() => {
   const [isNewNote, setIsNewNote] = useState(false)
   const [openDrawer, setOpenDrawer] = useState(false)
 
-  const { palette } = useTheme()
+  const theme = useTheme()
+
+  const isSmallerThanMedium = useMediaQuery(theme.breakpoints.down('md'))
 
   const toggleDrawer = (event) => {
     if (
@@ -51,8 +53,8 @@ const Notes = React.memo(() => {
               sx={{
                 display: { sm: "flex", md: "none" },
                 paddingRight: '1rem',
-                color: palette.secondary[400],
-                "&:hover": { color: palette.secondary[100] },
+                color: theme.palette.secondary[400],
+                "&:hover": { color: theme.palette.secondary[100] },
               }}
             >
               <FolderIcon />
@@ -61,7 +63,7 @@ const Notes = React.memo(() => {
 
           <Typography
             variant="h3"
-            color={palette.secondary[400]}
+            color={theme.palette.secondary[400]}
             padding="2rem 0"
             sx={{ fontSize: { xs: '0.875rem', sm: '1.25rem' }}}
           >
@@ -74,8 +76,8 @@ const Notes = React.memo(() => {
             <IconButton
               onClick={handleIsNewNote}
               sx={{
-                color: palette.secondary[400],
-                "&:hover": { color: palette.secondary[100] },
+                color: theme.palette.secondary[400],
+                "&:hover": { color: theme.palette.secondary[100] },
               }}
             >
               <AddIcon sx={{ fontSize: "1rem", marginRight: "-4px" }} />
@@ -85,18 +87,18 @@ const Notes = React.memo(() => {
         </FlexBetween>
       </FlexBetween>
 
-      <Box sx={{ display: { xs: 'none', sm: "none", md: "flex" } }}>
-        <FolderList />
-        <NoteList setIsNewNote={setIsNewNote} />
-        <NoteForm isNewNote={isNewNote} setIsNewNote={setIsNewNote} />
-      </Box>
-
-      <Box sx={{ display: { xs: 'flex', sm: "flex", md: "none" } }}>
+      <Box display='flex'>
+        {isSmallerThanMedium ? null : (
+          <>
+            <FolderList />
+            <NoteList setIsNewNote={setIsNewNote} />
+          </>
+        )}
         <NoteForm isNewNote={isNewNote} setIsNewNote={setIsNewNote} />
       </Box>
 
       <Drawer
-        openDrawer={openDrawer}
+        openDrawer={openDrawer && isSmallerThanMedium}
         setIsNewNote={setIsNewNote}
         toggleDrawer={toggleDrawer}
       />
