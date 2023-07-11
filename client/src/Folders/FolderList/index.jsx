@@ -75,7 +75,6 @@ const FolderList = () => {
     <Box
       sx={{
         width: 'clamp(200px, 15%, 250px)',
-        height: '75vh',
         overflowY: 'auto',
         overflowX: 'hidden',
         paddingTop: '1rem',

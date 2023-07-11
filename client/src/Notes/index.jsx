@@ -87,7 +87,7 @@ const Notes = React.memo(() => {
         </FlexBetween>
       </FlexBetween>
 
-      <Box display='flex'>
+      <Box display='flex' height='83.5vh'>
         {isSmallerThanMedium ? null : (
           <>
             <FolderList />

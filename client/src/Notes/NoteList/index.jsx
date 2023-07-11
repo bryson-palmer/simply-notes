@@ -65,7 +65,6 @@ const NoteList = React.memo(({ setIsNewNote }) => {
     <div
       style={{
         width: 'clamp(200px, 30%, 300px)',
-        height: '75vh',
         overflowY: 'auto',
         overflowX: 'hidden',
         paddingTop: 0,
@@ -151,7 +150,6 @@ const NoteList = React.memo(({ setIsNewNote }) => {
                       variant='h5'
                       sx={{
                         color: palette.grey[600],
-                        display: { sm: 'none', md: 'block' },
                       }}
                     >
                       {(selectedNote.body && id === selectedNote.id) ? selectedNote.body : body}
