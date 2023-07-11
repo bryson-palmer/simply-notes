@@ -39,9 +39,8 @@ def notes():
         return create_or_modify_note(request)
 
     user_id = session.get('user_id')
-    print(f'Notes: user_id: {user_id}')
     folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
-    print('folder_id', folder_id)
+
     # if we get here, we are fetching all notes
     connection = sqlite3.connect(DB_FILE)
     connection.row_factory = sqlite3.Row  # results come back as dictionaries
