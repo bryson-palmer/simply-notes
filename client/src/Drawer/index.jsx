@@ -18,11 +18,12 @@ const Drawer = React.memo(({
   const { palette } = useTheme()
 
   const StyledBox = styled(Box)(() => ({
-    backgroundColor: palette.background.light,
+    backgroundColor: palette.background.default,
     display: 'flex',
-    width: 400,
+    width: 'clamp(264px, calc(100vw - 1rem), 400px)',
     height: '100%',
     borderTop: `1px solid ${palette.grey[800]}`,
+    paddingLeft: '1rem'
   }))
 
   return (
