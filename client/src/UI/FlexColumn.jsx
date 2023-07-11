@@ -6,9 +6,8 @@ const FlexColumn = styled(Box, {
 })(({ isNote }) => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem',
   width: isNote ? '80%' : 'inherit',
-  minHeight: isNote ? '100%' : 'inherit',
+  minHeight: '100%',
   paddingLeft: isNote ? '2rem' : 0,
 }))
 
