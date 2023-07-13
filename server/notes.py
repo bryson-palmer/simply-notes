@@ -2,7 +2,7 @@ from flask import Flask, request, session
 import uuid
 import sqlite3
 from constants import DB_FILE
-from app_setup import app
+from flask_setup import app
 
 
 def create_or_modify_note(request):

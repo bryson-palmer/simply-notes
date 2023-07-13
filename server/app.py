@@ -1,7 +1,7 @@
 import db_setup
 import folders
 import notes  # this auto-decoreates note-related functions with app.route(...)
-from app_setup import app, app_configure
+from flask_setup import app, app_configure
 from users import create_new_user_if_uninitialized
 
 app_configure()  # set up secret keys, cookie settings, CORS, etc.
@@ -12,4 +12,4 @@ db_setup.create_update_tables()
 def home():
 	return 'Flask app is running!!!'
 
-app.run(debug=True)
+app.run(debug=False, port=8080)

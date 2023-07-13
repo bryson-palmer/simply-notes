@@ -2,7 +2,7 @@ import sqlite3
 import uuid
 from flask import request, session
 
-from app_setup import app
+from flask_setup import app
 from constants import DB_FILE
 from users import create_new_user_if_uninitialized
 
