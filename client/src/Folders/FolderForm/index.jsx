@@ -35,18 +35,18 @@ const FolderFormComponent = ({ formik }) => {
         value={values.folderName ?? ''}
         onChange={handleChange}
         sx={{
-          '& [class*=MuiInputBase-root-MuiInput-root]': {
+          '& [class*=MuiInputBase-root]': {
             color: palette.secondary[400],
             fontSize: '0.75rem',
           },
-          '& [class*=MuiInputBase-root-MuiInput-root]:before': {
+          '& [class*=MuiInputBase-root]:before': {
             borderBottom: 'none',
           },
-          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before':
+          '& [class*=MuiInputBase-root]:hover:not(.Mui-disabled, .Mui-error):before':
             {
               borderBottom: 'none',
             },
-          '& [class*=MuiInputBase-root-MuiInput-root]:after': {
+          '& [class*=MuiInputBase-root]:after': {
             borderColor: palette.secondary[400],
           },
         }}

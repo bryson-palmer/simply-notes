@@ -58,16 +58,16 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
         value={values?.title ?? ''}
         onChange={handleChange}
         sx={{
-          '& [class*=MuiInputBase-root-MuiInput-root]': {
+          '& [class*=MuiInputBase-root]': {
               color: palette.secondary[400],
               fontWeight: '700',
               fontSize: '1.25rem'
             },
-          '& [class*=MuiInputBase-root-MuiInput-root]:before': { border: 'none' },
-          '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
-          '& [class*=MuiInputBase-root-MuiInput-root]:after': { border: 'none' },
-          '& [class*=MuiFormLabel-root-MuiInputLabel-root]': { color: palette.secondary[200] },
-          '& [class*=MuiFormLabel-root-MuiInputLabel-root].Mui-focused': { color: palette.secondary[400] },
+          '& [class*=MuiInputBase-root]:before': { border: 'none' },
+          '& [class*=MuiInputBase-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
+          '& [class*=MuiInputBase-root]:after': { border: 'none' },
+          '& [class*=MuiFormLabel-root]': { color: palette.secondary[200] },
+          '& [class*=MuiFormLabel-root].Mui-focused': { color: palette.secondary[400] },
         }}
       />
 
@@ -81,10 +81,10 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
           value={values.body?.trimStart() ?? ''}
           onChange={handleChange}
           sx={{
-            '& [class*=MuiInputBase-root-MuiInput-root]': { color: palette.grey[400] },
-            '& [class*=MuiInputBase-root-MuiInput-root]:before': { border: 'none' },
-            '& [class*=MuiInputBase-root-MuiInput-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
-            '& [class*=MuiInputBase-root-MuiInput-root]:after': { border: 'none' },
+            '& [class*=MuiInputBase-root]': { color: palette.grey[400] },
+            '& [class*=MuiInputBase-root]:before': { border: 'none' },
+            '& [class*=MuiInputBase-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
+            '& [class*=MuiInputBase-root]:after': { border: 'none' },
           }}
         />
       )}

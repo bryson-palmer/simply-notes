@@ -159,7 +159,7 @@ const FolderList = () => {
                       open={open}
                       onClose={handleAnchorElClose}
                       sx={{
-                        '& [class*=MuiPaper-root-MuiMenu-paper-MuiPopover-paper]': {
+                        '& [class*=MuiPaper-root]': {
                           backgroundColor: palette.background.default,
                           color: palette.grey[400],
                           border: `0.5px solid ${palette.secondary[400]}`,
@@ -194,7 +194,7 @@ const FolderList = () => {
                 borderRadius: '0.5rem',
                 backgroundColor: selectedFolderID === id ? palette.background.light : 'inherit',
                 paddingRight: '2rem',
-                '& [class*=MuiButtonBase-root-MuiListItemButton-root]': {
+                '& [class*=MuiButtonBase-root]': {
                   paddingRight: 0,
                   gap: '0.25rem'
                 },
