@@ -1,6 +1,3 @@
-def app(*args, **kwargs):
-    from app import app
-    return app
-
-if __name__ == '__main__':
-    app()
+from app import app  # gunicorn's default config expects server:app, which is this
+# this is what gunicorn calls app with.... approximately
+#app(environ=, start_response=)

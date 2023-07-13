@@ -12,4 +12,5 @@ db_setup.create_update_tables()
 def home():
 	return 'Flask app is running!!!'
 
-app.run(debug=False, port=8080)
+if __name__ == '__main__':
+	app.run(debug=False)
