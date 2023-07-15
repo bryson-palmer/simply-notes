@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 
 import { useTheme } from '@emotion/react'
@@ -55,11 +55,6 @@ const NoteList = React.memo(({ setIsNewNote }) => {
   const handleDeleteNote = useCallback(id => {
     deleteNote(id)
   }, [deleteNote])
-
-  useEffect(() => {
-    if (!notes.length) return setIsNewNote(true)
-    if (selectedNote) return setIsNewNote(false)
-  }, [notes, notes.length, selectedNote, setIsNewNote])
 
   return (
     <div

@@ -36,8 +36,8 @@ const Notes = React.memo(() => {
   }
 
   const handleIsNewNote = useCallback(() => {
-    setIsNewNote(!isNewNote)
-  }, [isNewNote])
+    setIsNewNote(true)
+  }, [])
  
   return (
     <FlexColumn>
