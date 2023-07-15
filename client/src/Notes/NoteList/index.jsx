@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 
 import { useTheme } from '@emotion/react'
@@ -55,11 +55,6 @@ const NoteList = React.memo(({ setIsNewNote }) => {
   const handleDeleteNote = useCallback(id => {
     deleteNote(id)
   }, [deleteNote])
-
-  useEffect(() => {
-    if (!notes.length) return setIsNewNote(true)
-    if (selectedNote) return setIsNewNote(false)
-  }, [notes, notes.length, selectedNote, setIsNewNote])
 
   return (
     <div
@@ -128,6 +123,7 @@ const NoteList = React.memo(({ setIsNewNote }) => {
                 </ListItemIcon>
               </IconButton>
               <ListItemButton
+                disableRipple
                 role={undefined}
                 onClick={handleSelectNote(id)}
                 sx={{
@@ -139,7 +135,6 @@ const NoteList = React.memo(({ setIsNewNote }) => {
                   id={labelId}
                   sx={{
                     color: palette.secondary[400],
-                    '&:hover': { color: palette.primary[200] },
                   }}
                   // take selectedNote as source of truth for title and body, because on update we do not update selectedNote
                   primary={(selectedNote.title && id === selectedNote.id) ? selectedNote.title : title}

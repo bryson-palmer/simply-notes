@@ -6,7 +6,7 @@ import * as yup from 'yup'
 
 import { Box, TextField, useTheme } from "@mui/material"
 
-import { useCreateNote, useSelectedNote, useUpdateNote, useSelectedFolderID } from "@/store/store-selectors"
+import { useCreateNote, useNotes, useSelectedNote, useUpdateNote, useSelectedFolderID } from "@/store/store-selectors"
 import FlexColumn from "@/UI/FlexColumn"
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
@@ -130,7 +130,8 @@ const getInitialValues = ({ isNewNote, selectedNote, selectedFolderID }) => {
   return (isNewNote ? { id: '', title: '', body: '', folder: selectedFolderID } : selectedNote )
 }
 
-const NoteForm = React.memo(({ isNewNote=false, setIsNewNote={} }) => {
+const NoteForm = React.memo(({ isNewNote=false, setIsNewNote }) => {
+  const notes = useNotes()
   const selectedNote = useSelectedNote()
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
@@ -145,6 +146,14 @@ const NoteForm = React.memo(({ isNewNote=false, setIsNewNote={} }) => {
   }, [createNote, isNewNote, setIsNewNote, updateNote])
 
   const initialValues = getInitialValues({ isNewNote, selectedNote, selectedFolderID })
+
+  useEffect(() => {
+    if (!notes.length) {
+      setIsNewNote(true)
+    } else {
+      setIsNewNote(false)
+    }
+  }, [notes.length, setIsNewNote])
 
   return (
     <Formik

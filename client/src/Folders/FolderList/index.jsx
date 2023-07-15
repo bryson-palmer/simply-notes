@@ -60,7 +60,6 @@ const FolderList = () => {
 
   // when editting folder is unfocused, close it (return to list folder item)
   const handleEditFolderBlur = () => {
-    console.log('editfolder blur')
     setEditableFolderID('')
   }
 
@@ -203,7 +202,7 @@ const FolderList = () => {
                   minWidth: 'auto',
                 },
                 '& [class*=MuiListItemSecondaryAction-root]': {
-                  right: 0
+                  right: 8
                 },
               }}
             >

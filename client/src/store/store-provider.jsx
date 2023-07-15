@@ -6,8 +6,8 @@ import { noteAPI } from '@/apis/noteAPI'
 import { folderAPI } from '@/apis/folderAPI'
 
 const useStore = () => {
-  const [notes, setNotes] = useState([])
   const [folders, setFolders] = useState([])
+  const [notes, setNotes] = useState([])
   const [selectedNote, setSelectedNote] = useState({})
   const [selectedFolderID, setSelectedFolderID] = useState('')
 
@@ -47,15 +47,14 @@ const useStore = () => {
   const createNote = useCallback(note => {
     setSelectedNote(note)
     noteAPI.create(note)
-    .then(data => {
+    .then(() => {
       getAllNotes(selectedFolderID)  // always fetch by folder ID, it should work if folder id is null too
-      // getNote(data)
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:54 ~ createNote ~ error:", error)
       return 
     })
-  }, [getAllNotes, getNote, selectedFolderID])
+  }, [getAllNotes, selectedFolderID])
 
   const createFolder = useCallback(folder => {
     folderAPI.create(folder)
@@ -109,15 +108,12 @@ const useStore = () => {
 
   // on first load, fetch all folders
   useEffect(() => {
-    console.log('Get all folders')
     getAllFolders()
   }, [getAllFolders])  // this cannot depend on folders, or else it refetches folders everytime
 
   // anytime folders are loaded, make sure a folder is selected (defaults to 0)
   useEffect(() => {
-    console.log('Set selected useEffect')
     if (!selectedFolderID && folders.length) {
-      console.log('Set selected folder')
       setSelectedFolderID(folders[0]?.id)
     }
   }, [folders, selectedFolderID])
@@ -125,7 +121,6 @@ const useStore = () => {
   // anytime a folder is selected, fetch all notes for that folder
   useEffect(() => {
     if (selectedFolderID) {
-      console.log('fetching notes by folder')
       getAllNotes(selectedFolderID)
     }
   }, [getAllNotes, selectedFolderID])
