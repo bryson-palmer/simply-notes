@@ -34,7 +34,7 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
 
   useEffect(() => {
     if (Boolean(titleInput) && isNewNote) return titleInput.focus({ focusVisible: true })
-  }, [isNewNote, titleInput, values.title])
+  }, [isNewNote, titleInput])
   
   useEffect(() => {
     if (titleInput) {
@@ -71,23 +71,21 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
         }}
       />
 
-      {isNewNote && !values.title ? null : (
-        <TextField
-          fullWidth
-          multiline
-          id='body'
-          name='body'
-          variant='standard'
-          value={values.body?.trimStart() ?? ''}
-          onChange={handleChange}
-          sx={{
-            '& [class*=MuiInputBase-root]': { color: palette.grey[400] },
-            '& [class*=MuiInputBase-root]:before': { border: 'none' },
-            '& [class*=MuiInputBase-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
-            '& [class*=MuiInputBase-root]:after': { border: 'none' },
-          }}
-        />
-      )}
+      <TextField
+        fullWidth
+        multiline
+        id='body'
+        name='body'
+        variant='standard'
+        value={values.body?.trimStart() ?? ''}
+        onChange={handleChange}
+        sx={{
+          '& [class*=MuiInputBase-root]': { color: palette.grey[400] },
+          '& [class*=MuiInputBase-root]:before': { border: 'none' },
+          '& [class*=MuiInputBase-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
+          '& [class*=MuiInputBase-root]:after': { border: 'none' },
+        }}
+      />
     </Box>
   )
 }
