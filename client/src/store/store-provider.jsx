@@ -7,15 +7,18 @@ import { folderAPI } from '@/apis/folderAPI'
 
 const useStore = () => {
   const [folders, setFolders] = useState([])
+  const [loadingNotes, setLoadingNotes] = useState(false)
   const [notes, setNotes] = useState([])
   const [selectedNote, setSelectedNote] = useState({})
   const [selectedFolderID, setSelectedFolderID] = useState('')
 
   const getAllNotes = useCallback((folderID) => {
+    setLoadingNotes(true)
     noteAPI.getAll(folderID)
     .then(data => {
       setNotes(data)
     })
+    .then(() => setLoadingNotes(false))
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:19 ~ getAllNotes ~ error:", error)
       return 
@@ -140,6 +143,7 @@ const useStore = () => {
   }, [notes, selectedNote]) // anytime these two variables change, trigger this useEffect
 
   return {
+    loadingNotes,
     notes,
     selectedNote,
     getNote: id => getNote(id),
