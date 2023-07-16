@@ -48,10 +48,10 @@ const useStore = () => {
   }, [])
 
   const createNote = useCallback(note => {
-    setSelectedNote(note)
     noteAPI.create(note)
-    .then(() => {
+    .then(data => {
       getAllNotes(selectedFolderID)  // always fetch by folder ID, it should work if folder id is null too
+      setSelectedNote(data)
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:54 ~ createNote ~ error:", error)
@@ -74,6 +74,19 @@ const useStore = () => {
     setSelectedNote(note)  // to avoid overwriting user as he continues typing
     noteAPI.update(note)
     .then(() => {
+      /*
+        Moving the setSelectedNote(note/data) to before the call with the note or after the response with data doesn't matter (that I can tell) for these issues.
+          - An empty title in the NoteForm, doesn't clear the title in the selectedNote in the NoteList.
+          - With slower network connections or throttling, updating a note lags behind and makes for a janky typing experience.
+          - When saving a new note, note[0] flashes on the screen for a moment before the newly created note is selected.
+
+        I think the solution needs to be made in the NoteForm where we better handle a few things.
+          1. Create a local state for form values and display them always as the source of truth. They will be the latest changes to the form. The saving will just happen behind the scenes.
+          2. Make sure that the initialValues are being set up properly.
+          3. Perhaps avoid submitting the values if we're currently submitting or loading.
+
+        More testing is needed. Maybe even write some tests.
+      */
       // nothing anymore. We know the note contents already (it's in note variable)
       // unless... unless it has a newer note modification date, then we need to load the newer data in
       // TODO: what it says above
@@ -129,6 +142,7 @@ const useStore = () => {
   }, [getAllNotes, selectedFolderID])
   
   useEffect(() => {
+    if (loadingNotes) return // Don't continue with side effect if loading is true
     const isSelectedInNotes = notes.some(note => note.id === selectedNote.id)
     // Deleted all notes
     if (!notes?.length && selectedNote.id) {
@@ -140,7 +154,7 @@ const useStore = () => {
     } else {
       setSelectedNote(selectedNote)
     }
-  }, [notes, selectedNote]) // anytime these two variables change, trigger this useEffect
+  }, [loadingNotes, notes, selectedNote]) // anytime these three variables change, trigger this useEffect
 
   return {
     loadingNotes,
