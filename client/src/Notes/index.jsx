@@ -76,12 +76,6 @@ const Notes = React.memo(() => {
         </FlexBetween>
 
         <FlexBetween>
-          <StyledTooltip
-            arrow
-            title="New note"
-            TransitionComponent={Fade}
-            TransitionProps={{ timeout: 400 }}
-          >
             <IconButton
               onClick={handleIsNewNote}
               sx={{
@@ -89,10 +83,16 @@ const Notes = React.memo(() => {
                 '&:hover': { color: theme.palette.secondary[100] },
               }}
             >
-              <AddIcon sx={{ fontSize: "1rem", marginRight: "-4px" }} />
+              <StyledTooltip
+                arrow
+                title='New note'
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 400 }}
+              >
+                <AddIcon sx={{ fontSize: '1rem', marginRight: '-4px' }} />
+              </StyledTooltip>
               <CreateIcon />
             </IconButton>
-          </StyledTooltip>
         </FlexBetween>
       </FlexBetween>
 
