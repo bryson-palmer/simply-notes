@@ -4,13 +4,14 @@ import { Form, Formik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 
-import { Box, TextField, useTheme } from "@mui/material"
+import { Box, TextField, Typography, useTheme } from "@mui/material"
 
-import { useCreateNote, useNotes, useSelectedNote, useUpdateNote, useSelectedFolderID } from "@/store/store-selectors"
+import { useCreateNote, useFolders, useNotes, useSelectedNote, useUpdateNote, useSelectedFolderID } from "@/store/store-selectors"
 import FlexColumn from "@/UI/FlexColumn"
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
+  const folders = useFolders()
   const {handleChange, submitForm, values } = formik
 
   const form = document.getElementById('form')
@@ -45,6 +46,16 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
       })
     }
   }, [titleInput])
+
+  if (!folders.length) {
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <Typography variant='h3' color={palette.secondary[400]}>
+          Add a new folder to get started
+        </Typography>
+      </div>
+    )
+  }
   
   return (
     <Box id='form' display='flex' flexDirection='column'>
