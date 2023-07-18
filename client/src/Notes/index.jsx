@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 
-import { Box, IconButton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Fade, IconButton, Typography, useMediaQuery } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import CreateIcon from '@mui/icons-material/Create'
 import FolderIcon from '@mui/icons-material/Folder'
@@ -48,6 +48,8 @@ const Notes = React.memo(() => {
           <StyledTooltip
             arrow
             title="Folder list"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 400 }}
             sx={{ display: { sm: "flex", md: "none" } }}
           >
             <IconButton
@@ -74,7 +76,12 @@ const Notes = React.memo(() => {
         </FlexBetween>
 
         <FlexBetween>
-          <StyledTooltip arrow title="New note">
+          <StyledTooltip
+            arrow
+            title="New note"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 400 }}
+          >
             <IconButton
               onClick={handleIsNewNote}
               sx={{

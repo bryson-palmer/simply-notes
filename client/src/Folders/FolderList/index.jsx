@@ -1,22 +1,24 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import {
+  Box,
+  Fade,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  useTheme,
-  IconButton,
-  Box,
   Menu,
   MenuItem,
+  useTheme,
 } from '@mui/material'
 
 import { FolderOpen, CreateNewFolder, MoreVert } from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
 import FolderForm from '@/Folders/FolderForm'
 import { useDeleteFolder, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
+import StyledTooltip from '@/UI/SyledTooltip'
 
 const FolderList = () => {
   const { palette } = useTheme()
@@ -89,21 +91,28 @@ const FolderList = () => {
           marginBottom: '1rem',
         }}
         secondaryAction={
-          <IconButton
-            onClick={handleNewFolder}
-            sx={{
-              '& [class*=MuiListItemSecondaryAction-root': {
-                right: 0
-              }
-            }}
+          <StyledTooltip
+            arrow
+            title="Add folder"
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 400 }}
           >
-            <CreateNewFolder
+            <IconButton
+              onClick={handleNewFolder}
               sx={{
-                color: palette.secondary[400],
-                '&:hover': { color: palette.secondary[100] },
+                '& [class*=MuiListItemSecondaryAction-root': {
+                  right: 0
+                }
               }}
-            />
-          </IconButton>
+            >
+              <CreateNewFolder
+                sx={{
+                  color: palette.secondary[400],
+                  '&:hover': { color: palette.secondary[100] },
+                }}
+              />
+            </IconButton>
+          </StyledTooltip>
         }
       >
       </ListItem>
@@ -161,7 +170,7 @@ const FolderList = () => {
                         '& [class*=MuiPaper-root]': {
                           backgroundColor: palette.background.default,
                           color: palette.grey[400],
-                          border: `0.5px solid ${palette.secondary[400]}`,
+                          border: `1px solid ${palette.secondary[200]}`,
                         },
                       }}
                     >
