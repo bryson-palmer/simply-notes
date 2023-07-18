@@ -15,7 +15,7 @@ import {
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 import ListHeader from '@/Notes/ListHeader'
-import { useDeleteNote, useGetNote, useNotes, useSelectedNote } from '@/store/store-selectors'
+import EmptyState from '@/UI/EmptyState'
 
 const NoteList = React.memo(({ setIsNewNote }) => {
   const [listState, setListState] = useState({
@@ -69,6 +69,7 @@ const NoteList = React.memo(({ setIsNewNote }) => {
       }}
     >
       <ListHeader listState={listState} setListState={setListState} />
+      {notes.length ? (
       <List>
         {notes.map(({ id, title, body }) => {
           const labelId = `notes-list-label-${id}`
@@ -156,6 +157,7 @@ const NoteList = React.memo(({ setIsNewNote }) => {
           )
         })}
       </List>
+      ) : <EmptyState text='Oops! No notes have been created yet.' />}
     </div>
   )
 })
