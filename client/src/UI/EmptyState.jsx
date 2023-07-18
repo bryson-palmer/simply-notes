@@ -16,12 +16,18 @@ const EmptyState = ({ EmptyIcon, isNewFolder=false, text='' }) => {
           sx={{ opacity: 0.6 }}
         >
           {text}
-          <Box mt='1rem' position='relative'>
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignContent='center'
+            mt='1rem'
+            position='relative'
+          >
             <SvgIcon
               sx={{
                 color: palette.grey[100],
                 fontSize: '7rem',
-                position: 'relative',
+                position: 'absolute',
                 background: 'transparent',
                 stroke: palette.background.default,
                 zIndex: 1
@@ -35,9 +41,8 @@ const EmptyState = ({ EmptyIcon, isNewFolder=false, text='' }) => {
                 sx={{
                     color: palette.grey[100],
                     fontSize: '4rem',
-                    position: 'relative',
-                    bottom: '94px',
-                    left: 0,
+                    position: 'absolute',
+                    top: '24px',
                 }}
               >
                 <EmptyIcon />
