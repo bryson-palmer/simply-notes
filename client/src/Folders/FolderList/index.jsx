@@ -91,12 +91,6 @@ const FolderList = () => {
           marginBottom: '1rem',
         }}
         secondaryAction={
-          <StyledTooltip
-            arrow
-            title="Add folder"
-            TransitionComponent={Fade}
-            TransitionProps={{ timeout: 400 }}
-          >
             <IconButton
               onClick={handleNewFolder}
               sx={{
@@ -104,6 +98,12 @@ const FolderList = () => {
                   right: 0
                 }
               }}
+          >
+            <StyledTooltip
+              arrow
+              title="Add folder"
+              TransitionComponent={Fade}
+              TransitionProps={{ timeout: 400 }}
             >
               <CreateNewFolder
                 sx={{
@@ -111,8 +111,8 @@ const FolderList = () => {
                   '&:hover': { color: palette.secondary[100] },
                 }}
               />
+            </StyledTooltip>
             </IconButton>
-          </StyledTooltip>
         }
       >
       </ListItem>
