@@ -65,7 +65,7 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
         id='title'
         name='title'
         variant='standard'
-        placeholder='What would you like ToDo?'
+        placeholder='Well, hello there.'
         value={values?.title ?? ''}
         onChange={handleChange}
         sx={{
