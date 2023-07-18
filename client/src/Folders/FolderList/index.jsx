@@ -14,7 +14,12 @@ import {
   useTheme,
 } from '@mui/material'
 
-import { FolderOpen, CreateNewFolder, MoreVert } from '@mui/icons-material'
+import {
+  CreateNewFolder,
+  Folder as FolderIcon,
+  FolderOpen,
+  MoreVert
+} from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
 import FolderForm from '@/Folders/FolderForm'
 import { useDeleteFolder, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
@@ -33,6 +38,7 @@ const FolderList = () => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const open = Boolean(anchorEl)
+  const Icon = () => <FolderIcon />
  
   const handleNewFolder = useCallback(() => {
     // if we are about to add a new folder form, remove form from other folder
@@ -235,7 +241,7 @@ const FolderList = () => {
             )
           })
         ) : (
-          <EmptyState text={isNewFolder ? '' : 'Add a folder to get started.'} />
+          <EmptyState EmptyIcon={Icon} isNewFolder={isNewFolder} text={'No folders'} />
         )
         }
       </List>
