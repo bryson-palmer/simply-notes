@@ -12,7 +12,7 @@ import {
   ListItemText,
   Typography
 } from '@mui/material'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import { DeleteForever as DeleteForeverIcon, Description as DescriptionIcon } from '@mui/icons-material'
 
 import ListHeader from '@/Notes/ListHeader'
 import EmptyState from '@/UI/EmptyState'
@@ -28,6 +28,8 @@ const NoteList = React.memo(({ setIsNewNote }) => {
   const selectedNote = useSelectedNote()
   const getNote = useGetNote()
   const deleteNote = useDeleteNote()
+
+  const Icon = () => <DescriptionIcon />
   
   const handleCheckToggle = useCallback(value => () => {
     const currentIndex = listState.checkedIds.indexOf(value)
@@ -157,7 +159,7 @@ const NoteList = React.memo(({ setIsNewNote }) => {
           )
         })}
       </List>
-      ) : <EmptyState text='Oops! No notes have been created yet.' />}
+      ) : <EmptyState EmptyIcon={Icon} text='No notes' />}
     </div>
   )
 })
