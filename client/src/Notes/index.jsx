@@ -10,7 +10,7 @@ import Drawer from '@/Drawer'
 import FolderList from '@/Folders/FolderList'
 import NoteForm from '@/Notes/NoteForm'
 import NoteList from '@/Notes/NoteList'
-import { useNotes } from '@/store/store-selectors'
+import { useFolders, useNotes } from '@/store/store-selectors'
 import FlexBetween from '@/UI/FlexBetween'
 import FlexColumn from '@/UI/FlexColumn'
 import StyledTooltip from '@/UI/SyledTooltip'
@@ -21,6 +21,7 @@ const Notes = React.memo(() => {
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const theme = useTheme()
+  const folders = useFolders()
   const notes = useNotes()
 
   const isSmallerThanMedium = useMediaQuery(theme.breakpoints.down('md'))
@@ -77,10 +78,13 @@ const Notes = React.memo(() => {
 
         <FlexBetween>
             <IconButton
+              disabled={!folders.length}
               onClick={handleIsNewNote}
               sx={{
                 color: theme.palette.secondary[400],
                 '&:hover': { color: theme.palette.secondary[100] },
+                '&.Mui-disabled': { color: theme.palette.secondary[400], opacity: 0.5}
+
               }}
             >
               <StyledTooltip
