@@ -47,18 +47,18 @@ const Notes = React.memo(() => {
         <FlexBetween>
           <StyledTooltip
             arrow
-            title="Folder list"
+            title='Folder list'
             TransitionComponent={Fade}
             TransitionProps={{ timeout: 400 }}
-            sx={{ display: { sm: "flex", md: "none" } }}
+            sx={{ display: { sm: 'flex', md: 'none' } }}
           >
             <IconButton
               onClick={toggleDrawer}
               sx={{
-                display: { sm: "flex", md: "none" },
+                display: { sm: 'flex', md: 'none' },
                 paddingRight: '1rem',
                 color: theme.palette.secondary[400],
-                "&:hover": { color: theme.palette.secondary[100] },
+                '&:hover': { color: theme.palette.secondary[100] },
               }}
             >
               <FolderIcon />
@@ -66,9 +66,9 @@ const Notes = React.memo(() => {
           </StyledTooltip>
 
           <Typography
-            variant="h3"
+            variant='h3'
             color={theme.palette.secondary[400]}
-            padding="2rem 0"
+            padding='2rem 0'
             sx={{ fontSize: { xs: '0.875rem', sm: '1.25rem' }}}
           >
             Well, hello there. What would you like to do?
@@ -86,7 +86,7 @@ const Notes = React.memo(() => {
               onClick={handleIsNewNote}
               sx={{
                 color: theme.palette.secondary[400],
-                "&:hover": { color: theme.palette.secondary[100] },
+                '&:hover': { color: theme.palette.secondary[100] },
               }}
             >
               <AddIcon sx={{ fontSize: "1rem", marginRight: "-4px" }} />
