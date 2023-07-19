@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
@@ -11,6 +11,7 @@ import Notes from '@/Notes'
 import { themeSettings } from '@/theme'
 
 const App = () => {
+  const [isNewNote, setIsNewNote] = useState(false)
   const theme = useMemo(() => createTheme(themeSettings), [])
 
   return (
@@ -21,10 +22,13 @@ const App = () => {
               <CssBaseline />
 
               <Box width='100%' height='100%' padding='1rem 2rem 4rem 2rem'>
-                <Navbar />
+                <Navbar setIsNewNote={setIsNewNote} />
                 <Routes>
-                  <Route index element={<Notes />} />
-                  <Route path='notes' element={<Notes />} />
+                  <Route index element={<Notes isNewNote={isNewNote} setIsNewNote={setIsNewNote} />} />
+                  <Route
+                    path='notes'
+                    element={<Notes isNewNote={isNewNote} setIsNewNote={setIsNewNote} />}
+                  />
                   <Route path='chat' element={<Typography variant="h2" color={theme.palette.secondary[400]}>Lets chat</Typography>} />
                   {/* <Route path='*' element={<404 />} /> */}
                 </Routes>
