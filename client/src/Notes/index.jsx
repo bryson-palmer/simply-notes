@@ -10,10 +10,8 @@ import Drawer from '@/Drawer'
 import FolderList from '@/Folders/FolderList'
 import NoteForm from '@/Notes/NoteForm'
 import NoteList from '@/Notes/NoteList'
-import { useFolders, useNotes } from '@/store/store-selectors'
-import FlexBetween from '@/UI/FlexBetween'
-import FlexColumn from '@/UI/FlexColumn'
-import StyledTooltip from '@/UI/SyledTooltip'
+import { useNotes } from '@/store/store-selectors'
+import FlexColumn from '@/ui/FlexColumn'
 
 
 const Notes = React.memo(() => {

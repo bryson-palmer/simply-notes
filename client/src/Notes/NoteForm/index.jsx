@@ -7,7 +7,7 @@ import * as yup from 'yup'
 import { Box, TextField, Typography, useTheme } from "@mui/material"
 
 import { useCreateNote, useFolders, useNotes, useSelectedNote, useUpdateNote, useSelectedFolderID } from "@/store/store-selectors"
-import FlexColumn from "@/UI/FlexColumn"
+import FlexColumn from "@/ui/FlexColumn"
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
@@ -157,6 +157,8 @@ const NoteForm = React.memo(({ isNewNote=false, setIsNewNote }) => {
   const initialValues = getInitialValues({ isNewNote, selectedNote, selectedFolderID })
 
   useEffect(() => {
+    // Need to watch for loading as well
+    // Like if (loading) return
     if (!notes.length) {
       setIsNewNote(true)
     } else {

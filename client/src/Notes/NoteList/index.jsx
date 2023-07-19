@@ -15,7 +15,7 @@ import {
 import { DeleteForever as DeleteForeverIcon, Description as DescriptionIcon } from '@mui/icons-material'
 
 import ListHeader from '@/Notes/ListHeader'
-import EmptyState from '@/UI/EmptyState'
+import EmptyState from '@/ui/EmptyState'
 
 const NoteList = React.memo(({ setIsNewNote }) => {
   const [listState, setListState] = useState({
