@@ -1,17 +1,17 @@
 import { useCallback } from 'react'
-import { PropTypes } from 'prop-types/prop-types'
 import { Link } from 'react-router-dom'
 
 import { Add as AddIcon, Create as CreateIcon, Pix as PixIcon } from '@mui/icons-material'
 import { Button, Fade, IconButton,  useTheme } from '@mui/material'
 
-import { useFolders } from '@/store/store-selectors'
+import { useFolders, useSetIsNewNote } from '@/store/store-selectors'
 import FlexBetween from '@/ui/FlexBetween'
 import StyledTooltip from '@/ui/StyledTooltip'
 
-const Navbar = ({ setIsNewNote }) => {
+const Navbar = () => {
   const { palette } = useTheme()
   const folders = useFolders()
+  const setIsNewNote = useSetIsNewNote()
 
   const handleIsNewNote = useCallback(() => {
     setIsNewNote(true)
@@ -20,7 +20,6 @@ const Navbar = ({ setIsNewNote }) => {
   return (
     <FlexBetween
       m='0 -4px'
-      mb='0.25rem'
       p='0.5rem 0rem'
       color={palette.grey[300]}
     >
@@ -78,8 +77,5 @@ const Navbar = ({ setIsNewNote }) => {
 }
 
 Navbar.displayName = 'Navbar'
-Navbar.propTypes = {
-  setIsNewNote: PropTypes.func
-}
 
 export default Navbar
