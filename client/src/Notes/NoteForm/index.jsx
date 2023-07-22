@@ -66,7 +66,11 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
   }
   
   return (
-    <Box id='form' display='flex' flexDirection='column'>
+    <Box
+      id='form'
+      display='flex'
+      flexDirection='column'
+    >
       <TextField
         fullWidth
         multiline
@@ -80,7 +84,8 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
           '& [class*=MuiInputBase-root]': {
               color: palette.secondary[400],
               fontWeight: '700',
-              fontSize: '1.25rem'
+              fontSize: '1.25rem',
+              padding: 0
             },
           '& [class*=MuiInputBase-root]:before': { border: 'none' },
           '& [class*=MuiInputBase-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
@@ -99,7 +104,7 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
         value={values.body?.trimStart() ?? ''}
         onChange={handleChange}
         sx={{
-          '& [class*=MuiInputBase-root]': { color: palette.grey[400] },
+          '& [class*=MuiInputBase-root]': { color: palette.grey[400], padding: 0, alignItems: 'initial' },
           '& [class*=MuiInputBase-root]:before': { border: 'none' },
           '& [class*=MuiInputBase-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
           '& [class*=MuiInputBase-root]:after': { border: 'none' },
@@ -147,9 +152,11 @@ const getInitialValues = ({ isNewNote, selectedNote, selectedFolderID }) => {
   return (isNewNote ? { id: '', title: '', body: '', folder: selectedFolderID } : selectedNote )
 }
 
-const NoteForm = React.memo(({ isNewNote=false, setIsNewNote }) => {
+const NoteForm = React.memo(() => {
+  const isNewNote = useIsNewNote()
   const notes = useNotes()
   const selectedNote = useSelectedNote()
+  const setIsNewNote = useSetIsNewNote()
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
   const selectedFolderID = useSelectedFolderID()
@@ -182,12 +189,12 @@ const NoteForm = React.memo(({ isNewNote=false, setIsNewNote }) => {
       validationSchema={validationSchema}
     >
       {formik => (
-          <Form onSubmit={formik.handleSubmit}>
-            <NoteFormComponent
-              formik={formik}
-              isNewNote={isNewNote}
-            />
-          </Form>
+        <Form onSubmit={formik.handleSubmit}>
+          <NoteFormComponent
+            formik={formik}
+            isNewNote={isNewNote}
+          />
+        </Form>
       )}
     </Formik>
   )
@@ -202,9 +209,7 @@ NoteForm.propTypes = {
       body: PropTypes.string,
       folder: PropTypes.string,
     })
-  })),
-  isNewNote: PropTypes.bool,
-  setIsNewNote: PropTypes.func,
+  }))
 }
 
 export default NoteForm
