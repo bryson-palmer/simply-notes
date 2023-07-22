@@ -83,13 +83,16 @@ const NoteList = React.memo(() => {
     >
       <ListHeader listState={listState} setListState={setListState} />
       {notes.length ? (
-        <List sx={{
+        <List
+          sx={{
           height: '88vh',
           overflow: 'auto',
           paddingRight: '0.5rem',
-          borderTop: `thin solid ${palette.grey[900]}`,
-          borderRight: `thin solid ${palette.grey[900]}`,
-        }}>
+            borderTop: `thin solid ${palette.grey[800]}`,
+            borderRight: isDesktop ? `thin solid ${palette.grey[800]}` : 0,
+            borderTopRightRadius: isDesktop ? '0.5rem' : 0
+          }}
+        >
         {notes.map(({ id, title, body }) => {
           const labelId = `notes-list-label-${id}`
 
@@ -103,7 +106,10 @@ const NoteList = React.memo(() => {
                 borderRadius: '0.5rem',
                 paddingLeft: '1rem',
                 marginLeft: '0.5rem',
-                backgroundColor: id === selectedNote.id ? palette.background.light : 'inherit',
+                  backgroundColor:
+                    id === selectedNote.id
+                      ? palette.background.light
+                      : 'inherit',
               }}
               secondaryAction={
                 <IconButton
@@ -150,7 +156,7 @@ const NoteList = React.memo(() => {
                 onClick={handleSelectNote(id)}
                 sx={{
                   padding: '0 38px 0 0 !important',
-                  '&:hover': { backgroundColor: 'transparent'},
+                    '&:hover': { backgroundColor: 'transparent' }
                 }}
               >
                 <ListItemText
@@ -159,7 +165,11 @@ const NoteList = React.memo(() => {
                     color: palette.secondary[400],
                   }}
                   // take selectedNote as source of truth for title and body, because on update we do not update selectedNote
-                  primary={(selectedNote.title && id === selectedNote.id) ? selectedNote.title : title}
+                    primary={
+                      selectedNote.title && id === selectedNote.id
+                        ? selectedNote.title
+                        : title
+                    }
                   primaryTypographyProps={{ noWrap: true }}
                   secondary={
                     <Typography
@@ -169,7 +179,9 @@ const NoteList = React.memo(() => {
                         color: palette.grey[600],
                       }}
                     >
-                      {(selectedNote.body && id === selectedNote.id) ? selectedNote.body : body}
+                        {selectedNote.body && id === selectedNote.id
+                          ? selectedNote.body
+                          : body}
                     </Typography>
                   }
                 />
