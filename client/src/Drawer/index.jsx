@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import { PropTypes } from 'prop-types/prop-types'
 
@@ -9,21 +9,22 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 
 import FolderList from '@/Folders/FolderList'
 import NoteList from '@/Notes/NoteList'
+import { useNotes, useScreenSize } from '@/store/store-selectors'
 
 const Drawer = React.memo(({
+  drawerWidth,
   openDrawer = false,
-  setIsNewNote,
   toggleDrawer
 }) => {
   const { palette } = useTheme()
+  const notes = useNotes()
+  const screenSize = useScreenSize()
+
+  const isDesktop = useMemo(() => screenSize === 'desktop' || screenSize === 'large', [screenSize])
 
   const StyledBox = styled(Box)(() => ({
-    backgroundColor: palette.background.default,
     display: 'flex',
-    width: 'clamp(264px, calc(100vw - 1rem), 400px)',
-    height: '100%',
-    borderTop: `1px solid ${palette.grey[800]}`,
-    paddingLeft: '1rem'
+    transition: 'all 0.35s ease-in-out'
   }))
 
   return (
@@ -32,19 +33,28 @@ const Drawer = React.memo(({
       open={openDrawer}
       onClose={toggleDrawer}
       onOpen={toggleDrawer}
+      variant={isDesktop ? 'permanent' : 'temporary'}
+      transitionDuration={400}
     >
       <Global
         styles={{
           '.MuiDrawer-root > .MuiPaper-root': {
-            marginTop: 151,
-            borderTopRightRadius: 8
+            width: `clamp(264px, calc(100% - 1rem), ${drawerWidth()}px)`,
+            height: '93vh',
+            backgroundColor: palette.background.default,
+            overflow: 'hidden',
+            marginTop: isDesktop ? 68 : 61,
+            borderTopRightRadius: isDesktop ? 0 : 8,
+            borderTop: isDesktop ? 'none' : `thin solid ${palette.grey[800]}`,
+            borderRight: isDesktop ? 'none' : `thin solid ${palette.grey[800]}`,
+            transition: 'all 0.35s ease-in-out'
           },
         }}
       />
 
       <StyledBox>
         <FolderList />
-        <NoteList setIsNewNote={setIsNewNote} />
+        <NoteList key={`${notes[0]?.folder}`} />
       </StyledBox>
     </SwipeableDrawer>
   )
@@ -52,9 +62,9 @@ const Drawer = React.memo(({
 
 Drawer.displayName = 'Drawer'
 Drawer.propTypes = {
+  drawerWidth: PropTypes.func,
   openDrawer: PropTypes.bool,
-  setIsNewNote: PropTypes.func,
-  toggleDrawer: PropTypes.func
+  toggleDrawer: PropTypes.func,
 }
 
 export default Drawer
