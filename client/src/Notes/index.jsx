@@ -1,25 +1,26 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 
-import { Box, Fade, IconButton, Typography, useMediaQuery } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
-import CreateIcon from '@mui/icons-material/Create'
-import FolderIcon from '@mui/icons-material/Folder'
-import { useTheme } from '@emotion/react'
+import { Box, Button, useTheme } from '@mui/material'
+import { ArrowBackIosNew as ArrowBackIosNewIcon } from '@mui/icons-material'
 
 import Drawer from '@/Drawer'
-import FolderList from '@/Folders/FolderList'
 import NoteForm from '@/Notes/NoteForm'
 import { useScreenSize } from '@/store/store-selectors'
 
 const Notes = React.memo(() => {
-  const [isNewNote, setIsNewNote] = useState(false)
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const theme = useTheme()
-  const folders = useFolders()
-  const notes = useNotes()
+  const screenSize = useScreenSize()
+  
+  const { palette } = theme
+  const isDesktop = screenSize === 'large' || screenSize === 'desktop'
 
-  const isSmallerThanMedium = useMediaQuery(theme.breakpoints.down('md'))
+  const drawerWidth = () => {
+    if (screenSize === 'large') return 600
+    if (screenSize === 'tablet') return 500
+    if (screenSize === 'desktop' || screenSize === 'mobile') return 400
+  }
 
   const toggleDrawer = (event) => {
     if (
@@ -40,62 +41,49 @@ const Notes = React.memo(() => {
       height='100vh'
       overflow='hidden'
       flexDirection={isDesktop ? 'row' : 'column'}
+    >
+      <Box component='aside' aria-label='folders notes' transition='all 0.35s ease-in-out'>
+        <Box height='3.75rem' paddingLeft='0.5rem' transition='all 0.35s ease-in-out'>
+          <Button
+            disableRipple
+            onClick={toggleDrawer}
+            startIcon={<ArrowBackIosNewIcon />}
+            sx={{
+              display: { sm: 'flex', md: 'none' },
+              justifyContent: 'flex-start',
+              color: palette.grey[400],
+              fontSize: { xs: '0.6rem', sm: '0.75rem' },
+              '&:hover': { color: palette.secondary[100] },
+              '& [class*=MuiButton-startIcon]': {
+                marginRight: '6px',
+                '& > svg': {
+                  fontSize: { xs: '1.2rem', sm: '1.5rem', md: 'none' },
+                },
+              }
+            }}
           >
-            <IconButton
-              onClick={toggleDrawer}
-              sx={{
-                display: { sm: 'flex', md: 'none' },
-                paddingRight: '1rem',
-                color: theme.palette.secondary[400],
-                '&:hover': { color: theme.palette.secondary[100] },
-              }}
-            >
-              <FolderIcon />
-            </IconButton>
-          </StyledTooltip>
+            Folders
+          </Button>
+        </Box>
 
-          <Typography
-            variant='h3'
-            color={theme.palette.secondary[400]}
-            padding='2rem 0'
-            sx={{ fontSize: { xs: '0.875rem', sm: '1.25rem' }}}
-          >
-            Well, hello there. What would you like to do?
-          </Typography>
-        </FlexBetween>
-
-        <FlexBetween>
-            <IconButton
-              disabled={!folders.length}
-              onClick={handleIsNewNote}
-              sx={{
-                color: theme.palette.secondary[400],
-                '&:hover': { color: theme.palette.secondary[100] },
-                '&.Mui-disabled': { color: theme.palette.secondary[400], opacity: 0.5}
-
-              }}
-            >
-              <StyledTooltip
-                arrow
-                title='New note'
-                TransitionComponent={Fade}
-                TransitionProps={{ timeout: 400 }}
-              >
-                <AddIcon sx={{ fontSize: '1rem', marginRight: '-4px' }} />
-              </StyledTooltip>
-              <CreateIcon />
-            </IconButton>
-        </FlexBetween>
-      </FlexBetween>
-
-      <Box display='flex' height='83.5vh'>
-        {isSmallerThanMedium ? null : (
-          <>
-            <FolderList />
-            <NoteList key={`${notes[0]?.folder}`} setIsNewNote={setIsNewNote} />
-          </>
-        )}
-        <NoteForm isNewNote={isNewNote} setIsNewNote={setIsNewNote} />
+        <Drawer
+          openDrawer={openDrawer}
+          toggleDrawer={toggleDrawer}
+          drawerWidth={drawerWidth}
+        />
+      </Box>
+      <Box
+        component='main'
+        sx={{
+          width: isDesktop ? `calc(100% - ${drawerWidth()}px)` : '100%',
+          transition: 'all 0.35s ease-in-out',
+          height: '93vh',
+          overflow: 'auto',
+          padding: isDesktop ? 3 : 3.5,
+          paddingTop: isDesktop ? '60px' : 'initial'
+        }}
+      >
+        <NoteForm />
       </Box>
     </Box>
   );
