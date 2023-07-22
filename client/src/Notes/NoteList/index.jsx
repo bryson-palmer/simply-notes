@@ -3,6 +3,7 @@ import { PropTypes } from 'prop-types/prop-types'
 
 import { useTheme } from '@emotion/react'
 import {
+  Box,
   Checkbox,
   IconButton,
   List,
@@ -39,6 +40,7 @@ const NoteList = React.memo(() => {
   const getNote = useGetNote()
   const deleteNote = useDeleteNote()
 
+  const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const notesListWidth = useMemo(() => {
     if (screenSize === 'large') return 350
     if (screenSize === 'tablet') return 300
@@ -85,112 +87,124 @@ const NoteList = React.memo(() => {
       {notes.length ? (
         <List
           sx={{
-          height: '88vh',
-          overflow: 'auto',
-          paddingRight: '0.5rem',
+            height: '88vh',
+            overflow: 'auto',
+            paddingRight: '0.5rem',
             borderTop: `thin solid ${palette.grey[800]}`,
             borderRight: isDesktop ? `thin solid ${palette.grey[800]}` : 0,
             borderTopRightRadius: isDesktop ? '0.5rem' : 0
           }}
         >
-        {notes.map(({ id, title, body }) => {
-          const labelId = `notes-list-label-${id}`
+          {notes.map(({ id, title, body }) => {
+            const labelId = `notes-list-label-${id}`
 
-          return (
-            <ListItem
-              dense
-              disablePadding
-              key={labelId}
-              sx={{
-                width: 'calc(100% - 0.5rem)',
-                borderRadius: '0.5rem',
-                paddingLeft: '1rem',
-                marginLeft: '0.5rem',
+            return (
+              <ListItem
+                dense
+                disablePadding
+                key={labelId}
+                sx={{
+                  width: 'calc(100% - 0.5rem)',
+                  borderRadius: '0.5rem',
+                  paddingLeft: '1rem',
+                  marginLeft: '0.5rem',
                   backgroundColor:
                     id === selectedNote.id
                       ? palette.background.light
                       : 'inherit',
-              }}
-              secondaryAction={
-                <IconButton
-                  disableRipple
-                  onClick={() => handleDeleteNote(id)}
-                  aria-label={`delete-note -${id}`}
-                  edge='end'
-                  sx={{
-                    color: palette.grey[300],
-                    '&:hover': { color: palette.primary[200] },
-                  }}
-                >
-                  <DeleteForeverIcon />
-                </IconButton>
-              }
-            >
-              <IconButton
-                disableRipple
-                size='small'
-                onClick={handleCheckToggle(id)}
-              >
-                <ListItemIcon
-                  sx={{
-                    '&.MuiListItemIcon-root': { minWidth: 'auto' }
-                  }}
-                >
-                  <Checkbox
+                }}
+                secondaryAction={
+                  <IconButton
                     disableRipple
-                    edge='start'
-                    checked={listState.checkedIds.includes(id)}
-                    tabIndex={-1}
-                    inputProps={{ 'aria-labelledby': labelId }}
+                    onClick={() => handleDeleteNote(id)}
+                    aria-label={`delete-note -${id}`}
+                    edge='end'
                     sx={{
                       color: palette.grey[300],
-                      padding: '9px 3px 9px 9px',
                       '&:hover': { color: palette.primary[200] },
                     }}
-                  />
-                </ListItemIcon>
-              </IconButton>
-              <ListItemButton
-                disableRipple
-                role={undefined}
-                onClick={handleSelectNote(id)}
-                sx={{
-                  padding: '0 38px 0 0 !important',
-                    '&:hover': { backgroundColor: 'transparent' }
-                }}
+                  >
+                    <DeleteForeverIcon />
+                  </IconButton>
+                }
               >
-                <ListItemText
-                  id={labelId}
+                <IconButton
+                  disableRipple
+                  size='small'
+                  onClick={handleCheckToggle(id)}
+                >
+                  <ListItemIcon
+                    sx={{
+                      '&.MuiListItemIcon-root': { minWidth: 'auto' }
+                    }}
+                  >
+                    <Checkbox
+                      disableRipple
+                      edge='start'
+                      checked={listState.checkedIds.includes(id)}
+                      tabIndex={-1}
+                      inputProps={{ 'aria-labelledby': labelId }}
+                      sx={{
+                        color: palette.grey[300],
+                        padding: '9px 3px 9px 9px',
+                        '&:hover': { color: palette.primary[200] },
+                      }}
+                    />
+                  </ListItemIcon>
+                </IconButton>
+                <ListItemButton
+                  disableRipple
+                  role={undefined}
+                  onClick={handleSelectNote(id)}
                   sx={{
-                    color: palette.secondary[400],
+                    padding: '0 38px 0 0 !important',
+                    '&:hover': { backgroundColor: 'transparent' }
                   }}
-                  // take selectedNote as source of truth for title and body, because on update we do not update selectedNote
+                >
+                  <ListItemText
+                    id={labelId}
+                    sx={{
+                      color: palette.secondary[400],
+                    }}
+                    // take selectedNote as source of truth for title and body, because on update we do not update selectedNote
                     primary={
                       selectedNote.title && id === selectedNote.id
                         ? selectedNote.title
                         : title
                     }
-                  primaryTypographyProps={{ noWrap: true }}
-                  secondary={
-                    <Typography
-                      noWrap
-                      variant='h5'
-                      sx={{
-                        color: palette.grey[600],
-                      }}
-                    >
+                    primaryTypographyProps={{ noWrap: true }}
+                    secondary={
+                      <Typography
+                        noWrap
+                        variant='h5'
+                        sx={{
+                          color: palette.grey[600],
+                        }}
+                      >
                         {selectedNote.body && id === selectedNote.id
                           ? selectedNote.body
                           : body}
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
-          )
-        })}
-      </List>
-      ) : <EmptyState EmptyIcon={Icon} text='No notes' />}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            )
+          })}
+        </List>
+      ) : (
+        <Box
+          sx={{
+            height: '88vh',
+            paddingTop: '0.5rem',
+            borderTop: `thin solid ${palette.grey[800]}`,
+            borderRight: isDesktop ? `thin solid ${palette.grey[800]}` : 0,
+            borderTopRightRadius: isDesktop ? '0.5rem' : 0
+          }}
+        >
+          <EmptyState EmptyIcon={Icon} text='No notes' />
+        </Box>
+      )}
     </div>
   )
 })
