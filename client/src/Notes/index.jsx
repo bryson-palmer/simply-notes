@@ -9,10 +9,7 @@ import { useTheme } from '@emotion/react'
 import Drawer from '@/Drawer'
 import FolderList from '@/Folders/FolderList'
 import NoteForm from '@/Notes/NoteForm'
-import NoteList from '@/Notes/NoteList'
-import { useNotes } from '@/store/store-selectors'
-import FlexColumn from '@/ui/FlexColumn'
-
+import { useScreenSize } from '@/store/store-selectors'
 
 const Notes = React.memo(() => {
   const [isNewNote, setIsNewNote] = useState(false)
@@ -35,21 +32,14 @@ const Notes = React.memo(() => {
 
     setOpenDrawer(!openDrawer)
   }
-
-  const handleIsNewNote = useCallback(() => {
-    setIsNewNote(true)
-  }, [])
  
   return (
-    <FlexColumn>
-      <FlexBetween>
-        <FlexBetween>
-          <StyledTooltip
-            arrow
-            title='Folder list'
-            TransitionComponent={Fade}
-            TransitionProps={{ timeout: 400 }}
-            sx={{ display: { sm: 'flex', md: 'none' } }}
+    <Box
+      display='flex'
+      justifyContent='flex-end'
+      height='100vh'
+      overflow='hidden'
+      flexDirection={isDesktop ? 'row' : 'column'}
           >
             <IconButton
               onClick={toggleDrawer}
@@ -107,13 +97,7 @@ const Notes = React.memo(() => {
         )}
         <NoteForm isNewNote={isNewNote} setIsNewNote={setIsNewNote} />
       </Box>
-
-      <Drawer
-        openDrawer={openDrawer && isSmallerThanMedium}
-        setIsNewNote={setIsNewNote}
-        toggleDrawer={toggleDrawer}
-      />
-    </FlexColumn>
+    </Box>
   );
 })
 

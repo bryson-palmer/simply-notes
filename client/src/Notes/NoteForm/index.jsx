@@ -6,8 +6,16 @@ import * as yup from 'yup'
 
 import { Box, TextField, Typography, useTheme } from "@mui/material"
 
-import { useCreateNote, useFolders, useNotes, useSelectedNote, useUpdateNote, useSelectedFolderID } from "@/store/store-selectors"
-import FlexColumn from "@/ui/FlexColumn"
+import { 
+  useCreateNote,
+  useFolders,
+  useIsNewNote,
+  useNotes,
+  useSelectedNote,
+  useSetIsNewNote,
+  useUpdateNote,
+  useSelectedFolderID
+} from "@/store/store-selectors"
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
@@ -174,14 +182,12 @@ const NoteForm = React.memo(({ isNewNote=false, setIsNewNote }) => {
       validationSchema={validationSchema}
     >
       {formik => (
-        <FlexColumn isNote>
           <Form onSubmit={formik.handleSubmit}>
             <NoteFormComponent
               formik={formik}
               isNewNote={isNewNote}
             />
           </Form>
-        </FlexColumn>
       )}
     </Formik>
   )
