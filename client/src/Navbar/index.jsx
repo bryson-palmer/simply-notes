@@ -5,7 +5,7 @@ import { Add as AddIcon, Create as CreateIcon, Pix as PixIcon } from '@mui/icons
 import { Button, Fade, IconButton,  useTheme } from '@mui/material'
 
 import { useFolders, useScreenSize, useSetIsNewNote } from '@/store/store-selectors'
-import FlexBetween from '@/ui/FlexBetween'
+import FlexBetween from '@/UI/FlexBetween'
 import StyledTooltip from '@/ui/StyledTooltip'
 
 const Navbar = () => {
