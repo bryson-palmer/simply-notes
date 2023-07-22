@@ -32,7 +32,7 @@ const FolderFormComponent = ({ formik }) => {
         placeholder='Folder Name'
         size='small'
         variant='standard'
-        inputProps={{ enterkeyhint: 'enter' }}
+        inputProps={{ enterKeyHint: 'enter' }}
         value={values.folderName ?? ''}
         onChange={handleChange}
         sx={{
@@ -81,12 +81,14 @@ const FolderForm = ({ id, folderName, setEditableFolderID, setIsNewFolder, onBlu
     setIsNewFolder(false)
   }
 
-  const handleStopFolderSubmit = (e, dirty, handleSubmit) => {
+  const handleStopFolderSubmit = async (e, dirty, handleSubmit) => {
+    console.log("🚀 ~ file: index.jsx:85 ~ handleStopFolderSubmit ~ dirty:", dirty)
+    console.log("🚀 ~ file: index.jsx:85 ~ handleStopFolderSubmit ~ e:", e)
     e.preventDefault()
     if (!dirty) {
       return false
     } else {
-      handleSubmit()
+      await handleSubmit()
       return false
     }
   }
