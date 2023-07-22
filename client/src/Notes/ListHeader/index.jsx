@@ -79,7 +79,6 @@ const ListHeader = ({ listState, setListState }) => {
         <Box
           minHeight='50px'
           width='206px'
-          marginBottom='1rem'
           sx={{ borderBottom: `thin solid ${palette.grey[900]}` }}
         />
       )}

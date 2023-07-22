@@ -117,38 +117,41 @@ const FolderList = () => {
               TransitionProps={{ timeout: 400 }}
             >
               <CreateNewFolder
-              sx={{
-                color: palette.secondary[400],
-                '&:hover': { color: palette.secondary[100] },
-              }}
-            />
+                sx={{
+                  color: palette.secondary[400],
+                  '&:hover': { color: palette.secondary[100] },
+                }}
+              />
             </StyledTooltip>
           </IconButton>
         }
-      >
-      </ListItem>
+      />
 
       {/* Folder List */}
-      <List sx={{
-        height: '88vh',
-        overflow: 'auto',
-        paddingRight: '0.5rem',
-        paddingLeft: '1rem',
-        borderRight: `thin solid ${palette.grey[900]}`,
-      }}>
+      <List
+        sx={{
+          height: '88vh',
+          overflow: 'auto',
+          paddingRight: '0.5rem',
+          paddingLeft: '1rem',
+          borderRight: `thin solid ${palette.grey[900]}`,
+        }}
+      >
         {isNewFolder ? (
           <FolderForm
             setEditableFolderID={setEditableFolderID}
             setIsNewFolder={setIsNewFolder}
-            onBlur={() => {/* noop (we want newFolder form to stick around onBlur. Otherwise behavior gets messy) */}}
+            onBlur={() => {
+              /* noop (we want newFolder form to stick around onBlur. Otherwise behavior gets messy) */
+            }}
           />
         ) : null}
 
-        {folders.length ? 
-          (folders?.map(({ id, folderName }) => {
+        {folders.length ? (
+          folders?.map(({ id, folderName }) => {
             const labelId = `folders-list-label-${id}`
 
-            return  id == editableFolderID? (
+            return id == editableFolderID ? (
               <FolderForm
                 key={labelId}
                 id={id}
@@ -157,20 +160,20 @@ const FolderList = () => {
                 setIsNewFolder={setIsNewFolder}
                 onBlur={handleEditFolderBlur}
               />
-              ) : (
+            ) : (
               <ListItem
                 dense
                 key={labelId}
                 id={id}
                 onClick={() => setSelectedFolderID(id)}
-                onDoubleClick={() => handleFolderDoubleClick(id) }
+                onDoubleClick={() => handleFolderDoubleClick(id)}
                 secondaryAction={
                   selectedFolderID === id ? (
                     <>
                       <IconButton
                         id='anchorEl'
-                        aria-controls="IconButton"
-                        aria-label="IconButton"
+                        aria-controls='IconButton'
+                        aria-label='IconButton'
                         aria-expanded={open ? 'true' : undefined}
                         onClick={handleAnchorElClick}
                         sx={{
@@ -190,23 +193,39 @@ const FolderList = () => {
                             color: palette.grey[400],
                             border: `1px solid ${palette.secondary[200]}`,
                           },
+                          '& [class*=MuiList-root]': {
+                            padding: 0
+                          }
                         }}
                       >
                         <MenuItem
-                          onClick={() => {setEditableFolderID(id); handleAnchorElClose()}}
+                          onClick={() => {
+                            setEditableFolderID(id)
+                            handleAnchorElClose()
+                          }}
                           sx={{
+                            minHeight: 0,
                             '&:hover': {
-                              backgroundColor: palette.background.light
+                              backgroundColor: palette.background.light,
+                            },
+                            '& [class*=MuiButtonBase-root]': {
+                              minHeight: 0,
                             }
                           }}
                         >
                           Edit
                         </MenuItem>
                         <MenuItem
-                          onClick={() => {(handleFolderDelete(id))}}
+                          onClick={() => {
+                            handleFolderDelete(id)
+                          }}
                           sx={{
+                            minHeight: 0,
                             '&:hover': {
-                              backgroundColor: palette.background.light
+                              backgroundColor: palette.background.light,
+                            },
+                            '& [class*=MuiButtonBase-root]': {
+                              minHeight: 0,
                             }
                           }}
                         >
@@ -218,7 +237,10 @@ const FolderList = () => {
                 }
                 sx={{
                   borderRadius: '0.5rem',
-                  backgroundColor: selectedFolderID === id ? palette.background.light : 'inherit',
+                  backgroundColor:
+                    selectedFolderID === id
+                      ? palette.background.light
+                      : 'inherit',
                   paddingRight: '2rem',
                   '& [class*=MuiButtonBase-root]': {
                     paddingRight: 0,
@@ -236,7 +258,7 @@ const FolderList = () => {
                 <ListItemButton
                   disableGutters
                   disableRipple
-                  sx={{ '&:hover': { backgroundColor: 'transparent'} }}
+                  sx={{ '&:hover': { backgroundColor: 'transparent' } }}
                 >
                   <ListItemIcon>
                     <FolderOpen />
@@ -244,16 +266,19 @@ const FolderList = () => {
                   <ListItemText
                     primaryTypographyProps={{ noWrap: true }}
                     sx={{ color: palette.secondary[400] }}
-                    primary={folderName} 
+                    primary={folderName}
                   />
                 </ListItemButton>
               </ListItem>
             )
           })
         ) : (
-          <EmptyState EmptyIcon={Icon} isNewFolder={isNewFolder} text={'No folders'} />
-        )
-        }
+          <EmptyState
+            EmptyIcon={Icon}
+            isNewFolder={isNewFolder}
+            text={'No folders'}
+          />
+        )}
       </List>
     </Box>
   )
