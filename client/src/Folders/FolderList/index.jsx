@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import {
   Box,
@@ -22,7 +22,7 @@ import {
 } from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
 import FolderForm from '@/Folders/FolderForm'
-import { useDeleteFolder, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
+import { useDeleteFolder, useScreenSize, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
 import EmptyState from '@/ui/EmptyState'
 import StyledTooltip from '@/ui/StyledTooltip'
 
@@ -30,12 +30,19 @@ const FolderList = () => {
   const { palette } = useTheme()
   const folders = useFolders()
   const deleteFolder = useDeleteFolder()
+  const screenSize = useScreenSize()
   const selectedFolderID = useSelectedFolderID()
   const setSelectedFolderID = useSetSelectedFolderID()
 
   const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
+
+  const folderListWidth = useMemo(() => {
+    if (screenSize === 'large') return 250
+    if (screenSize === 'tablet') return 200
+    if (screenSize === 'desktop' || screenSize === 'mobile') return 176
+  }, [screenSize])
 
   const open = Boolean(anchorEl)
   const Icon = () => <FolderIcon />
@@ -82,20 +89,16 @@ const FolderList = () => {
   return (
     <Box
       sx={{
-        width: 'clamp(175px, 25%, 250px)',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        paddingTop: '1rem',
-        marginRight: '0.5rem',
-        paddingRight: '0.5rem',
+        width: folderListWidth,
+        paddingTop: '0.5rem',
         bgcolor: 'transparent',
-        borderRight: `1px solid ${palette.grey[800]}`,
       }}
     >
       {/* Folder List Header */}
       <ListItem
         sx={{
-          marginBottom: '1rem',
+          height: '49.5px',
+          borderBottom: `thin solid ${palette.grey[900]}`
         }}
         secondaryAction={
           <IconButton
@@ -125,7 +128,13 @@ const FolderList = () => {
       </ListItem>
 
       {/* Folder List */}
-      <List>
+      <List sx={{
+        height: '88vh',
+        overflow: 'auto',
+        paddingRight: '0.5rem',
+        paddingLeft: '1rem',
+        borderRight: `thin solid ${palette.grey[900]}`,
+      }}>
         {isNewFolder ? (
           <FolderForm
             setEditableFolderID={setEditableFolderID}
