@@ -193,6 +193,9 @@ const FolderList = () => {
                             color: palette.grey[400],
                             border: `1px solid ${palette.secondary[200]}`,
                           },
+                          '& [class*=MuiList-root]': {
+                            padding: 0
+                          }
                         }}
                       >
                         <MenuItem
@@ -201,8 +204,12 @@ const FolderList = () => {
                             handleAnchorElClose()
                           }}
                           sx={{
+                            minHeight: 0,
                             '&:hover': {
                               backgroundColor: palette.background.light,
+                            },
+                            '& [class*=MuiButtonBase-root]': {
+                              minHeight: 0,
                             }
                           }}
                         >
@@ -213,8 +220,12 @@ const FolderList = () => {
                             handleFolderDelete(id)
                           }}
                           sx={{
+                            minHeight: 0,
                             '&:hover': {
-                              backgroundColor: palette.background.light
+                              backgroundColor: palette.background.light,
+                            },
+                            '& [class*=MuiButtonBase-root]': {
+                              minHeight: 0,
                             }
                           }}
                         >
