@@ -42,10 +42,7 @@ const ListHeader = ({ listState, setListState }) => {
         <ListItem
           dense
           disablePadding
-          sx={{
-            paddingLeft: "1.5rem",
-            borderBottom: `thin solid ${palette.grey[900]}`
-          }}
+          sx={{ paddingLeft: "1.5rem" }}
           secondaryAction={
             checkedIds.length ? (
               <IconButton
@@ -78,7 +75,14 @@ const ListHeader = ({ listState, setListState }) => {
             </ListItemIcon>
           </IconButton>
         </ListItem>
-      ) : <Box minHeight='55px' width='206px' />}
+      ) : (
+        <Box
+          minHeight='50px'
+          width='206px'
+          marginBottom='1rem'
+          sx={{ borderBottom: `thin solid ${palette.grey[900]}` }}
+        />
+      )}
     </>
   )
 }
