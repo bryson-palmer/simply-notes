@@ -6,7 +6,7 @@ import { Button, Fade, IconButton,  useTheme } from '@mui/material'
 
 import { useFolders, useScreenSize, useSetIsNewNote } from '@/store/store-selectors'
 import FlexBetween from '@/UI/FlexBetween'
-import StyledTooltip from '@/ui/StyledTooltip'
+import StyledTooltip from '@/UI/StyledTooltip'
 
 const Navbar = () => {
   const { palette } = useTheme()

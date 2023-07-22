@@ -23,8 +23,8 @@ import {
 import { useFolders } from '@/store/store-selectors'
 import FolderForm from '@/Folders/FolderForm'
 import { useDeleteFolder, useScreenSize, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
-import EmptyState from '@/ui/EmptyState'
-import StyledTooltip from '@/ui/StyledTooltip'
+import EmptyState from '@/UI/EmptyState'
+import StyledTooltip from '@/UI/StyledTooltip'
 
 const FolderList = () => {
   const { palette } = useTheme()

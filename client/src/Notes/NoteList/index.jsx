@@ -23,7 +23,7 @@ import {
   useSelectedNote,
   useSetIsNewNote
 } from '@/store/store-selectors'
-import EmptyState from '@/ui/EmptyState'
+import EmptyState from '@/UI/EmptyState'
 
 const NoteList = React.memo(() => {
   const [listState, setListState] = useState({
