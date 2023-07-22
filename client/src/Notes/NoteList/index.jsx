@@ -99,6 +99,7 @@ const NoteList = React.memo(() => {
               disablePadding
               key={labelId}
               sx={{
+                width: 'calc(100% - 0.5rem)',
                 borderRadius: '0.5rem',
                 paddingLeft: '1rem',
                 marginLeft: '0.5rem',
