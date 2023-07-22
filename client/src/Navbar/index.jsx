@@ -28,6 +28,13 @@ const Navbar = () => {
       position='sticky'
       top={0}
       p='0.5rem 1.5rem 0.5rem 1rem'
+      sx={{
+        '& > a': {
+          textDecoration: 'none',
+          color: 'transparent',
+          cursor: 'none'
+        }
+      }}
     >
       {/* Left Side */}
       <Link to='/'>

@@ -87,7 +87,7 @@ const NoteList = React.memo(() => {
           height: '88vh',
           overflow: 'auto',
           paddingRight: '0.5rem',
-          marginLeft: '0.5rem',
+          borderTop: `thin solid ${palette.grey[900]}`,
           borderRight: `thin solid ${palette.grey[900]}`,
         }}>
         {notes.map(({ id, title, body }) => {
@@ -101,6 +101,7 @@ const NoteList = React.memo(() => {
               sx={{
                 borderRadius: '0.5rem',
                 paddingLeft: '1rem',
+                marginLeft: '0.5rem',
                 backgroundColor: id === selectedNote.id ? palette.background.light : 'inherit',
               }}
               secondaryAction={

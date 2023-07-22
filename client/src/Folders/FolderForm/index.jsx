@@ -32,6 +32,7 @@ const FolderFormComponent = ({ formik }) => {
         placeholder='Folder Name'
         size='small'
         variant='standard'
+        inputProps={{ enterkeyhint: 'enter' }}
         value={values.folderName ?? ''}
         onChange={handleChange}
         sx={{
