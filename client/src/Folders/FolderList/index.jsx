@@ -38,6 +38,7 @@ const FolderList = () => {
   const [isNewFolder, setIsNewFolder] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
 
+  const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const folderListWidth = useMemo(() => {
     if (screenSize === 'large') return 250
     if (screenSize === 'tablet') return 200
@@ -111,7 +112,7 @@ const FolderList = () => {
           >
             <StyledTooltip
               arrow
-              title="Add folder"
+              title={isDesktop ? 'Add folder' : ''}
               TransitionComponent={Fade}
               TransitionProps={{ timeout: 400 }}
             >
