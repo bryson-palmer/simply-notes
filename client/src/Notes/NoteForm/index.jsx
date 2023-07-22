@@ -57,11 +57,9 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
 
   if (!folders.length) {
     return (
-      <div style={{ textAlign: 'center' }}>
-        <Typography variant='h3' color={palette.secondary[400]}>
-          Add a new folder to get started
-        </Typography>
-      </div>
+      <Typography color={palette.grey[400]}>
+        Add a new folder to get started
+      </Typography>
     )
   }
   
