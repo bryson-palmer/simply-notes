@@ -12,7 +12,7 @@ const EmptyState = ({ EmptyIcon, isNewFolder=false, text='' }) => {
           textAlign='center'
           color={palette.grey[400]}
           fontSize='0.875rem'
-          padding='0 1rem'
+          padding='1rem 1rem 0'
           sx={{ opacity: 0.6 }}
         >
           {text}
