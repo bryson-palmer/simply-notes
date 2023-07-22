@@ -16,15 +16,17 @@ const useStore = () => {
 
   const { breakpoints } = useTheme()
 
+  const isLargeSize = useMediaQuery(breakpoints.up('lg'))
   const isDesktopSize = useMediaQuery(breakpoints.up('md'))
   const isTabletSize = useMediaQuery(breakpoints.down('lg') && breakpoints.down('md'))
   const isMobileSize = useMediaQuery(breakpoints.down('sm'))
 
   const screenSize = useMemo(() => {
+    if (isLargeSize) return 'large'
     if (isDesktopSize) return 'desktop'
     if (isTabletSize && !isMobileSize) return 'tablet'
     if (isMobileSize && isTabletSize) return 'mobile'
-  }, [isDesktopSize, isMobileSize, isTabletSize])
+  }, [isDesktopSize, isLargeSize, isMobileSize, isTabletSize])
 
   const getAllNotes = useCallback((folderID) => {
     setLoadingNotes(true)
