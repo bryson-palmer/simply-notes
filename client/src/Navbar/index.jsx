@@ -1,17 +1,21 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Add as AddIcon, Create as CreateIcon, Pix as PixIcon } from '@mui/icons-material'
 import { Button, Fade, IconButton,  useTheme } from '@mui/material'
 
-import { useFolders, useSetIsNewNote } from '@/store/store-selectors'
+import { useFolders, useScreenSize, useSetIsNewNote } from '@/store/store-selectors'
 import FlexBetween from '@/ui/FlexBetween'
 import StyledTooltip from '@/ui/StyledTooltip'
 
 const Navbar = () => {
   const { palette } = useTheme()
   const folders = useFolders()
+  const screenSize = useScreenSize()
   const setIsNewNote = useSetIsNewNote()
+
+  const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
+  const isDisabled = useMemo(() => !folders.length, [folders.length])
 
   const handleIsNewNote = useCallback(() => {
     setIsNewNote(true)
@@ -19,9 +23,11 @@ const Navbar = () => {
 
   return (
     <FlexBetween
-      m='0 -4px'
-      p='0.5rem 0rem'
+      height={60}
       color={palette.grey[300]}
+      position='sticky'
+      top={0}
+      p='0.5rem 1.5rem 0.5rem 1rem'
     >
       {/* Left Side */}
       <Link to='/'>
@@ -29,14 +35,14 @@ const Navbar = () => {
           startIcon={<PixIcon />}
           sx={{
             color: palette.secondary[400],
-            fontSize: { xs: '1.2rem', sm: '1.2rem', md: '1.5rem' },
+            fontSize: { xs: '1.2rem', sm: '1.5rem' },
             fontWeight: 600,
             textTransform: 'none',
             lineHeight: 1.2,
             '& [class*=MuiButton-startIcon]': {
               marginRight: '6px',
               '& > svg': {
-                fontSize: { xs: '1.5rem', sm: '1.5rem', md: '2rem' },
+                fontSize: { xs: '1.5rem', sm: '2rem' },
               },
             }
           }}
@@ -48,27 +54,28 @@ const Navbar = () => {
       {/* Right Side */}
       <FlexBetween gap='1rem'>
         <IconButton
-          disabled={!folders.length}
+          disabled={isDisabled}
           onClick={handleIsNewNote}
           sx={{
             color: palette.secondary[400],
+            paddingTop: '1rem',
             '&:hover': { color: palette.secondary[100] },
             '&.Mui-disabled': { color: palette.secondary[400], opacity: 0.5},
             '& [class*=MuiSvgIcon-root]': {
-              fontSize: { xs: '1.2rem', sm: '1.2rem', md: '1.5rem' }
+              fontSize: { xs: '1.3rem', sm: '1.5rem', md: '1.7rem' }
             }
           }}
         >
           <StyledTooltip
             arrow
-            title='New note'
+            title={isDesktop ? 'New note' : ''}
             TransitionComponent={Fade}
             TransitionProps={{ timeout: 400 }}
           >
-            <>
+            <div>
               <AddIcon sx={{ marginRight: '-4px' }} />
               <CreateIcon />
-            </>
+            </div>
           </StyledTooltip>
         </IconButton>
       </FlexBetween>
