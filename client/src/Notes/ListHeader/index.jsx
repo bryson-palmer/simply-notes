@@ -43,8 +43,8 @@ const ListHeader = ({ listState, setListState }) => {
           dense
           disablePadding
           sx={{
-            borderRadius: "1rem",
-            paddingLeft: "1rem",
+            paddingLeft: "1.5rem",
+            borderBottom: `thin solid ${palette.grey[900]}`
           }}
           secondaryAction={
             checkedIds.length ? (
