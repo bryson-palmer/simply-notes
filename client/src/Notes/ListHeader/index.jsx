@@ -49,9 +49,9 @@ const ListHeader = ({ listState, setListState }) => {
                 disableRipple
                 onClick={handleDeleteCheckedNotes}
                 aria-label="delete-all-notes"
-                edge="end"
                 sx={{
                   color: palette.grey[300],
+                  marginRight: '-3px',
                   "&:hover": { color: palette.primary[200] },
                 }}
               >
