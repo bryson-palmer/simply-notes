@@ -1,16 +1,32 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createContext } from 'use-context-selector'
 import { PropTypes } from 'prop-types/prop-types'
 
 import { noteAPI } from '@/apis/noteAPI'
 import { folderAPI } from '@/apis/folderAPI'
+import { useMediaQuery, useTheme } from '@mui/material'
 
 const useStore = () => {
   const [folders, setFolders] = useState([])
+  const [isNewNote, setIsNewNote] = useState(false)
   const [loadingNotes, setLoadingNotes] = useState(false)
   const [notes, setNotes] = useState([])
   const [selectedNote, setSelectedNote] = useState({})
   const [selectedFolderID, setSelectedFolderID] = useState('')
+
+  const { breakpoints } = useTheme()
+
+  const isLargeSize = useMediaQuery(breakpoints.up('lg'))
+  const isDesktopSize = useMediaQuery(breakpoints.up('md'))
+  const isTabletSize = useMediaQuery(breakpoints.down('lg') && breakpoints.down('md'))
+  const isMobileSize = useMediaQuery(breakpoints.down('sm'))
+
+  const screenSize = useMemo(() => {
+    if (isLargeSize) return 'large'
+    if (isDesktopSize) return 'desktop'
+    if (isTabletSize && !isMobileSize) return 'tablet'
+    if (isMobileSize && isTabletSize) return 'mobile'
+  }, [isDesktopSize, isLargeSize, isMobileSize, isTabletSize])
 
   const getAllNotes = useCallback((folderID) => {
     setLoadingNotes(true)
@@ -157,6 +173,9 @@ const useStore = () => {
   }, [loadingNotes, notes, selectedNote]) // anytime these three variables change, trigger this useEffect
 
   return {
+    isNewNote,
+    setIsNewNote,
+    screenSize,
     loadingNotes,
     notes,
     selectedNote,

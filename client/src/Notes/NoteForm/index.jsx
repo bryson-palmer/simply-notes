@@ -4,13 +4,22 @@ import { Form, Formik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 
-import { Box, TextField, useTheme } from "@mui/material"
+import { Box, TextField, Typography, useTheme } from "@mui/material"
 
-import { useCreateNote, useNotes, useSelectedNote, useUpdateNote, useSelectedFolderID } from "@/store/store-selectors"
-import FlexColumn from "@/UI/FlexColumn"
+import { 
+  useCreateNote,
+  useFolders,
+  useIsNewNote,
+  useNotes,
+  useSelectedNote,
+  useSetIsNewNote,
+  useUpdateNote,
+  useSelectedFolderID
+} from "@/store/store-selectors"
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
+  const folders = useFolders()
   const {handleChange, submitForm, values } = formik
 
   const form = document.getElementById('form')
@@ -45,23 +54,38 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
       })
     }
   }, [titleInput])
+
+  if (!folders.length) {
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <Typography variant='h3' color={palette.secondary[400]}>
+          Add a new folder to get started
+        </Typography>
+      </div>
+    )
+  }
   
   return (
-    <Box id='form' display='flex' flexDirection='column'>
+    <Box
+      id='form'
+      display='flex'
+      flexDirection='column'
+    >
       <TextField
         fullWidth
         multiline
         id='title'
         name='title'
         variant='standard'
-        placeholder='What would you like ToDo?'
+        placeholder='Well, hello there.'
         value={values?.title ?? ''}
         onChange={handleChange}
         sx={{
           '& [class*=MuiInputBase-root]': {
               color: palette.secondary[400],
               fontWeight: '700',
-              fontSize: '1.25rem'
+              fontSize: '1.25rem',
+              padding: 0
             },
           '& [class*=MuiInputBase-root]:before': { border: 'none' },
           '& [class*=MuiInputBase-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
@@ -80,7 +104,7 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
         value={values.body?.trimStart() ?? ''}
         onChange={handleChange}
         sx={{
-          '& [class*=MuiInputBase-root]': { color: palette.grey[400] },
+          '& [class*=MuiInputBase-root]': { color: palette.grey[400], padding: 0, alignItems: 'initial' },
           '& [class*=MuiInputBase-root]:before': { border: 'none' },
           '& [class*=MuiInputBase-root]:hover:not(.Mui-disabled, .Mui-error):before': { border: 'none' },
           '& [class*=MuiInputBase-root]:after': { border: 'none' },
@@ -128,9 +152,11 @@ const getInitialValues = ({ isNewNote, selectedNote, selectedFolderID }) => {
   return (isNewNote ? { id: '', title: '', body: '', folder: selectedFolderID } : selectedNote )
 }
 
-const NoteForm = React.memo(({ isNewNote=false, setIsNewNote }) => {
+const NoteForm = React.memo(() => {
+  const isNewNote = useIsNewNote()
   const notes = useNotes()
   const selectedNote = useSelectedNote()
+  const setIsNewNote = useSetIsNewNote()
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
   const selectedFolderID = useSelectedFolderID()
@@ -146,6 +172,8 @@ const NoteForm = React.memo(({ isNewNote=false, setIsNewNote }) => {
   const initialValues = getInitialValues({ isNewNote, selectedNote, selectedFolderID })
 
   useEffect(() => {
+    // Need to watch for loading as well
+    // Like if (loading) return
     if (!notes.length) {
       setIsNewNote(true)
     } else {
@@ -161,14 +189,12 @@ const NoteForm = React.memo(({ isNewNote=false, setIsNewNote }) => {
       validationSchema={validationSchema}
     >
       {formik => (
-        <FlexColumn isNote>
-          <Form onSubmit={formik.handleSubmit}>
-            <NoteFormComponent
-              formik={formik}
-              isNewNote={isNewNote}
-            />
-          </Form>
-        </FlexColumn>
+        <Form onSubmit={formik.handleSubmit}>
+          <NoteFormComponent
+            formik={formik}
+            isNewNote={isNewNote}
+          />
+        </Form>
       )}
     </Formik>
   )
@@ -183,9 +209,7 @@ NoteForm.propTypes = {
       body: PropTypes.string,
       folder: PropTypes.string,
     })
-  })),
-  isNewNote: PropTypes.bool,
-  setIsNewNote: PropTypes.func,
+  }))
 }
 
 export default NoteForm

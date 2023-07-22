@@ -2,6 +2,12 @@ import { useContextSelector } from 'use-context-selector'
 
 import { StoreContext } from '@/store/store-provider'
 
+export const useIsNewNote = () => useContextSelector(StoreContext, store => store.isNewNote)
+
+export const useSetIsNewNote = () => useContextSelector(StoreContext, store => store.setIsNewNote)
+
+export const useScreenSize = () => useContextSelector(StoreContext, store => store.screenSize)
+
 export const useLoadingNotes = () => useContextSelector(StoreContext, store => store.loadingNotes)
 
 export const useNotes = () => useContextSelector(StoreContext, store => store.notes)

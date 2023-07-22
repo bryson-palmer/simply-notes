@@ -1,27 +1,36 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import {
+  Box,
+  Fade,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  useTheme,
-  IconButton,
-  Box,
   Menu,
   MenuItem,
+  useTheme,
 } from '@mui/material'
 
-import { FolderOpen, CreateNewFolder, MoreVert } from '@mui/icons-material'
+import {
+  CreateNewFolder,
+  Folder as FolderIcon,
+  FolderOpen,
+  MoreVert
+} from '@mui/icons-material'
 import { useFolders } from '@/store/store-selectors'
 import FolderForm from '@/Folders/FolderForm'
-import { useDeleteFolder, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
+import { useDeleteFolder, useScreenSize, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
+import EmptyState from '@/UI/EmptyState'
+import StyledTooltip from '@/UI/StyledTooltip'
 
 const FolderList = () => {
   const { palette } = useTheme()
   const folders = useFolders()
   const deleteFolder = useDeleteFolder()
+  const screenSize = useScreenSize()
   const selectedFolderID = useSelectedFolderID()
   const setSelectedFolderID = useSetSelectedFolderID()
 
@@ -29,7 +38,14 @@ const FolderList = () => {
   const [isNewFolder, setIsNewFolder] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
 
+  const folderListWidth = useMemo(() => {
+    if (screenSize === 'large') return 250
+    if (screenSize === 'tablet') return 200
+    if (screenSize === 'desktop' || screenSize === 'mobile') return 176
+  }, [screenSize])
+
   const open = Boolean(anchorEl)
+  const Icon = () => <FolderIcon />
  
   const handleNewFolder = useCallback(() => {
     // if we are about to add a new folder form, remove form from other folder
@@ -73,20 +89,16 @@ const FolderList = () => {
   return (
     <Box
       sx={{
-        width: 'clamp(175px, 25%, 250px)',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        paddingTop: '1rem',
-        marginRight: '0.5rem',
-        paddingRight: '0.5rem',
+        width: folderListWidth,
+        paddingTop: '0.5rem',
         bgcolor: 'transparent',
-        borderRight: `1px solid ${palette.grey[800]}`,
       }}
     >
       {/* Folder List Header */}
       <ListItem
         sx={{
-          marginBottom: '1rem',
+          height: '49.5px',
+          borderBottom: `thin solid ${palette.grey[900]}`
         }}
         secondaryAction={
           <IconButton
@@ -97,19 +109,32 @@ const FolderList = () => {
               }
             }}
           >
-            <CreateNewFolder
+            <StyledTooltip
+              arrow
+              title="Add folder"
+              TransitionComponent={Fade}
+              TransitionProps={{ timeout: 400 }}
+            >
+              <CreateNewFolder
               sx={{
                 color: palette.secondary[400],
                 '&:hover': { color: palette.secondary[100] },
               }}
             />
+            </StyledTooltip>
           </IconButton>
         }
       >
       </ListItem>
 
       {/* Folder List */}
-      <List>
+      <List sx={{
+        height: '88vh',
+        overflow: 'auto',
+        paddingRight: '0.5rem',
+        paddingLeft: '1rem',
+        borderRight: `thin solid ${palette.grey[900]}`,
+      }}>
         {isNewFolder ? (
           <FolderForm
             setEditableFolderID={setEditableFolderID}
@@ -118,111 +143,116 @@ const FolderList = () => {
           />
         ) : null}
 
-        {folders?.map(({ id, folderName }) => {
-          const labelId = `folders-list-label-${id}`
+        {folders.length ? 
+          (folders?.map(({ id, folderName }) => {
+            const labelId = `folders-list-label-${id}`
 
-          return  id == editableFolderID? (
-            <FolderForm
-              key={labelId}
-              id={id}
-              folderName={folderName}
-              setEditableFolderID={setEditableFolderID}
-              setIsNewFolder={setIsNewFolder}
-              onBlur={handleEditFolderBlur}
-            />
-            ) : (
-            <ListItem
-              dense
-              key={labelId}
-              id={id}
-              onClick={() => setSelectedFolderID(id)}
-              onDoubleClick={() => handleFolderDoubleClick(id) }
-              secondaryAction={
-                selectedFolderID === id ? (
-                  <>
-                    <IconButton
-                      id='anchorEl'
-                      aria-controls="IconButton"
-                      aria-label="IconButton"
-                      aria-expanded={open ? 'true' : undefined}
-                      onClick={handleAnchorElClick}
-                      sx={{
-                        color: palette.grey[400],
-                      }}
-                    >
-                      <MoreVert />
-                    </IconButton>
-                    <Menu
-                      id='menuList'
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleAnchorElClose}
-                      sx={{
-                        '& [class*=MuiPaper-root]': {
-                          backgroundColor: palette.background.default,
+            return  id == editableFolderID? (
+              <FolderForm
+                key={labelId}
+                id={id}
+                folderName={folderName}
+                setEditableFolderID={setEditableFolderID}
+                setIsNewFolder={setIsNewFolder}
+                onBlur={handleEditFolderBlur}
+              />
+              ) : (
+              <ListItem
+                dense
+                key={labelId}
+                id={id}
+                onClick={() => setSelectedFolderID(id)}
+                onDoubleClick={() => handleFolderDoubleClick(id) }
+                secondaryAction={
+                  selectedFolderID === id ? (
+                    <>
+                      <IconButton
+                        id='anchorEl'
+                        aria-controls="IconButton"
+                        aria-label="IconButton"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handleAnchorElClick}
+                        sx={{
                           color: palette.grey[400],
-                          border: `0.5px solid ${palette.secondary[400]}`,
-                        },
-                      }}
-                    >
-                      <MenuItem
-                        onClick={() => {setEditableFolderID(id); handleAnchorElClose()}}
-                        sx={{
-                          '&:hover': {
-                            backgroundColor: palette.background.light
-                          }
                         }}
                       >
-                        Edit
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {(handleFolderDelete(id))}}
+                        <MoreVert />
+                      </IconButton>
+                      <Menu
+                        id='menuList'
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleAnchorElClose}
                         sx={{
-                          '&:hover': {
-                            backgroundColor: palette.background.light
-                          }
+                          '& [class*=MuiPaper-root]': {
+                            backgroundColor: palette.background.default,
+                            color: palette.grey[400],
+                            border: `1px solid ${palette.secondary[200]}`,
+                          },
                         }}
                       >
-                        Delete
-                      </MenuItem>
-                    </Menu>
-                  </>
-                ) : null
-              }
-              sx={{
-                borderRadius: '0.5rem',
-                backgroundColor: selectedFolderID === id ? palette.background.light : 'inherit',
-                paddingRight: '2rem',
-                '& [class*=MuiButtonBase-root]': {
-                  paddingRight: 0,
-                  gap: '0.25rem'
-                },
-                '& [class*=MuiListItemIcon-root]': {
-                  color: palette.secondary[400],
-                  minWidth: 'auto',
-                },
-                '& [class*=MuiListItemSecondaryAction-root]': {
-                  right: 8
-                },
-              }}
-            >
-              <ListItemButton
-                disableGutters
-                disableRipple
-                sx={{ '&:hover': { backgroundColor: 'transparent'} }}
+                        <MenuItem
+                          onClick={() => {setEditableFolderID(id); handleAnchorElClose()}}
+                          sx={{
+                            '&:hover': {
+                              backgroundColor: palette.background.light
+                            }
+                          }}
+                        >
+                          Edit
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {(handleFolderDelete(id))}}
+                          sx={{
+                            '&:hover': {
+                              backgroundColor: palette.background.light
+                            }
+                          }}
+                        >
+                          Delete
+                        </MenuItem>
+                      </Menu>
+                    </>
+                  ) : null
+                }
+                sx={{
+                  borderRadius: '0.5rem',
+                  backgroundColor: selectedFolderID === id ? palette.background.light : 'inherit',
+                  paddingRight: '2rem',
+                  '& [class*=MuiButtonBase-root]': {
+                    paddingRight: 0,
+                    gap: '0.25rem'
+                  },
+                  '& [class*=MuiListItemIcon-root]': {
+                    color: palette.secondary[400],
+                    minWidth: 'auto',
+                  },
+                  '& [class*=MuiListItemSecondaryAction-root]': {
+                    right: 8
+                  },
+                }}
               >
-                <ListItemIcon>
-                  <FolderOpen />
-                </ListItemIcon>
-                <ListItemText
-                  primaryTypographyProps={{ noWrap: true }}
-                  sx={{ color: palette.secondary[400] }}
-                  primary={folderName} 
-                />
-              </ListItemButton>
-            </ListItem>
-          )
-        })}
+                <ListItemButton
+                  disableGutters
+                  disableRipple
+                  sx={{ '&:hover': { backgroundColor: 'transparent'} }}
+                >
+                  <ListItemIcon>
+                    <FolderOpen />
+                  </ListItemIcon>
+                  <ListItemText
+                    primaryTypographyProps={{ noWrap: true }}
+                    sx={{ color: palette.secondary[400] }}
+                    primary={folderName} 
+                  />
+                </ListItemButton>
+              </ListItem>
+            )
+          })
+        ) : (
+          <EmptyState EmptyIcon={Icon} isNewFolder={isNewFolder} text={'No folders'} />
+        )
+        }
       </List>
     </Box>
   )

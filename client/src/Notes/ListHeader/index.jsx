@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 
 import { useTheme } from '@emotion/react'
-import { Checkbox, IconButton, ListItem, ListItemIcon } from '@mui/material'
+import { Box, Checkbox, IconButton, ListItem, ListItemIcon } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 import { useDeleteNote, useNotes } from '@/store/store-selectors'
@@ -37,48 +37,50 @@ const ListHeader = ({ listState, setListState }) => {
   }, [isAllChecked, checkedIds.length, notes.length, setListState])
 
   return (
-    <ListItem
-      dense
-      disablePadding
-      sx={{
-        borderRadius: "1rem",
-        paddingLeft: "1rem",
-      }}
-      secondaryAction={
-        checkedIds.length ? (
-          <IconButton
-            disableRipple
-            onClick={handleDeleteCheckedNotes}
-            aria-label="delete-all-notes"
-            edge="end"
-            sx={{
-              color: palette.grey[300],
-              "&:hover": { color: palette.primary[200] },
-            }}
-          >
-            <DeleteForeverIcon />
-          </IconButton>
-        ) : null
-      }
-    >
+    <>
       {notes.length ? (
-        <IconButton disableRipple size="small" onClick={handleAllNotesChecked}>
-          <ListItemIcon sx={{ "&.MuiListItemIcon-root": { minWidth: "auto" } }}>
-            <Checkbox
-              disableRipple
-              edge="start"
-              checked={isAllChecked}
-              inputProps={{ "aria-labelledby": "notes-list-header" }}
-              sx={{
-                color: palette.grey[300],
-                "&:hover": { color: palette.primary[200] },
-              }}
-            />
-          </ListItemIcon>
-        </IconButton>
-      ) : null}
-    </ListItem>
-  );
+        <ListItem
+          dense
+          disablePadding
+          sx={{
+            paddingLeft: "1.5rem",
+            borderBottom: `thin solid ${palette.grey[900]}`
+          }}
+          secondaryAction={
+            checkedIds.length ? (
+              <IconButton
+                disableRipple
+                onClick={handleDeleteCheckedNotes}
+                aria-label="delete-all-notes"
+                edge="end"
+                sx={{
+                  color: palette.grey[300],
+                  "&:hover": { color: palette.primary[200] },
+                }}
+              >
+                <DeleteForeverIcon />
+              </IconButton>
+            ) : null
+          }
+        >
+          <IconButton disableRipple size="small" onClick={handleAllNotesChecked}>
+            <ListItemIcon sx={{ "&.MuiListItemIcon-root": { minWidth: "auto" } }}>
+              <Checkbox
+                disableRipple
+                edge="start"
+                checked={isAllChecked}
+                inputProps={{ "aria-labelledby": "notes-list-header" }}
+                sx={{
+                  color: palette.grey[300],
+                  "&:hover": { color: palette.primary[200] },
+                }}
+              />
+            </ListItemIcon>
+          </IconButton>
+        </ListItem>
+      ) : <Box minHeight='55px' width='206px' />}
+    </>
+  )
 }
 
 ListHeader.displayName = '/ListHeader'

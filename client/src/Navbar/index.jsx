@@ -1,59 +1,88 @@
-import { useState } from 'react'
-
+import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
-import PixIcon from '@mui/icons-material/Pix'
-import { Box, Typography, useTheme } from '@mui/material'
+import { Add as AddIcon, Create as CreateIcon, Pix as PixIcon } from '@mui/icons-material'
+import { Button, Fade, IconButton,  useTheme } from '@mui/material'
 
+import { useFolders, useScreenSize, useSetIsNewNote } from '@/store/store-selectors'
 import FlexBetween from '@/UI/FlexBetween'
+import StyledTooltip from '@/UI/StyledTooltip'
 
 const Navbar = () => {
-  const [selected, setSelected] = useState('notes')
   const { palette } = useTheme()
+  const folders = useFolders()
+  const screenSize = useScreenSize()
+  const setIsNewNote = useSetIsNewNote()
+
+  const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
+  const isDisabled = useMemo(() => !folders.length, [folders.length])
+
+  const handleIsNewNote = useCallback(() => {
+    setIsNewNote(true)
+  }, [setIsNewNote])
 
   return (
     <FlexBetween
-      mb='0.25rem'
-      p='0.5rem 0rem'
+      height={60}
       color={palette.grey[300]}
+      position='sticky'
+      top={0}
+      p='0.5rem 1.5rem 0.5rem 1rem'
     >
       {/* Left Side */}
-      <FlexBetween gap='0.75rem'>
-        <PixIcon sx={{ fontSize: '28px' }} />
-        <Typography variant='h4' fontSize='16px'>
-          ToDo
-        </Typography>
-      </FlexBetween>
+      <Link to='/'>
+        <Button
+          startIcon={<PixIcon />}
+          sx={{
+            color: palette.secondary[400],
+            fontSize: { xs: '1.2rem', sm: '1.5rem' },
+            fontWeight: 600,
+            textTransform: 'none',
+            lineHeight: 1.2,
+            '& [class*=MuiButton-startIcon]': {
+              marginRight: '6px',
+              '& > svg': {
+                fontSize: { xs: '1.5rem', sm: '2rem' },
+              },
+            }
+          }}
+        >
+          Simple-Notes
+        </Button>
+      </Link>
 
       {/* Right Side */}
-      <FlexBetween gap='2rem'>
-        <Box sx={{ '&:hover': { color: palette.primary[100] } }}>
-          <Link
-            to='/'
-            onClick={() => setSelected('notes')}
-            style={{
-              color: selected === 'notes' ? 'inherit' : palette.grey[700],
-              textDecoration: 'inherit'
-            }}
+      <FlexBetween gap='1rem'>
+        <IconButton
+          disabled={isDisabled}
+          onClick={handleIsNewNote}
+          sx={{
+            color: palette.secondary[400],
+            paddingTop: '1rem',
+            '&:hover': { color: palette.secondary[100] },
+            '&.Mui-disabled': { color: palette.secondary[400], opacity: 0.5},
+            '& [class*=MuiSvgIcon-root]': {
+              fontSize: { xs: '1.3rem', sm: '1.5rem', md: '1.7rem' }
+            }
+          }}
+        >
+          <StyledTooltip
+            arrow
+            title={isDesktop ? 'New note' : ''}
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 400 }}
           >
-            notes
-          </Link>
-        </Box>
-        <Box sx={{ '&:hover': { color: palette.primary[100] } }}>
-          <Link
-            to='/chat'
-            onClick={() => setSelected('chat')}
-            style={{
-              color: selected === 'chat' ? 'inherit' : palette.grey[700],
-              textDecoration: 'inherit'
-            }}
-          >
-            chat
-          </Link>
-        </Box>
+            <div>
+              <AddIcon sx={{ marginRight: '-4px' }} />
+              <CreateIcon />
+            </div>
+          </StyledTooltip>
+        </IconButton>
       </FlexBetween>
     </FlexBetween>
   )
 }
+
+Navbar.displayName = 'Navbar'
 
 export default Navbar

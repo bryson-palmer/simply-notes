@@ -5,12 +5,12 @@ const StyledTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.arrow}`]: {
-    color: theme.palette.background.light,
+    color: theme.palette.secondary[400],
   },
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.background.light,
-    color: theme.palette.secondary[100],
-    fontWeight: 800
+    backgroundColor: theme.palette.secondary[400],
+    color: theme.palette.grey[900],
+    fontWeight: 800,
   },
 }))
 
