@@ -4,7 +4,10 @@ import notes  # this auto-decoreates note-related functions with app.route(...)
 from app_setup import app, app_configure
 from users import create_new_user_if_uninitialized
 
-app_configure()  # set up secret keys, cookie settings, CORS, etc.
+if __name__ == '__main__':
+	app_configure()  # set up secret keys, cookie settings, CORS, etc.
+else:
+	app_configure(origins=['simple-notes-gamma.vercel.app'])
 
 db_setup.create_update_tables()
 
