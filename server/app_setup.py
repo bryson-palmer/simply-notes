@@ -7,7 +7,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-def app_configure(origins=['127.0.0.1', 'localhost']):
+def app_configure(origins='*'):
     CORS(app, supports_credentials=True, origins=origins)
     app.permanent_session_lifetime = timedelta(days=31)  # how long before they must log in again
     # Work around for cookies not saving in Chrome
