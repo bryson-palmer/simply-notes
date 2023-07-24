@@ -49,9 +49,9 @@ const ListHeader = ({ listState, setListState }) => {
                 disableRipple
                 onClick={handleDeleteCheckedNotes}
                 aria-label="delete-all-notes"
-                edge="end"
                 sx={{
                   color: palette.grey[300],
+                  marginRight: '-3px',
                   "&:hover": { color: palette.primary[200] },
                 }}
               >
@@ -77,10 +77,8 @@ const ListHeader = ({ listState, setListState }) => {
         </ListItem>
       ) : (
         <Box
-          minHeight='50px'
+          minHeight='49px'
           width='206px'
-          marginBottom='0.5rem'
-          sx={{ borderBottom: `thin solid ${palette.grey[900]}` }}
         />
       )}
     </>

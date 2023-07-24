@@ -93,13 +93,15 @@ const FolderList = () => {
         width: folderListWidth,
         paddingTop: '0.5rem',
         bgcolor: 'transparent',
+        borderRight: isDesktop ? 'none' : `thin solid ${palette.grey[800]}`,
+        borderTopRightRadius: isDesktop ? 'none' : '0.5rem'
       }}
     >
       {/* Folder List Header */}
       <ListItem
         sx={{
           height: '49.5px',
-          borderBottom: `thin solid ${palette.grey[900]}`
+          borderBottom: `thin solid ${palette.grey[800]}`
         }}
         secondaryAction={
           <IconButton
@@ -134,7 +136,7 @@ const FolderList = () => {
           overflow: 'auto',
           paddingRight: '0.5rem',
           paddingLeft: '1rem',
-          borderRight: `thin solid ${palette.grey[900]}`,
+          borderRight: isDesktop ? `thin solid ${palette.grey[800]}` : 'none',
         }}
       >
         {isNewFolder ? (

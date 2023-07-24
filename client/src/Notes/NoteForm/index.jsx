@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useRef } from "react"
+import React, { useCallback, useEffect, useMemo, useRef } from "react"
 
 import { Form, Formik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 
+import { Description as DescriptionIcon } from '@mui/icons-material'
 import { Box, TextField, Typography, useTheme } from "@mui/material"
 
 import { 
@@ -11,20 +12,25 @@ import {
   useFolders,
   useIsNewNote,
   useNotes,
+  useScreenSize,
   useSelectedNote,
   useSetIsNewNote,
   useUpdateNote,
   useSelectedFolderID
 } from "@/store/store-selectors"
+import EmptyState from '@/UI/EmptyState'
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
   const folders = useFolders()
+  const screenSize = useScreenSize()
   const {handleChange, submitForm, values } = formik
 
   const form = document.getElementById('form')
   const titleInput = document.getElementById('title')
 
+  const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
+  const Icon = () => <DescriptionIcon />
   let timer = useRef(0)
 
   useEffect(() => {
@@ -56,11 +62,20 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
   }, [titleInput])
 
   if (!folders.length) {
-    return (
-      <Typography color={palette.grey[400]}>
-        Add a new folder to get started
-      </Typography>
-    )
+    if (isDesktop) {
+      return (
+        <Typography
+          sx={{
+            color: palette.grey[400],
+            textAlign: 'center',
+            paddingTop: '3rem'
+          }}
+        >
+          Add a new folder to get started
+        </Typography>
+      )
+    }
+      return <EmptyState EmptyIcon={Icon} text='Add a new folder to get started' />
   }
   
   return (

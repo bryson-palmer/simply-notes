@@ -1,5 +1,5 @@
-# Simple ToDo
-##### A simple yet intuitive ToDo note app for the web.
+# Simple-Notes
+##### A simple yet intuitive note app for the web.
 
 ### The App
 Using web based technologies to build a simple yet intuitive note app that aims to serve a single purpose and do it well. It will feature being able to add a note, scroll a list of notes or search for a note by title/body. The note view will be an active form with auto saving to keep note taking easy and fast for creating, reading, updating, and deleting.
