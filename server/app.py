@@ -17,4 +17,4 @@ def home():
 	return 'Flask app is running!!!'
 
 if __name__ == '__main__':
-	app.run(debug=False)
+	app.run(debug=True)
