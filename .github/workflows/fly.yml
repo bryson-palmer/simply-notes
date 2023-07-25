@@ -1,0 +1,16 @@
+# followed the tutorial at https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
+name: Deploy backend to Fly.io
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    name: Deploy backend app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
