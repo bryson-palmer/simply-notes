@@ -15,9 +15,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        entryFileNames: `assets/[name].js`,
-        chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`
+        entryFileNames: `https://simple-notes-gamma.vercel.app/assets/[name].js`,
+        chunkFileNames: `https://simple-notes-gamma.vercel.app/assets/[name].js`,
+        assetFileNames: `https://simple-notes-gamma.vercel.app/assets/[name].[ext]`
       }
     }
   }
