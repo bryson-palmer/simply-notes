@@ -3,6 +3,7 @@ import os
 from datetime import timedelta
 from flask import Flask 
 from flask_cors import CORS
+from constants import SECRET_FILE
 
 
 app = Flask(__name__)
@@ -17,7 +18,6 @@ def app_configure():
     app.config["SESSION_COOKIE_SECURE"] = "True"
 
     # load secret key from .env file (or create it and then load it)
-    SECRET_FILE = '.env.local'
     if not os.path.exists(SECRET_FILE):
         with open(SECRET_FILE, 'w') as f:
             f.write(f'{os.urandom(24)}')
