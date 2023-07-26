@@ -21,22 +21,26 @@ def create_update_tables():
     connection.commit()
 
     # adding folder_id to NOTES existing NOTES table
-    cursor.execute('PRAGMA user_version')
+    # warning: pragma_table_info may be SQLite specific
+    cursor.execute("SELECT COUNT(*) FROM pragma_table_info('NOTES') WHERE name='folder_id'")
     result = cursor.fetchone()
-    version = result[0]
-    print(version)
-    if version == 0:
+    has_folder = result[0]  # will return 0 or 1+
+    print(has_folder)
+    if not has_folder:
         add_folder_to_notes_table = """
             ALTER TABLE NOTES ADD COLUMN folder_id
         """
         cursor.execute(add_folder_to_notes_table)
-        cursor.execute(f'PRAGMA user_version = {version + 1}')
+        # cursor.execute(f'PRAGMA user_version = {version + 1}')
         connection.commit()
-    if version == 1:
+    cursor.execute("SELECT COUNT(*) FROM pragma_table_info('FOLDERS') WHERE name='user_id'")
+    result = cursor.fetchone()
+    has_user = result[0]  # will return 0 or 1+
+    if not has_user:
         add_user_to_folders_table = """
-        ALTER TABLE FOLDERS ADD COLUMN user_id
+            ALTER TABLE FOLDERS ADD COLUMN user_id
         """
         cursor.execute(add_user_to_folders_table)
-        cursor.execute(f'PRAGMA user_version = {version + 1}')
+        # cursor.execute(f'PRAGMA user_version = {version + 1}')
         connection.commit()
     connection.close()
