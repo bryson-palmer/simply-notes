@@ -5,17 +5,25 @@ from app_setup import app, app_configure
 from users import create_new_user_if_uninitialized
 from flask import request, Response, jsonify
 
-if __name__ == '__main__':
-	app_configure()  # set up secret keys, cookie settings, CORS, etc.
-else:
-	app_configure() #origins=['simple-notes-gamma.vercel.app'])
+app_configure()  # set up secret keys, cookie settings, CORS, etc.
 
 db_setup.create_update_tables()
 
 @app.route('/')
-def home():  # when
-	''' when navigating here, redirect user to load resources from front-end server.
-		This response is exactly the first thing loaded when querying the frontend root.
+def frontend_bootstrap():
+	''' when navigating to root, direct user to bootstrap rest of page from front-end server.
+		This html here is exactly the first thing seen when loading from frontend root.
+		So it's a hard-coded version of what the react front-end first serves up.
+		If this ever changes, (can check by visiting front-end), then you'll need to update
+		the html here too.
+		Note that to get this to work, we had to build front-end to reference all assets with
+		an absolute URL.
+		The reason for doing this is that Safari (and likely soon other browsers too) don't
+		allow third-party cookies (cookies being sent to another domain than the base domain).
+		And since our authentication is through the cookie, we have to load the website from
+		our backend, so that cookies will be sent to our backend. This is a convenient way to
+		load the frontend from our backend. With one downside being that if we used URLs in
+		the app, we'd have to make sure they didn't clash with our backend API urls.
 	'''
 	react_html_root = '''
 		<!DOCTYPE html>
@@ -27,7 +35,7 @@ def home():  # when
 			<link rel="icon" type="image/png" sizes="32x32" href="https://simple-notes-gamma.vercel.app/favicon-32x32.png">
 			<link rel="icon" type="image/png" sizes="16x16" href="https://simple-notes-gamma.vercel.app/favicon-16x16.png">
 			<link rel="manifest" href="https://simple-notes-gamma.vercel.app/site.webmanifest">
-			<title>ToDo</title>
+			<title>Simple-Notes</title>
 			<script type="module" crossorigin src="https://simple-notes-gamma.vercel.app/assets/index.js"></script>
 			<link rel="stylesheet" href="https://simple-notes-gamma.vercel.app/assets/index.css">
 		</head>
