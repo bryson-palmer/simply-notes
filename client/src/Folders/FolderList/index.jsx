@@ -20,6 +20,7 @@ import {
   FolderOpen,
   MoreVert
 } from '@mui/icons-material'
+import { useStore } from '@/store/store'
 import { useFolders } from '@/store/store-selectors'
 import FolderForm from '@/Folders/FolderForm'
 import { useDeleteFolder, useScreenSize, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
@@ -29,6 +30,8 @@ import StyledTooltip from '@/UI/StyledTooltip'
 const FolderList = () => {
   const { palette } = useTheme()
   const folders = useFolders()
+  const foldersPlus = useStore(store => store.folders)
+  console.log("🚀 ~ file: index.jsx:34 ~ FolderList ~ foldersPlus:", foldersPlus)
   const deleteFolder = useDeleteFolder()
   const screenSize = useScreenSize()
   const selectedFolderID = useSelectedFolderID()
