@@ -31,7 +31,7 @@ const NoteList = React.memo(() => {
   const selectedFolderID = useStore(store => store.selectedFolderID)
 
   // From react query
-  const { data: notes = [], isLoading: notesIsLoading } = useNotes(selectedFolderID)
+  const { data: notes = [], isLoading: notesIsLoading } = useNotes(!!selectedFolderID && selectedFolderID)
   console.log("🚀 ~ file: index.jsx:39 ~ NoteList ~ notes:", notes)
   const screenSize = useScreenSize()
   const deleteNote = useDeleteNote()
