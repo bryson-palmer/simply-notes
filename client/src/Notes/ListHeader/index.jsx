@@ -6,39 +6,40 @@ import { useTheme } from '@emotion/react'
 import { Box, Checkbox, IconButton, ListItem, ListItemIcon } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
-import { useDeleteNote, useNotes } from '@/store/store-selectors'
+import useDeleteNote from '@/hooks/useDeleteNote'
+import useNotes from '@/hooks/useNotes'
 
 const ListHeader = ({ listState, setListState }) => {
   const { palette } = useTheme()
   const deleteNote = useDeleteNote()
-  const notes = useNotes()
+  const { data: notes = [] } = useNotes()
   const { checkedIds, isAllChecked} = listState
   
   const handleAllNotesChecked = useCallback(() => setListState(prevListState => ({
     ...prevListState,
     isAllChecked: !prevListState.isAllChecked,
-    checkedIds: prevListState.isAllChecked ? []: notes.map(({ id }) => id)
+    checkedIds: prevListState.isAllChecked ? []: notes?.map(({ id }) => id)
   })), [notes, setListState])
   
   const handleDeleteCheckedNotes = useCallback(() => {
     if (!Array.isArray(checkedIds) || checkedIds.length < 1) return
-    deleteNote(checkedIds)
+    deleteNote.mutate(checkedIds)
 
   }, [checkedIds, deleteNote])
 
   useEffect(() => {
-    if (!notes.length) {  
+    if (!notes?.length) {  
       return setListState(prevListState => ({
         ...prevListState,
         isAllChecked: false,
         checkedIds: []
       }))
     }
-  }, [isAllChecked, checkedIds.length, notes.length, setListState])
+  }, [isAllChecked, checkedIds.length, notes?.length, setListState])
 
   return (
     <>
-      {notes.length ? (
+      {notes?.length ? (
         <ListItem
           dense
           disablePadding
