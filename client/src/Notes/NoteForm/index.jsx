@@ -7,22 +7,16 @@ import * as yup from 'yup'
 import { Description as DescriptionIcon } from '@mui/icons-material'
 import { Box, TextField, Typography, useTheme } from "@mui/material"
 
-import { 
-  useCreateNote,
-  useFolders,
-  useIsNewNote,
-  useNotes,
-  useScreenSize,
-  useSelectedNote,
-  useSetIsNewNote,
-  useUpdateNote,
-  useSelectedFolderID
-} from "@/store/store-selectors"
+import useCreateNote from '@/hooks/useCreateNote'
+import useUpdateNote from '@/hooks/useUpdateNote'
+import useNotes from '@/hooks/useNotes'
+import useFolders from '@/hooks/useFolders'
+import { useScreenSize, useStore } from "@/store/store"
 import EmptyState from '@/UI/EmptyState'
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
-  const folders = useFolders()
+  const { data: folders = [] } = useFolders()
   const screenSize = useScreenSize()
   const {handleChange, submitForm, values } = formik
 
@@ -61,7 +55,7 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
     }
   }, [titleInput])
 
-  if (!folders.length) {
+  if (!folders?.length) {
     if (isDesktop) {
       return (
         <Typography
@@ -166,18 +160,19 @@ const getInitialValues = ({ isNewNote, selectedNote, selectedFolderID }) => {
 }
 
 const NoteForm = React.memo(() => {
-  const isNewNote = useIsNewNote()
-  const notes = useNotes()
-  const selectedNote = useSelectedNote()
-  const setIsNewNote = useSetIsNewNote()
+  const isNewNote = useStore(store => store.isNewNote)
+  const selectedNote = useStore(store => store.selectedNote)
+  console.log("🚀 ~ file: index.jsx:165 ~ NoteForm ~ selectedNote:", selectedNote)
+  const setIsNewNote = useStore(store => store.setIsNewNote)
+  const selectedFolderID = useStore(store => store.selectedFolderID)
+  const { data: notes } = useNotes()
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
-  const selectedFolderID = useSelectedFolderID()
   
   const handleSubmit = useCallback(values => {
     isNewNote
-      ? createNote(values)
-      : updateNote(values)
+      ? createNote.mutate(values)
+      : updateNote.mutate(values)
     
     setIsNewNote(false)
   }, [createNote, isNewNote, setIsNewNote, updateNote])
@@ -187,12 +182,12 @@ const NoteForm = React.memo(() => {
   useEffect(() => {
     // Need to watch for loading as well
     // Like if (loading) return
-    if (!notes.length) {
+    if (!notes?.length) {
       setIsNewNote(true)
     } else {
       setIsNewNote(false)
     }
-  }, [notes.length, setIsNewNote])
+  }, [notes?.length, setIsNewNote])
 
   return (
     <Formik
@@ -214,15 +209,15 @@ const NoteForm = React.memo(() => {
 })
 
 NoteForm.displayName = '/NoteFormWrapper'
-NoteForm.propTypes = {
-  notes: PropTypes.arrayOf(PropTypes.shape({
-    note: PropTypes.shape({
-      id: PropTypes.string,
-      title: PropTypes.string,
-      body: PropTypes.string,
-      folder: PropTypes.string,
-    })
-  }))
-}
+// NoteForm.propTypes = {
+//   notes: PropTypes.arrayOf(PropTypes.shape({
+//     note: PropTypes.shape({
+//       id: PropTypes.string,
+//       title: PropTypes.string,
+//       body: PropTypes.string,
+//       folder: PropTypes.string,
+//     })
+//   }))
+// }
 
 export default NoteForm
