@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 
 import { useTheme } from '@emotion/react'
@@ -15,15 +15,10 @@ import {
 } from '@mui/material'
 import { DeleteForever as DeleteForeverIcon, Description as DescriptionIcon } from '@mui/icons-material'
 
+import useNotes from '@/hooks/useNotes'
+import useDeleteNote from '@/hooks/useDeleteNote'
 import ListHeader from '@/Notes/ListHeader'
-
 import  { useScreenSize, useStore } from '@/store/store'
-
-import {
-  useDeleteNote,
-  useGetNote,
-  useNotes,
-} from '@/store/store-selectors'
 import EmptyState from '@/UI/EmptyState'
 
 const NoteList = React.memo(() => {
@@ -33,20 +28,19 @@ const NoteList = React.memo(() => {
   })
 
   const { palette } = useTheme()
+  const selectedFolderID = useStore(store => store.selectedFolderID)
 
   // From react query
-  const notes = useNotes()
-
-  // From custom hook
+  const { data: notes = [], isLoading: notesIsLoading } = useNotes(selectedFolderID)
+  console.log("🚀 ~ file: index.jsx:39 ~ NoteList ~ notes:", notes)
   const screenSize = useScreenSize()
+  const deleteNote = useDeleteNote()
   
   // From zustand store
   const selectedNote = useStore(store => store.selectedNote)
+  console.log("🚀 ~ file: index.jsx:41 ~ NoteList ~ selectedFolderID:", selectedFolderID)
   const setIsNewNote = useStore(store => store.setIsNewNote)
-
-  // From old store context
-  const getNote = useGetNote()
-  const deleteNote = useDeleteNote()
+  const setSelectedNote = useStore(store => store.setSelectedNote)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const notesListWidth = useMemo(() => {
@@ -66,23 +60,45 @@ const NoteList = React.memo(() => {
       : newCheckedIds.splice(currentIndex, 1)
       
       setListState(prevListState => {
-        const isNewAllChecked = !prevListState.isAllChecked && newCheckedIds.length === notes.length
+        const isNewAllChecked = !prevListState.isAllChecked && newCheckedIds.length === notes?.length
         return ({
       ...prevListState,
       checkedIds: newCheckedIds,
       isAllChecked: isNewAllChecked
     })
   })
-  }, [listState.checkedIds, notes.length])
+  }, [listState.checkedIds, notes?.length])
 
   const handleSelectNote = useCallback(value => () => {
     setIsNewNote(false)
-    getNote(value)
-  }, [getNote, setIsNewNote])
+    setSelectedNote(value)
+  }, [setIsNewNote, setSelectedNote])
 
   const handleDeleteNote = useCallback(id => {
-    deleteNote(id)
+    deleteNote.mutate(id)
   }, [deleteNote])
+
+  // anytime a folder is selected, fetch all notes for that folder
+  // useEffect(() => {
+  //   if (selectedFolderID) {
+  //     getAllNotes(selectedFolderID)
+  //   }
+  // }, [getAllNotes, selectedFolderID])
+
+  useEffect(() => {
+    if (notesIsLoading) return // Don't continue with side effect if loading is true
+    const isSelectedInNotes = notes?.length && notes?.some(note => note.id === selectedNote.id)
+    // Deleted all notes
+    if (!notes?.length && selectedNote?.id) {
+      setSelectedNote({})
+      // Deleted the selectedNote
+    } else if (notes.length && (!selectedNote?.id || !isSelectedInNotes)) {
+      setSelectedNote(notes[0])
+      // Default set user selected note
+    } else {
+      setSelectedNote(selectedNote)
+    }
+  }, [notes, notesIsLoading, selectedNote, setSelectedNote]) // anytime these three variables change, trigger this useEffect
 
   return (
     <div
@@ -92,7 +108,7 @@ const NoteList = React.memo(() => {
       }}
     >
       <ListHeader listState={listState} setListState={setListState} />
-      {notes.length ? (
+      {notes?.length ? (
         <List
           sx={{
             height: '88vh',
@@ -103,7 +119,7 @@ const NoteList = React.memo(() => {
             borderTopRightRadius: isDesktop ? '0.5rem' : 0
           }}
         >
-          {notes.map(({ id, title, body }) => {
+          {notes?.map(({ id, title, body }) => {
             const labelId = `notes-list-label-${id}`
 
             return (
