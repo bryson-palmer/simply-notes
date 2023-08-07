@@ -10,6 +10,6 @@ export default function useNotes(folderId) {
   return useQuery({
     queryKey: ['notes', folderId],
     queryFn: () => noteAPI.get(folderId),
-    // enabled: Boolean(selectedFolderID)
+    enabled: Boolean(folderId) // As far as I understand when enabled is true, it will run the query
   })
 }
