@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import {
   Box,
+  CircularProgress,
   Fade,
   IconButton,
   List,
@@ -20,26 +21,32 @@ import {
   FolderOpen,
   MoreVert
 } from '@mui/icons-material'
-import { useStore } from '@/store/store'
-import { useFolders } from '@/store/store-selectors'
+
 import FolderForm from '@/Folders/FolderForm'
-import { useDeleteFolder, useScreenSize, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
+import useDeleteFolder from '@/hooks/useDeleteFolder'
+import useFolders from '@/hooks/useFolders'
+import { useScreenSize, useStore } from '@/store/store'
+
 import EmptyState from '@/UI/EmptyState'
 import StyledTooltip from '@/UI/StyledTooltip'
 
 const FolderList = () => {
-  const { palette } = useTheme()
-  const folders = useFolders()
-  const foldersPlus = useStore(store => store.folders)
-  console.log("🚀 ~ file: index.jsx:34 ~ FolderList ~ foldersPlus:", foldersPlus)
-  const deleteFolder = useDeleteFolder()
-  const screenSize = useScreenSize()
-  const selectedFolderID = useSelectedFolderID()
-  const setSelectedFolderID = useSetSelectedFolderID()
-
   const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
+  // console.log("🚀 ~ file: index.jsx:36 ~ FolderList ~ isNewFolder:", isNewFolder)
   const [anchorEl, setAnchorEl] = useState(null)
+
+  const { palette } = useTheme()
+  const screenSize = useScreenSize()
+  const deleteFolder = useDeleteFolder()
+  
+  const selectedFolderID = useStore(store => store.selectedFolderID)
+  const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
+  const { data: folders = [], isFetching: foldersIsFetching, isLoading: foldersIsLoading } = useFolders()
+  // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ foldersIsStale:", foldersIsStale)
+  // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ foldersIsLoading:", foldersIsLoading)
+  // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ foldersIsFetching:", foldersIsFetching)
+  // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ folders?.length:", folders?.length)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const folderListWidth = useMemo(() => {
@@ -71,17 +78,25 @@ const FolderList = () => {
 
   const handleAnchorElClose = () => setAnchorEl(null)
 
-  const handleFolderDelete = (id) => {
+  const handleFolderDelete = id => {
     handleAnchorElClose()
     setEditableFolderID('')
-    setSelectedFolderID('')  // this doesn't seem to work?
-    deleteFolder(id)
+    deleteFolder.mutate(id)
   }
 
   // when editting folder is unfocused, close it (return to list folder item)
   const handleEditFolderBlur = () => {
     setEditableFolderID('')
   }
+
+  useEffect(() => {
+    if (!folders.length || foldersIsLoading) return
+    const isSelectedFolderInList = folders.some(folder => folder.id === selectedFolderID)
+    // If no selected folder id or the selected folder id isn't in the list of folders
+    if (!selectedFolderID || !isSelectedFolderInList) {
+      setSelectedFolderID(folders[0]?.id)
+    }
+  }, [folders, foldersIsLoading, selectedFolderID, setSelectedFolderID])
 
   useEffect(() => {
     if (!editableFolderID || !selectedFolderID) return
@@ -153,7 +168,8 @@ const FolderList = () => {
           />
         ) : null}
 
-        {folders.length ? (
+        {/* Data state */}
+        {folders?.length ? (
           folders?.map(({ id, folderName }) => {
             const labelId = `folders-list-label-${id}`
 
@@ -282,13 +298,23 @@ const FolderList = () => {
               </ListItem>
             )
           })
-        ) : (
+        ) : null}
+
+        {/* Loading state */}
+        {!folders?.length && (foldersIsLoading || foldersIsFetching) ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress sx={{ color: palette.secondary[400] }} />
+          </Box>
+        ) : null}
+
+        {/* Empty state */}
+        {!folders.length && (!foldersIsLoading || !foldersIsFetching) ? (
           <EmptyState
             EmptyIcon={Icon}
             isNewFolder={isNewFolder}
             text={'No folders'}
           />
-        )}
+        ) : null}
       </List>
     </Box>
   )
