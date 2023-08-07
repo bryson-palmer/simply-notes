@@ -137,25 +137,6 @@ const useStore = () => {
       return 
     })
   }, [getAllFolders])
-
-  // on first load, fetch all folders
-  useEffect(() => {
-    getAllFolders()
-  }, [getAllFolders])  // this cannot depend on folders, or else it refetches folders everytime
-
-  // anytime folders are loaded, make sure a folder is selected (defaults to 0)
-  useEffect(() => {
-    if (!selectedFolderID && folders.length) {
-      setSelectedFolderID(folders[0]?.id)
-    }
-  }, [folders, selectedFolderID])
-
-  // anytime a folder is selected, fetch all notes for that folder
-  useEffect(() => {
-    if (selectedFolderID) {
-      getAllNotes(selectedFolderID)
-    }
-  }, [getAllNotes, selectedFolderID])
   
   useEffect(() => {
     if (loadingNotes) return // Don't continue with side effect if loading is true
