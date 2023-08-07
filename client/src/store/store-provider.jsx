@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { createContext } from 'use-context-selector'
 import { PropTypes } from 'prop-types/prop-types'
 
@@ -138,20 +138,20 @@ const useStore = () => {
     })
   }, [getAllFolders])
   
-  useEffect(() => {
-    if (loadingNotes) return // Don't continue with side effect if loading is true
-    const isSelectedInNotes = notes.some(note => note.id === selectedNote.id)
-    // Deleted all notes
-    if (!notes?.length && selectedNote.id) {
-      setSelectedNote({})
-      // Deleted the selectedNote
-    } else if (notes.length && (!selectedNote?.id || !isSelectedInNotes)) {
-      setSelectedNote(notes[0])
-      // Default set user selected note
-    } else {
-      setSelectedNote(selectedNote)
-    }
-  }, [loadingNotes, notes, selectedNote]) // anytime these three variables change, trigger this useEffect
+  // useEffect(() => {
+  //   if (loadingNotes) return // Don't continue with side effect if loading is true
+  //   const isSelectedInNotes = notes.some(note => note.id === selectedNote.id)
+  //   // Deleted all notes
+  //   if (!notes?.length && selectedNote.id) {
+  //     setSelectedNote({})
+  //     // Deleted the selectedNote
+  //   } else if (notes.length && (!selectedNote?.id || !isSelectedInNotes)) {
+  //     setSelectedNote(notes[0])
+  //     // Default set user selected note
+  //   } else {
+  //     setSelectedNote(selectedNote)
+  //   }
+  // }, [loadingNotes, notes, selectedNote]) // anytime these three variables change, trigger this useEffect
 
   return {
     isNewNote,
