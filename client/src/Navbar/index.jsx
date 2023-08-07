@@ -4,18 +4,19 @@ import { Link } from 'react-router-dom'
 import { Add as AddIcon, Create as CreateIcon, Pix as PixIcon } from '@mui/icons-material'
 import { Button, Fade, IconButton,  useTheme } from '@mui/material'
 
-import { useFolders, useScreenSize, useSetIsNewNote } from '@/store/store-selectors'
+import useFolders from '@/hooks/useFolders'
+import { useScreenSize, useStore } from '@/store/store'
 import FlexBetween from '@/UI/FlexBetween'
 import StyledTooltip from '@/UI/StyledTooltip'
 
 const Navbar = () => {
   const { palette } = useTheme()
-  const folders = useFolders()
+  const { data, isLoading, isError} = useFolders() // React Query folders
   const screenSize = useScreenSize()
-  const setIsNewNote = useSetIsNewNote()
+  const setIsNewNote = useStore(store => store.setIsNewNote)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
-  const isDisabled = useMemo(() => !folders.length, [folders.length])
+  const isDisabled = useMemo(() => isLoading || isError || !data?.length, [data?.length, isError, isLoading])
 
   const handleIsNewNote = useCallback(() => {
     setIsNewNote(true)
