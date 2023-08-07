@@ -1,14 +1,35 @@
+import { useMemo } from 'react'
 import { create } from 'zustand'
+import { useMediaQuery, useTheme } from '@mui/material'
 
-const store = set => ({
-  folders: [{ id: '123', folderName: 'Folder X', userId: 'xyz'}], // The store would do best to track all of the current useState vars in store-provider
-  addFolder: (folder, state) => //  This should be where we add react query
-    set(store => ({ folders: [...store.folders, { folder, state }] }),
-    false, // For telling zustand if you want everything in the store to be replaced or just what's in the object here
-    'addFolder' // For debugging with redux devtools if using
-  ),
-  deleteFolder: folder => 
-    set(store => ({ folders: store.folders.filter(f => f.id !== folder.id) })),
+export const useScreenSize = () => {
+  const { breakpoints } = useTheme()
+
+  const isLargeSize = useMediaQuery(breakpoints.up('lg'))
+  const isDesktopSize = useMediaQuery(breakpoints.up('md'))
+  const isTabletSize = useMediaQuery(breakpoints.down('lg') && breakpoints.down('md'))
+  const isMobileSize = useMediaQuery(breakpoints.down('sm'))
+
+  const screenSize = useMemo(() => {
+    if (isLargeSize) return 'large'
+    if (isDesktopSize) return 'desktop'
+    if (isTabletSize && !isMobileSize) return 'tablet'
+    if (isMobileSize && isTabletSize) return 'mobile'
+  }, [isDesktopSize, isLargeSize, isMobileSize, isTabletSize])
+
+  return screenSize
+}
+
+export const useStore = create(set => {
+  return ({
+    isNewNote: false,
+    setIsNewNote: bool =>
+      set(() => ({ isNewNote: bool })),
+    selectedFolderID: null,
+    setSelectedFolderID: folderId =>
+      set(() => ({ selectedFolderID: folderId })),
+    selectedNoteID: null,
+    setSelectedNoteID: noteId =>
+      set(() => ({ selectedNoteId: noteId }))
+  })
 })
-
-export const useStore = create(store)
