@@ -16,13 +16,13 @@ import {
 import { DeleteForever as DeleteForeverIcon, Description as DescriptionIcon } from '@mui/icons-material'
 
 import ListHeader from '@/Notes/ListHeader'
+
+import  { useScreenSize, useStore } from '@/store/store'
+
 import {
   useDeleteNote,
   useGetNote,
   useNotes,
-  useScreenSize,
-  useSelectedNote,
-  useSetIsNewNote
 } from '@/store/store-selectors'
 import EmptyState from '@/UI/EmptyState'
 
@@ -33,10 +33,18 @@ const NoteList = React.memo(() => {
   })
 
   const { palette } = useTheme()
+
+  // From react query
   const notes = useNotes()
+
+  // From custom hook
   const screenSize = useScreenSize()
-  const selectedNote = useSelectedNote()
-  const setIsNewNote = useSetIsNewNote()
+  
+  // From zustand store
+  const selectedNote = useStore(store => store.selectedNote)
+  const setIsNewNote = useStore(store => store.setIsNewNote)
+
+  // From old store context
   const getNote = useGetNote()
   const deleteNote = useDeleteNote()
 

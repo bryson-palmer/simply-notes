@@ -5,7 +5,7 @@ import { ArrowBackIosNew as ArrowBackIosNewIcon } from '@mui/icons-material'
 
 import Drawer from '@/Drawer'
 import NoteForm from '@/Notes/NoteForm'
-import { useScreenSize } from '@/store/store-selectors'
+import { useScreenSize } from '@/store/store'
 
 const Notes = React.memo(() => {
   const [openDrawer, setOpenDrawer] = useState(false)
