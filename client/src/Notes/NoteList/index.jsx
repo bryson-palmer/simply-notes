@@ -37,10 +37,10 @@ const NoteList = React.memo(() => {
   const deleteNote = useDeleteNote()
   
   // From zustand store
-  const selectedNote = useStore(store => store.selectedNote)
+  const selectedNoteID = useStore(store => store.selectedNoteID)
   console.log("🚀 ~ file: index.jsx:41 ~ NoteList ~ selectedFolderID:", selectedFolderID)
   const setIsNewNote = useStore(store => store.setIsNewNote)
-  const setSelectedNote = useStore(store => store.setSelectedNote)
+  const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const notesListWidth = useMemo(() => {
@@ -69,10 +69,10 @@ const NoteList = React.memo(() => {
   })
   }, [listState.checkedIds, notes?.length])
 
-  const handleSelectNote = useCallback(value => () => {
+  const handleSelectNote = useCallback(id => () => {
     setIsNewNote(false)
-    setSelectedNote(value)
-  }, [setIsNewNote, setSelectedNote])
+    setSelectedNoteID(id)
+  }, [setIsNewNote, setSelectedNoteID])
 
   const handleDeleteNote = useCallback(id => {
     deleteNote.mutate(id)
@@ -87,18 +87,18 @@ const NoteList = React.memo(() => {
 
   useEffect(() => {
     if (notesIsLoading) return // Don't continue with side effect if loading is true
-    const isSelectedInNotes = notes?.length && notes?.some(note => note.id === selectedNote?.id)
+    const isSelectedInNotes = notes?.length && notes?.some(note => note.id === selectedNoteID)
     // Deleted all notes
-    if (!notes?.length && selectedNote?.id) {
-      setSelectedNote({})
-      // Deleted the selectedNote
-    } else if (notes.length && (!selectedNote?.id || !isSelectedInNotes)) {
-      setSelectedNote(notes[0])
+    if (!notes?.length && selectedNoteID) {
+      setSelectedNoteID({})
+      // Deleted the selectedNoteID
+    } else if (notes.length && (!selectedNoteID || !isSelectedInNotes)) {
+      setSelectedNoteID(notes[0])
       // Default set user selected note
     } else {
-      setSelectedNote(selectedNote)
+      setSelectedNoteID(selectedNoteID)
     }
-  }, [notes, notesIsLoading, selectedNote, setSelectedNote]) // anytime these three variables change, trigger this useEffect
+  }, [notes, notesIsLoading, selectedNoteID, setSelectedNoteID]) // anytime these three variables change, trigger this useEffect
 
   return (
     <div
@@ -133,7 +133,7 @@ const NoteList = React.memo(() => {
                   paddingLeft: '1rem',
                   marginLeft: '0.5rem',
                   backgroundColor:
-                    id === selectedNote?.id
+                    id === selectedNoteID
                       ? palette.background.light
                       : 'inherit',
                 }}
@@ -190,11 +190,9 @@ const NoteList = React.memo(() => {
                     sx={{
                       color: palette.secondary[400],
                     }}
-                    // take selectedNote as source of truth for title and body, because on update we do not update selectedNote
+                    // TODO: take selectedNoteID as source of truth for title and body, because on update we do not update selectedNoteID
                     primary={
-                      selectedNote?.title && id === selectedNote?.id
-                        ? selectedNote.title
-                        : title
+                        title
                     }
                     primaryTypographyProps={{ noWrap: true }}
                     secondary={
@@ -205,9 +203,7 @@ const NoteList = React.memo(() => {
                           color: palette.grey[600],
                         }}
                       >
-                        {selectedNote?.body && id === selectedNote?.id
-                          ? selectedNote?.body
-                          : body}
+                          {body}
                       </Typography>
                     }
                   />

@@ -12,7 +12,7 @@ export const useLoadingNotes = () => useContextSelector(StoreContext, store => s
 
 export const useNotes = () => useContextSelector(StoreContext, store => store.notes)
 
-export const useSelectedNote = () => useContextSelector(StoreContext, store => store.selectedNote)
+export const useSelectedNoteID = () => useContextSelector(StoreContext, store => store.selectedNoteID)
 
 export const useGetNote = () => useContextSelector(StoreContext, store => store.getNote)
 

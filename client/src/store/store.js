@@ -28,8 +28,8 @@ export const useStore = create(set => {
     selectedFolderID: null,
     setSelectedFolderID: folderId =>
       set(() => ({ selectedFolderID: folderId })),
-    selectedNote: null,
-    setSelectedNote: note =>
-      set(() => ({ selectedNote: note }))
+    selectedNoteID: null,
+    setSelectedNoteID: id =>
+      set(() => ({ selectedNoteID: id }))
   })
 })
