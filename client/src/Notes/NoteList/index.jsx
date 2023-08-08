@@ -31,7 +31,7 @@ const NoteList = React.memo(() => {
   const selectedFolderID = useStore(store => store.selectedFolderID)
 
   // From react query
-  const { data: notes = [], isLoading: notesIsLoading } = useNotes(!!selectedFolderID && selectedFolderID)
+  const { data: notes = [], isLoading: notesIsLoading } = useNotes()
   console.log("🚀 ~ file: index.jsx:39 ~ NoteList ~ notes:", notes)
   const screenSize = useScreenSize()
   const deleteNote = useDeleteNote()
@@ -87,7 +87,7 @@ const NoteList = React.memo(() => {
 
   useEffect(() => {
     if (notesIsLoading) return // Don't continue with side effect if loading is true
-    const isSelectedInNotes = notes?.length && notes?.some(note => note.id === selectedNote.id)
+    const isSelectedInNotes = notes?.length && notes?.some(note => note.id === selectedNote?.id)
     // Deleted all notes
     if (!notes?.length && selectedNote?.id) {
       setSelectedNote({})
@@ -133,7 +133,7 @@ const NoteList = React.memo(() => {
                   paddingLeft: '1rem',
                   marginLeft: '0.5rem',
                   backgroundColor:
-                    id === selectedNote.id
+                    id === selectedNote?.id
                       ? palette.background.light
                       : 'inherit',
                 }}
@@ -192,7 +192,7 @@ const NoteList = React.memo(() => {
                     }}
                     // take selectedNote as source of truth for title and body, because on update we do not update selectedNote
                     primary={
-                      selectedNote.title && id === selectedNote.id
+                      selectedNote?.title && id === selectedNote?.id
                         ? selectedNote.title
                         : title
                     }
@@ -205,8 +205,8 @@ const NoteList = React.memo(() => {
                           color: palette.grey[600],
                         }}
                       >
-                        {selectedNote.body && id === selectedNote.id
-                          ? selectedNote.body
+                        {selectedNote?.body && id === selectedNote?.id
+                          ? selectedNote?.body
                           : body}
                       </Typography>
                     }
