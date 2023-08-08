@@ -7,8 +7,8 @@ export default function useNotes() {
   const selectedFolderID = useStore(store => store.selectedFolderID)
   
   return useQuery({
-    queryKey: ['notes'],
+    queryKey: ['notes', selectedFolderID],
     queryFn: () => noteAPI.getAll(selectedFolderID),
-    enabled: Boolean(selectedFolderID)
+    enabled: Boolean(selectedFolderID),
   })
 }
