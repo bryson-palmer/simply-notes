@@ -155,14 +155,14 @@ const validationSchema = yup.object({
     .string('Must be a string'),
 })
 
-const getInitialValues = ({ isNewNote, selectedNote, selectedFolderID }) => {
-  return (isNewNote ? { id: '', title: '', body: '', folder: selectedFolderID } : selectedNote )
+const getInitialValues = ({ isNewNote, selectedNoteID, selectedFolderID }) => {
+  return ({ id: '', title: '', body: '', folder: selectedFolderID })
 }
 
 const NoteForm = React.memo(() => {
   const isNewNote = useStore(store => store.isNewNote)
-  const selectedNote = useStore(store => store.selectedNote)
-  console.log("🚀 ~ file: index.jsx:165 ~ NoteForm ~ selectedNote:", selectedNote)
+  const selectedNoteID = useStore(store => store.selectedNoteID)
+  console.log("🚀 ~ file: index.jsx:165 ~ NoteForm ~ selectedNoteID:", selectedNoteID)
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const { data: notes } = useNotes()
@@ -177,7 +177,7 @@ const NoteForm = React.memo(() => {
     setIsNewNote(false)
   }, [createNote, isNewNote, setIsNewNote, updateNote])
 
-  const initialValues = getInitialValues({ isNewNote, selectedNote, selectedFolderID })
+  const initialValues = getInitialValues({ isNewNote, selectedNoteID, selectedFolderID })
 
   useEffect(() => {
     // Need to watch for loading as well

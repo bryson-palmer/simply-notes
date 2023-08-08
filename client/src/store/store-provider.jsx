@@ -11,7 +11,7 @@ const useStore = () => {
   const [isNewNote, setIsNewNote] = useState(false)
   const [loadingNotes, setLoadingNotes] = useState(false)
   const [notes, setNotes] = useState([])
-  const [selectedNote, setSelectedNote] = useState({})
+  const [selectedNoteID, setSelectedNoteID] = useState({})
   const [selectedFolderID, setSelectedFolderID] = useState('')
 
   const { breakpoints } = useTheme()
@@ -55,7 +55,7 @@ const useStore = () => {
   const getNote = useCallback(id => {
     noteAPI.get(id)
     .then(data => {
-      setSelectedNote(data)
+      setSelectedNoteID(data)
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:42 ~ getNote ~ error:", error)
@@ -67,7 +67,7 @@ const useStore = () => {
     noteAPI.create(note)
     .then(data => {
       getAllNotes(selectedFolderID)  // always fetch by folder ID, it should work if folder id is null too
-      setSelectedNote(data)
+      setSelectedNoteID(data)
     })
     .catch(error => {
       console.log("🚀 ~ file: store-provider.jsx:54 ~ createNote ~ error:", error)
@@ -87,12 +87,12 @@ const useStore = () => {
   }, [getAllFolders])
 
   const updateNote = useCallback(note => {
-    setSelectedNote(note)  // to avoid overwriting user as he continues typing
+    setSelectedNoteID(note)  // to avoid overwriting user as he continues typing
     noteAPI.update(note)
     .then(() => {
       /*
-        Moving the setSelectedNote(note/data) to before the call with the note or after the response with data doesn't matter (that I can tell) for these issues.
-          - An empty title in the NoteForm, doesn't clear the title in the selectedNote in the NoteList.
+        Moving the setSelectedNoteID(note/data) to before the call with the note or after the response with data doesn't matter (that I can tell) for these issues.
+          - An empty title in the NoteForm, doesn't clear the title in the selectedNoteID in the NoteList.
           - With slower network connections or throttling, updating a note lags behind and makes for a janky typing experience.
           - When saving a new note, note[0] flashes on the screen for a moment before the newly created note is selected.
 
@@ -116,7 +116,7 @@ const useStore = () => {
   const deleteNote = useCallback(id => {
     noteAPI.delete(id)
     .then(() => {
-      setSelectedNote({})
+      setSelectedNoteID({})
       getAllNotes(selectedFolderID)
     })
     .catch(error => {
@@ -140,18 +140,18 @@ const useStore = () => {
   
   // useEffect(() => {
   //   if (loadingNotes) return // Don't continue with side effect if loading is true
-  //   const isSelectedInNotes = notes.some(note => note.id === selectedNote.id)
+  //   const isSelectedInNotes = notes.some(note => note.id === selectedNoteID.id)
   //   // Deleted all notes
-  //   if (!notes?.length && selectedNote.id) {
-  //     setSelectedNote({})
-  //     // Deleted the selectedNote
-  //   } else if (notes.length && (!selectedNote?.id || !isSelectedInNotes)) {
-  //     setSelectedNote(notes[0])
+  //   if (!notes?.length && selectedNoteID.id) {
+  //     setSelectedNoteID({})
+  //     // Deleted the selectedNoteID
+  //   } else if (notes.length && (!selectedNoteID?.id || !isSelectedInNotes)) {
+  //     setSelectedNoteID(notes[0])
   //     // Default set user selected note
   //   } else {
-  //     setSelectedNote(selectedNote)
+  //     setSelectedNoteID(selectedNoteID)
   //   }
-  // }, [loadingNotes, notes, selectedNote]) // anytime these three variables change, trigger this useEffect
+  // }, [loadingNotes, notes, selectedNoteID]) // anytime these three variables change, trigger this useEffect
 
   return {
     isNewNote,
@@ -159,7 +159,7 @@ const useStore = () => {
     screenSize,
     loadingNotes,
     notes,
-    selectedNote,
+    selectedNoteID,
     getNote: id => getNote(id),
     createNote: note => createNote(note),
     updateNote: note => updateNote(note),
