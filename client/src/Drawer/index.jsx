@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 
 import { Global, useTheme } from '@emotion/react'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { styled } from '@mui/material/styles'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 

@@ -1,26 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import {
-  Box,
-  CircularProgress,
-  Fade,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  useTheme,
-} from '@mui/material'
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
+import FolderIcon from '@mui/icons-material/Folder'
+import FolderOpenIcon from '@mui/icons-material/FolderOpen'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 
-import {
-  CreateNewFolder,
-  Folder as FolderIcon,
-  FolderOpen,
-  MoreVert
-} from '@mui/icons-material'
+import { useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
+import Fade from '@mui/material/Fade'
+import IconButton from '@mui/material/IconButton'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 
 import FolderForm from '@/Folders/FolderForm'
 import useDeleteFolder from '@/hooks/useDeleteFolder'
@@ -136,7 +132,7 @@ const FolderList = () => {
               TransitionComponent={Fade}
               TransitionProps={{ timeout: 400 }}
             >
-              <CreateNewFolder
+              <CreateNewFolderIcon
                 id="newFolderButton"
                 sx={{
                   color: palette.secondary[400],
@@ -202,7 +198,7 @@ const FolderList = () => {
                           color: palette.grey[400],
                         }}
                       >
-                        <MoreVert 
+                        <MoreVertIcon
                           id='optionsFolder'
                         />
                       </IconButton>
@@ -287,7 +283,7 @@ const FolderList = () => {
                   sx={{ '&:hover': { backgroundColor: 'transparent' } }}
                 >
                   <ListItemIcon>
-                    <FolderOpen />
+                    <FolderOpenIcon />
                   </ListItemIcon>
                   <ListItemText
                     primaryTypographyProps={{ noWrap: true }}

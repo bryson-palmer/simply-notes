@@ -1,7 +1,8 @@
 import { PropTypes } from 'prop-types/prop-types'
-import { Box, SvgIcon } from '@mui/material'
 import NotInterestedIcon from '@mui/icons-material/NotInterested'
-import { useTheme } from '@emotion/react'
+import { useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import SvgIcon from '@mui/material/SvgIcon'
 
 const EmptyState = ({ EmptyIcon, isNewFolder=false, text='' }) => {
   const { palette } = useTheme()

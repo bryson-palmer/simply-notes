@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 
-import { Box, Button, useTheme } from '@mui/material'
-import { ArrowBackIosNew as ArrowBackIosNewIcon } from '@mui/icons-material'
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
+import { useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 
 import Drawer from '@/Drawer'
 import NoteForm from '@/Notes/NoteForm'

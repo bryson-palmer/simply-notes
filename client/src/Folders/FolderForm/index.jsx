@@ -1,6 +1,9 @@
+import FolderOpenIcon from '@mui/icons-material/FolderOpen'
+import { useTheme } from '@mui/material'
+import ListItem from '@mui/material/ListItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import TextField from '@mui/material/TextField'
 import { Form, Formik } from 'formik'
-import { ListItem, ListItemIcon, TextField, useTheme } from '@mui/material'
-import { FolderOpen } from '@mui/icons-material'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 import useCreateFolder from '@/hooks/useCreateFolder'
@@ -23,7 +26,7 @@ const FolderFormComponent = ({ formik }) => {
       }}
     >
       <ListItemIcon>
-        <FolderOpen />
+        <FolderOpenIcon />
       </ListItemIcon>
       <TextField
         autoFocus

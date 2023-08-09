@@ -1,8 +1,11 @@
 import { useMemo } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-import { Box, CssBaseline, ThemeProvider, Typography } from '@mui/material'
+import CssBaseline from '@mui/material/CssBaseline'
+import { ThemeProvider } from '@mui/material'
+import Box from '@mui/material/Box'
 import { createTheme } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 
 import Navbar from '@/Navbar'
 import Notes from '@/Notes'

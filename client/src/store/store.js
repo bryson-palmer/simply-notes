@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { create } from 'zustand'
-import { useMediaQuery, useTheme } from '@mui/material'
+import { useTheme } from '@mui/material'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 export const useScreenSize = () => {
   const { breakpoints } = useTheme()

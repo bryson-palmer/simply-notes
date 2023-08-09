@@ -4,8 +4,11 @@ import { Form, Formik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
 
-import { Description as DescriptionIcon } from '@mui/icons-material'
-import { Box, TextField, Typography, useTheme } from "@mui/material"
+import DescriptionIcon from '@mui/icons-material/Description'
+import { useTheme } from "@mui/material"
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 
 import useCreateNote from '@/hooks/useCreateNote'
 import useUpdateNote from '@/hooks/useUpdateNote'
