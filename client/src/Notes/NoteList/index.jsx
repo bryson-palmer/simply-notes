@@ -26,29 +26,28 @@ const NoteList = React.memo(() => {
     isAllChecked: false,
     checkedIds: []
   })
-
+  
   const { palette } = useTheme()
-  const selectedFolderID = useStore(store => store.selectedFolderID)
-
+  
   // From react query
   const { data: notes = [], isLoading: notesIsLoading } = useNotes()
   console.log("🚀 ~ file: index.jsx:39 ~ NoteList ~ notes:", notes)
+  const [notesLength, setNotesLength] = useState(notes?.length)
   const screenSize = useScreenSize()
   const deleteNote = useDeleteNote()
   
   // From zustand store
-  const selectedNoteID = useStore(store => store.selectedNoteID)
-  console.log("🚀 ~ file: index.jsx:41 ~ NoteList ~ selectedFolderID:", selectedFolderID)
   const setIsNewNote = useStore(store => store.setIsNewNote)
+  const selectedNoteID = useStore(store => store.selectedNoteID)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
-
+  
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const notesListWidth = useMemo(() => {
     if (screenSize === 'large') return 350
     if (screenSize === 'tablet') return 300
     if (screenSize === 'desktop' || screenSize === 'mobile') return 224
   }, [screenSize])
-
+  
   const Icon = () => <DescriptionIcon />
   
   const handleCheckToggle = useCallback(value => () => {
@@ -70,35 +69,39 @@ const NoteList = React.memo(() => {
   }, [listState.checkedIds, notes?.length])
 
   const handleSelectNote = useCallback(id => () => {
-    setIsNewNote(false)
+    if (id === selectedNoteID) return
     setSelectedNoteID(id)
-  }, [setIsNewNote, setSelectedNoteID])
+    setIsNewNote(false)
+  }, [selectedNoteID, setIsNewNote, setSelectedNoteID])
 
   const handleDeleteNote = useCallback(id => {
     deleteNote.mutate(id)
   }, [deleteNote])
 
-  // anytime a folder is selected, fetch all notes for that folder
-  // useEffect(() => {
-  //   if (selectedFolderID) {
-  //     getAllNotes(selectedFolderID)
-  //   }
-  // }, [getAllNotes, selectedFolderID])
+  useEffect(() => {
+    if (notes.length) {
+      setNotesLength(notes.length)
+    }
+  }, [notes])
 
   useEffect(() => {
     if (notesIsLoading) return // Don't continue with side effect if loading is true
     const isSelectedInNotes = notes?.length && notes?.some(note => note.id === selectedNoteID)
     // Deleted all notes
-    if (!notes?.length && selectedNoteID) {
-      setSelectedNoteID({})
+    if (!notes?.length) {
+      setSelectedNoteID(null)
       // Deleted the selectedNoteID
     } else if (notes.length && (!selectedNoteID || !isSelectedInNotes)) {
-      setSelectedNoteID(notes[0])
-      // Default set user selected note
+      setSelectedNoteID(notes[0].id)
+      // If we've added a new note w/o an id
+      // Then set the selected note to the last (new) note in the list
+    } else if (Boolean(notesLength) && notes.length === notesLength + 1) {
+      setSelectedNoteID(notes[notes.length -1]?.id)
     } else {
+      // Default set user selected note
       setSelectedNoteID(selectedNoteID)
     }
-  }, [notes, notesIsLoading, selectedNoteID, setSelectedNoteID]) // anytime these three variables change, trigger this useEffect
+  }, [notes, notesIsLoading, notesLength, selectedNoteID, setSelectedNoteID])
 
   return (
     <div
