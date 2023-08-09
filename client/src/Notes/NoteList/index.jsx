@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useFormikContext } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
@@ -25,17 +26,19 @@ const NoteList = React.memo(() => {
     isAllChecked: false,
     checkedIds: []
   })
-  
-  const { palette } = useTheme()
-  
-  // From react query
-  const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
 
-  const [notesLength, setNotesLength] = useState(notes?.length)
+  const { palette } = useTheme()
+  const { values } = useFormikContext()
+  console.log("🚀 ~ file: index.jsx:32 ~ NoteList ~ values:", values)
+
+  // Api query
+  const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
   const screenSize = useScreenSize()
   const deleteNote = useDeleteNote()
+
+  const [notesLength, setNotesLength] = useState(notes?.length)
   
-  // From zustand store
+  // Store
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const selectedNoteID = useStore(store => store.selectedNoteID)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
@@ -123,6 +126,7 @@ const NoteList = React.memo(() => {
         >
           {notes?.map(({ id, title, body }) => {
             const labelId = `notes-list-label-${id}`
+            const isSelected = id === selectedNoteID
 
             return (
               <ListItem
@@ -135,7 +139,7 @@ const NoteList = React.memo(() => {
                   paddingLeft: '1rem',
                   marginLeft: '0.5rem',
                   backgroundColor:
-                    id === selectedNoteID
+                  isSelected
                       ? palette.background.light
                       : 'inherit',
                 }}
@@ -192,10 +196,7 @@ const NoteList = React.memo(() => {
                     sx={{
                       color: palette.secondary[400],
                     }}
-                    // TODO: take selectedNoteID as source of truth for title and body, because on update we do not update selectedNoteID
-                    primary={
-                        title
-                    }
+                    primary={isSelected ? values.title : title }
                     primaryTypographyProps={{ noWrap: true }}
                     secondary={
                       <Typography
@@ -205,7 +206,7 @@ const NoteList = React.memo(() => {
                           color: palette.grey[600],
                         }}
                       >
-                          {body}
+                          {isSelected ? values.body : body}
                       </Typography>
                     }
                   />
