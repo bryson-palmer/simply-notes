@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef } from "react"
 
-import { Form, Formik } from 'formik'
-import { PropTypes } from 'prop-types/prop-types'
-import * as yup from 'yup'
+import { useFormikContext } from "formik"
+// import { PropTypes } from 'prop-types/prop-types'
 
 import DescriptionIcon from '@mui/icons-material/Description'
 import { useTheme } from "@mui/material"
@@ -10,18 +9,23 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
-import useCreateNote from '@/hooks/useCreateNote'
-import useUpdateNote from '@/hooks/useUpdateNote'
 import useGetNotes from '@/hooks/useGetNotes'
 import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from "@/store/store"
 import EmptyState from '@/UI/EmptyState'
 
-const NoteFormComponent = ({ formik, isNewNote }) => {
+const NoteForm = React.memo(() => {
   const { palette } = useTheme()
+
+  // Api query
   const { data: folders = [] } = useGetFolders()
+  const { data: notes } = useGetNotes()
+
+  // Store
   const screenSize = useScreenSize()
-  const {handleChange, submitForm, values } = formik
+  const isNewNote = useStore(store => store.isNewNote)
+  const setIsNewNote = useStore(store => store.setIsNewNote)
+  const {handleChange, submitForm, values } = useFormikContext()
 
   const form = document.getElementById('form')
   const titleInput = document.getElementById('title')
@@ -57,6 +61,16 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
       })
     }
   }, [titleInput])
+
+  useEffect(() => {
+    // Need to watch for loading as well
+    // Like if (loading) return
+    if (!notes?.length) {
+      setIsNewNote(true)
+    } else {
+      setIsNewNote(false)
+    }
+  }, [notes?.length, setIsNewNote])
 
   if (!folders?.length) {
     if (isDesktop) {
@@ -122,110 +136,28 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
       />
     </Box>
   )
-}
-
-NoteFormComponent.displayName = '/NoteForm'
-NoteFormComponent.propTypes = {
-  formik: PropTypes.shape({
-    dirty: PropTypes.bool,
-    handleChange: PropTypes.func,
-    isSubmitting: PropTypes.bool,
-    isValid: PropTypes.bool,
-    setSubmitting: PropTypes.func,
-    submitForm: PropTypes.func,
-    touched: PropTypes.shape({
-      id: PropTypes.bool,
-      title: PropTypes.bool,
-      body: PropTypes.bool
-    }),
-    values: PropTypes.shape({
-      id: PropTypes.string,
-      title: PropTypes.string,
-      body: PropTypes.string
-    })
-  }),
-  isNewNote: PropTypes.bool,
-}
-
-const validationSchema = yup.object({
-  id: yup
-    .string('Must be a string'),
-  title: yup
-    .string('Enter a title'),
-  body: yup
-    .string('Enter a note'),
-  folder: yup
-    .string('Must be a string'),
 })
 
-const NoteForm = React.memo(() => {
-  const [selectedNote, setSelectedNote] = useState({
-    id: '',
-    title: '',
-    body: '',
-    folder: '',
-  })
-
-  // Store
-  const isNewNote = useStore(store => store.isNewNote)
-  const setIsNewNote = useStore(store => store.setIsNewNote)
-  const selectedNoteID = useStore(store => store.selectedNoteID)
-  const selectedFolderID = useStore(store => store.selectedFolderID)
-
-  // Api query
-  const createNote = useCreateNote()
-  const updateNote = useUpdateNote()
-  const { data: notes } = useGetNotes()
-
-  const note = useMemo(() => notes?.find(note => note.id === selectedNoteID), [notes, selectedNoteID])
-  
-  const handleSubmit = useCallback(values => {
-    isNewNote
-      ? createNote.mutate(values)
-      : updateNote.mutate(values)
-    
-    setIsNewNote(false)
-  }, [createNote, isNewNote, setIsNewNote, updateNote])
-
-  useEffect(() => {
-    if (selectedFolderID) {
-      setSelectedNote(prev => ({
-        ...prev,
-        folder: selectedFolderID
-      }))
-    }
-  }, [selectedFolderID])
-
-  useEffect(() => {
-    // Need to watch for loading as well
-    // Like if (loading) return
-    if (!notes?.length) {
-      setIsNewNote(true)
-    } else {
-      setIsNewNote(false)
-    }
-  }, [notes?.length, setIsNewNote])
-
-  return (
-    <Formik
-      enableReinitialize
-      initialValues={selectedFolderID && !isNewNote ? note : selectedNote}
-      onSubmit={handleSubmit}
-      validationSchema={validationSchema}
-    >
-      {formik => (
-        <Form onSubmit={formik.handleSubmit}>
-          <NoteFormComponent
-            formik={formik}
-            isNewNote={isNewNote}
-            setSelectedNote={setSelectedNote}
-          />
-        </Form>
-      )}
-    </Formik>
-  )
-})
-
-NoteForm.displayName = '/NoteFormWrapper'
+NoteForm.displayName = '/NoteForm'
+// NoteForm.propTypes = {
+//   formik: PropTypes.shape({
+//     dirty: PropTypes.bool,
+//     handleChange: PropTypes.func,
+//     isSubmitting: PropTypes.bool,
+//     isValid: PropTypes.bool,
+//     setSubmitting: PropTypes.func,
+//     submitForm: PropTypes.func,
+//     touched: PropTypes.shape({
+//       id: PropTypes.bool,
+//       title: PropTypes.bool,
+//       body: PropTypes.bool
+//     }),
+//     values: PropTypes.shape({
+//       id: PropTypes.string,
+//       title: PropTypes.string,
+//       body: PropTypes.string
+//     })
+//   }),
+// }
 
 export default NoteForm
