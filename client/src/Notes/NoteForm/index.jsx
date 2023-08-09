@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react"
 
 import { useFormikContext } from "formik"
-// import { PropTypes } from 'prop-types/prop-types'
 
 import DescriptionIcon from '@mui/icons-material/Description'
 import { useTheme } from "@mui/material"
@@ -139,25 +138,5 @@ const NoteForm = React.memo(() => {
 })
 
 NoteForm.displayName = '/NoteForm'
-// NoteForm.propTypes = {
-//   formik: PropTypes.shape({
-//     dirty: PropTypes.bool,
-//     handleChange: PropTypes.func,
-//     isSubmitting: PropTypes.bool,
-//     isValid: PropTypes.bool,
-//     setSubmitting: PropTypes.func,
-//     submitForm: PropTypes.func,
-//     touched: PropTypes.shape({
-//       id: PropTypes.bool,
-//       title: PropTypes.bool,
-//       body: PropTypes.bool
-//     }),
-//     values: PropTypes.shape({
-//       id: PropTypes.string,
-//       title: PropTypes.string,
-//       body: PropTypes.string
-//     })
-//   }),
-// }
 
 export default NoteForm
