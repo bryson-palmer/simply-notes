@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { Form, Formik } from 'formik'
 import { PropTypes } from 'prop-types/prop-types'
@@ -108,7 +108,7 @@ const NoteFormComponent = ({ formik, isNewNote }) => {
         id='body'
         name='body'
         variant='standard'
-        value={values.body?.trimStart() ?? ''}
+        value={values?.body?.trimStart() ?? ''}
         onChange={handleChange}
         sx={{
           '& [class*=MuiInputBase-root]': { color: palette.grey[400], padding: 0, alignItems: 'initial' },
@@ -141,7 +141,7 @@ NoteFormComponent.propTypes = {
       body: PropTypes.string
     })
   }),
-  isNewNote: PropTypes.bool
+  isNewNote: PropTypes.bool,
 }
 
 const validationSchema = yup.object({
@@ -155,19 +155,26 @@ const validationSchema = yup.object({
     .string('Must be a string'),
 })
 
-const getInitialValues = ({ isNewNote, selectedNoteID, selectedFolderID }) => {
-  return ({ id: '', title: '', body: '', folder: selectedFolderID })
-}
-
 const NoteForm = React.memo(() => {
+  const [selectedNote, setSelectedNote] = useState({
+    id: '',
+    title: '',
+    body: '',
+    folder: '',
+  })
+
+  // Store
   const isNewNote = useStore(store => store.isNewNote)
-  const selectedNoteID = useStore(store => store.selectedNoteID)
-  console.log("🚀 ~ file: index.jsx:165 ~ NoteForm ~ selectedNoteID:", selectedNoteID)
   const setIsNewNote = useStore(store => store.setIsNewNote)
+  const selectedNoteID = useStore(store => store.selectedNoteID)
   const selectedFolderID = useStore(store => store.selectedFolderID)
-  const { data: notes } = useNotes()
+
+  // Api query
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
+  const { data: notes } = useNotes()
+
+  const note = useMemo(() => notes?.find(note => note.id === selectedNoteID), [notes, selectedNoteID])
   
   const handleSubmit = useCallback(values => {
     isNewNote
@@ -177,7 +184,14 @@ const NoteForm = React.memo(() => {
     setIsNewNote(false)
   }, [createNote, isNewNote, setIsNewNote, updateNote])
 
-  const initialValues = getInitialValues({ isNewNote, selectedNoteID, selectedFolderID })
+  useEffect(() => {
+    if (selectedFolderID) {
+      setSelectedNote(prev => ({
+        ...prev,
+        folder: selectedFolderID
+      }))
+    }
+  }, [selectedFolderID])
 
   useEffect(() => {
     // Need to watch for loading as well
@@ -192,7 +206,7 @@ const NoteForm = React.memo(() => {
   return (
     <Formik
       enableReinitialize
-      initialValues={initialValues ?? {}}
+      initialValues={selectedFolderID && !isNewNote ? note : selectedNote}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >
@@ -201,6 +215,7 @@ const NoteForm = React.memo(() => {
           <NoteFormComponent
             formik={formik}
             isNewNote={isNewNote}
+            setSelectedNote={setSelectedNote}
           />
         </Form>
       )}
@@ -209,15 +224,5 @@ const NoteForm = React.memo(() => {
 })
 
 NoteForm.displayName = '/NoteFormWrapper'
-// NoteForm.propTypes = {
-//   notes: PropTypes.arrayOf(PropTypes.shape({
-//     note: PropTypes.shape({
-//       id: PropTypes.string,
-//       title: PropTypes.string,
-//       body: PropTypes.string,
-//       folder: PropTypes.string,
-//     })
-//   }))
-// }
 
 export default NoteForm
