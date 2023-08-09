@@ -1,19 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 
-import { useTheme } from '@emotion/react'
-import {
-  Box,
-  Checkbox,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography
-} from '@mui/material'
-import { DeleteForever as DeleteForeverIcon, Description as DescriptionIcon } from '@mui/icons-material'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import DescriptionIcon from '@mui/icons-material/Description'
+import { useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import IconButton from '@mui/material/IconButton'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Typography from '@mui/material/Typography'
 
 import useGetNotes from '@/hooks/useGetNotes'
 import useDeleteNote from '@/hooks/useDeleteNote'

@@ -1,8 +1,13 @@
 import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Add as AddIcon, Create as CreateIcon, Pix as PixIcon } from '@mui/icons-material'
-import { Button, Fade, IconButton,  useTheme } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import CreateIcon from '@mui/icons-material/Create'
+import PixIcon from '@mui/icons-material/Pix'
+import { useTheme } from '@mui/material'
+import Button from '@mui/material/Button'
+import Fade from '@mui/material/Fade'
+import IconButton from '@mui/material/IconButton'
 
 import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from '@/store/store'
