@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { useTheme } from '@mui/material'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
@@ -21,16 +22,20 @@ export const useScreenSize = () => {
   return screenSize
 }
 
-export const useStore = create(set => {
-  return ({
-    isNewNote: false,
-    setIsNewNote: bool =>
-      set(() => ({ isNewNote: bool })),
-    selectedFolderID: null,
-    setSelectedFolderID: folderId =>
-      set(() => ({ selectedFolderID: folderId })),
-    selectedNoteID: null,
-    setSelectedNoteID: id =>
-      set(() => ({ selectedNoteID: id }))
-  })
-})
+export const useStore = create(
+  persist(
+    (set) => ({
+      isNewNote: false,
+      setIsNewNote: (bool) => set(() => ({ isNewNote: bool })),
+      selectedFolderID: null,
+      setSelectedFolderID: (folderId) =>
+        set(() => ({ selectedFolderID: folderId })),
+      selectedNoteID: null,
+      setSelectedNoteID: (id) => set(() => ({ selectedNoteID: id })),
+    }),
+    {
+      // Local Storage key name
+      name: "simple-notes",
+    }
+  )
+);
