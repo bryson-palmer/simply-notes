@@ -11,17 +11,6 @@ export const folderAPI = {
 
     return response.data
   },
-  get: async (id, cancel = false) => {
-    const response = await api.request({
-      url: `/folders/${id}`,
-      method: "GET",
-      // retrieving the signal value by using the property name
-      signal: cancel ? cancelApiObject[this.get.name].handleRequestCancellation().signal : undefined,
-    })
-
-    // returning the folder returned by the API
-    return response.data
-  },
   create: async (folder, cancel = false) => {
     const response = await api.request({
       url: `/folders`,
@@ -39,28 +28,6 @@ export const folderAPI = {
       signal: cancel ? cancelApiObject[this.delete.name].handleRequestCancellation().signal : undefined,
     })
   },
-  update: async (folder, cancel = false) => {
-    const response = await api.request({
-      url: `/folders/${folder.id}`,
-      method: "PUT",
-      data: folder,
-      signal: cancel ? cancelApiObject[this.update.name].handleRequestCancellation().signal : undefined,
-    })
-
-    return response.data
-  },
-  // search: async (title, cancel = false) => {
-  //   const response = await api.request({
-  //     url: "/folders/search",
-  //     method: "GET",
-  //     params: {
-  //       title: title,
-  //     },
-  //     signal: cancel ? cancelApiObject[this.search.name].handleRequestCancellation().signal : undefined,
-  //   })
-
-  //   return response.data.folders
-  // },
 }
 
 // defining the cancel API object for ProductAPI

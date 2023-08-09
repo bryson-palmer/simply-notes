@@ -49,18 +49,6 @@ def folders():
 
         return id
 
-@app.route('/folders/<id>', methods=['GET'])
-def folder(id):
-    connection = sqlite3.connect(DB_FILE)
-    cursor = connection.cursor()
-    cursor.execute(f'SELECT * FROM FOLDERS WHERE id = "{id}"')
-    folder = cursor.fetchone()
-    if folder is None:
-        return {}
-    folder_dict = dict(folderName=folder[0], id=folder[1])
-    connection.close()
-    return folder_dict
-
 @app.route('/folders/<id>', methods=['DELETE'])
 def folder_delete(id):
     tuple_ids = tuple(id.split(','))
