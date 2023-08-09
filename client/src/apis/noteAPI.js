@@ -52,18 +52,6 @@ export const noteAPI = {
 
     return response.data
   },
-  // search: async (title, cancel = false) => {
-  //   const response = await api.request({
-  //     url: "/notes/search",
-  //     method: "GET",
-  //     params: {
-  //       title: title,
-  //     },
-  //     signal: cancel ? cancelApiObject[this.search.name].handleRequestCancellation().signal : undefined,
-  //   })
-
-  //   return response.data.notes
-  // },
 }
 
 // defining the cancel API object for ProductAPI
