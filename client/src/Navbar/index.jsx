@@ -4,14 +4,14 @@ import { Link } from 'react-router-dom'
 import { Add as AddIcon, Create as CreateIcon, Pix as PixIcon } from '@mui/icons-material'
 import { Button, Fade, IconButton,  useTheme } from '@mui/material'
 
-import useFolders from '@/hooks/useFolders'
+import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from '@/store/store'
 import FlexBetween from '@/UI/FlexBetween'
 import StyledTooltip from '@/UI/StyledTooltip'
 
 const Navbar = () => {
   const { palette } = useTheme()
-  const { data, isLoading, isError} = useFolders() // React Query folders
+  const { data, isLoading, isError} = useGetFolders() // React Query folders
   const screenSize = useScreenSize()
   const setIsNewNote = useStore(store => store.setIsNewNote)
 

@@ -8,7 +8,7 @@ import { styled } from '@mui/material/styles'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 
 import FolderList from '@/Folders/FolderList'
-import useNotes from '@/hooks/useNotes'
+import useGetNotes from '@/hooks/useGetNotes'
 import NoteList from '@/Notes/NoteList'
 import { useScreenSize } from '@/store/store'
 
@@ -18,7 +18,7 @@ const Drawer = React.memo(({
   toggleDrawer
 }) => {
   const { palette } = useTheme()
-  const { data: notes = []} = useNotes()
+  const { data: notes = []} = useGetNotes()
   const screenSize = useScreenSize()
 
   const isDesktop = useMemo(() => screenSize === 'desktop' || screenSize === 'large', [screenSize])

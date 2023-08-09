@@ -7,12 +7,12 @@ import { Box, Checkbox, IconButton, ListItem, ListItemIcon } from '@mui/material
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 import useDeleteNote from '@/hooks/useDeleteNote'
-import useNotes from '@/hooks/useNotes'
+import useGetNotes from '@/hooks/useGetNotes'
 
 const ListHeader = ({ listState, setListState }) => {
   const { palette } = useTheme()
   const deleteNote = useDeleteNote()
-  const { data: notes = [] } = useNotes()
+  const { data: notes = [] } = useGetNotes()
   const { checkedIds, isAllChecked} = listState
   
   const handleAllNotesChecked = useCallback(() => setListState(prevListState => ({

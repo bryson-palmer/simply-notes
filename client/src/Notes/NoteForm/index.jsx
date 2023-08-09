@@ -9,14 +9,14 @@ import { Box, TextField, Typography, useTheme } from "@mui/material"
 
 import useCreateNote from '@/hooks/useCreateNote'
 import useUpdateNote from '@/hooks/useUpdateNote'
-import useNotes from '@/hooks/useNotes'
-import useFolders from '@/hooks/useFolders'
+import useGetNotes from '@/hooks/useGetNotes'
+import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from "@/store/store"
 import EmptyState from '@/UI/EmptyState'
 
 const NoteFormComponent = ({ formik, isNewNote }) => {
   const { palette } = useTheme()
-  const { data: folders = [] } = useFolders()
+  const { data: folders = [] } = useGetFolders()
   const screenSize = useScreenSize()
   const {handleChange, submitForm, values } = formik
 
@@ -172,7 +172,7 @@ const NoteForm = React.memo(() => {
   // Api query
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
-  const { data: notes } = useNotes()
+  const { data: notes } = useGetNotes()
 
   const note = useMemo(() => notes?.find(note => note.id === selectedNoteID), [notes, selectedNoteID])
   

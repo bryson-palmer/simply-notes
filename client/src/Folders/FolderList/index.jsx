@@ -24,7 +24,7 @@ import {
 
 import FolderForm from '@/Folders/FolderForm'
 import useDeleteFolder from '@/hooks/useDeleteFolder'
-import useFolders from '@/hooks/useFolders'
+import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from '@/store/store'
 
 import EmptyState from '@/UI/EmptyState'
@@ -42,7 +42,7 @@ const FolderList = () => {
   
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
-  const { data: folders = [], isFetching: foldersIsFetching, isLoading: foldersIsLoading } = useFolders()
+  const { data: folders = [], isFetching: foldersIsFetching, isLoading: foldersIsLoading } = useGetFolders()
   // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ foldersIsStale:", foldersIsStale)
   // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ foldersIsLoading:", foldersIsLoading)
   // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ foldersIsFetching:", foldersIsFetching)
