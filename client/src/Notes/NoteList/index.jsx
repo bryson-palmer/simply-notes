@@ -29,7 +29,6 @@ const NoteList = React.memo(() => {
 
   const { palette } = useTheme()
   const { values } = useFormikContext()
-  console.log("🚀 ~ file: index.jsx:32 ~ NoteList ~ values:", values)
 
   // Api query
   const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
