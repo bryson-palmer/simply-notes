@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 import { DeleteForever as DeleteForeverIcon, Description as DescriptionIcon } from '@mui/icons-material'
 
-import useNotes from '@/hooks/useNotes'
+import useGetNotes from '@/hooks/useGetNotes'
 import useDeleteNote from '@/hooks/useDeleteNote'
 import ListHeader from '@/Notes/ListHeader'
 import  { useScreenSize, useStore } from '@/store/store'
@@ -30,8 +30,8 @@ const NoteList = React.memo(() => {
   const { palette } = useTheme()
   
   // From react query
-  const { data: notes = [], isLoading: notesIsLoading } = useNotes()
-  console.log("🚀 ~ file: index.jsx:39 ~ NoteList ~ notes:", notes)
+  const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
+
   const [notesLength, setNotesLength] = useState(notes?.length)
   const screenSize = useScreenSize()
   const deleteNote = useDeleteNote()
