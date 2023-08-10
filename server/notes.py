@@ -52,9 +52,9 @@ def notes():
     connection.row_factory = sqlite3.Row  # results come back as dictionaries
     cursor = connection.cursor()
     if folder_id:
-        cursor.execute('SELECT * FROM NOTES WHERE user_id="%s" and folder_id="%s"' % (user_id, folder_id,))
+        cursor.execute('SELECT * FROM NOTES WHERE user_id="%s" and folder_id="%s" ORDER BY last_modified DESC' % (user_id, folder_id,))
     else:
-        cursor.execute('SELECT * FROM NOTES WHERE user_id="%s"' % (user_id,))
+        cursor.execute('SELECT * FROM NOTES WHERE user_id="%s" ORDER BY last_modified DESC' % (user_id,))
     results = cursor.fetchall()  # [['uadfsdf', 'title', 'body', None], []...]
     notes = []
     for result in results:
