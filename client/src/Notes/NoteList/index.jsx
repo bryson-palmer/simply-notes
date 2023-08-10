@@ -22,6 +22,7 @@ import  { useScreenSize, useStore } from '@/store/store'
 import EmptyState from '@/UI/EmptyState'
 
 const NoteList = React.memo(() => {
+  // Checkbox notes list state
   const [listState, setListState] = useState({
     isAllChecked: false,
     checkedIds: []
@@ -34,8 +35,6 @@ const NoteList = React.memo(() => {
   const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
   const screenSize = useScreenSize()
   const deleteNote = useDeleteNote()
-
-  const [notesLength, setNotesLength] = useState(notes?.length)
   
   // Store
   const setIsNewNote = useStore(store => store.setIsNewNote)
@@ -80,11 +79,6 @@ const NoteList = React.memo(() => {
     deleteNote.mutate(id)
   }, [deleteNote])
 
-  useEffect(() => {
-    if (notes.length) {
-      setNotesLength(notes.length)
-    }
-  }, [notes])
 
   useEffect(() => {
     if (notesIsLoading) return // Don't continue with side effect if loading is true
@@ -97,13 +91,13 @@ const NoteList = React.memo(() => {
       setSelectedNoteID(notes[0].id)
       // If we've added a new note w/o an id
       // Then set the selected note to the last (new) note in the list
-    } else if (Boolean(notesLength) && notes.length === notesLength + 1) {
-      setSelectedNoteID(notes[notes.length -1]?.id)
+    // } else if (Boolean(notesLength) && notes.length === notesLength + 1) {
+    //   setSelectedNoteID(notes[notes.length -1]?.id)
     } else {
       // Default set user selected note
       setSelectedNoteID(selectedNoteID)
     }
-  }, [notes, notesIsLoading, notesLength, selectedNoteID, setSelectedNoteID])
+  }, [isNewNote, notes, notesIsLoading, selectedNoteID, setSelectedNoteID])
 
   return (
     <div
@@ -113,6 +107,7 @@ const NoteList = React.memo(() => {
       }}
     >
       <ListHeader listState={listState} setListState={setListState} />
+
       {notes?.length ? (
         <List
           sx={{
@@ -121,12 +116,86 @@ const NoteList = React.memo(() => {
             paddingRight: '0.5rem',
             borderTop: `thin solid ${palette.grey[800]}`,
             borderRight: isDesktop ? `thin solid ${palette.grey[800]}` : 0,
-            borderTopRightRadius: isDesktop ? '0.5rem' : 0
+            borderTopRightRadius: isDesktop ? '0.5rem' : 0,
           }}
         >
+          {isNewNote ? (
+            <ListItem
+              dense
+              disablePadding
+              sx={{
+                width: 'calc(100% - 0.5rem)',
+                height: '3rem',
+                borderRadius: '0.5rem',
+                paddingLeft: '1rem',
+                marginLeft: '0.5rem',
+                backgroundColor: palette.background.light,
+              }}
+              secondaryAction={
+                <IconButton
+                  disableRipple
+                  disabled={true}
+                  onClick={() => 'noop'}
+                  aria-label='delete-note-disabled'
+                  edge='end'
+                  sx={{
+                    color: palette.grey[300],
+                    '&.Mui-disabled': { color: palette.grey[400], opacity: 0.5},
+                  }}
+                >
+                  <DeleteForeverIcon />
+                </IconButton>
+              }
+            >
+              <IconButton
+                disableRipple
+                size='small'
+                onClick={() => 'noop'}
+              >
+                <ListItemIcon
+                  sx={{
+                    '&.MuiListItemIcon-root': { minWidth: 'auto' },
+                  }}
+                >
+                  <Checkbox
+                    disableRipple
+                    disabled={true}
+                    edge='start'
+                    tabIndex={-1}
+                    inputProps={{ 'aria-labelledby': 'new-note' }}
+                    sx={{
+                      color: palette.grey[300],
+                      padding: '9px 3px 9px 9px',
+                      '&.Mui-disabled': { color: palette.grey[400], opacity: 0.5},
+                    }}
+                  />
+                </ListItemIcon>
+              </IconButton>
+              <ListItemText
+                id='new-note'
+                sx={{
+                  color: palette.secondary[400],
+                }}
+                primary={values?.title}
+                primaryTypographyProps={{ noWrap: true }}
+                secondary={
+                  <Typography
+                    noWrap
+                    variant='h5'
+                    sx={{
+                      color: palette.grey[600],
+                    }}
+                  >
+                    {values?.body}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          ) : null}
+
           {notes?.map(({ id, title, body }) => {
-            const labelId = `notes-list-label-${id}`
-            const isSelected = id === selectedNoteID
+            const labelId = `notes-list-label-${id}`;
+            const isSelected = !isNewNote && id === selectedNoteID;
 
             return (
               <ListItem
@@ -138,10 +207,9 @@ const NoteList = React.memo(() => {
                   borderRadius: '0.5rem',
                   paddingLeft: '1rem',
                   marginLeft: '0.5rem',
-                  backgroundColor:
-                  isSelected
-                      ? palette.background.light
-                      : 'inherit',
+                  backgroundColor: isSelected
+                    ? palette.background.light
+                    : 'inherit',
                 }}
                 secondaryAction={
                   <IconButton
@@ -165,7 +233,7 @@ const NoteList = React.memo(() => {
                 >
                   <ListItemIcon
                     sx={{
-                      '&.MuiListItemIcon-root': { minWidth: 'auto' }
+                      '&.MuiListItemIcon-root': { minWidth: 'auto' },
                     }}
                   >
                     <Checkbox
@@ -188,7 +256,7 @@ const NoteList = React.memo(() => {
                   onClick={handleSelectNote(id)}
                   sx={{
                     padding: '0 38px 0 0 !important',
-                    '&:hover': { backgroundColor: 'transparent' }
+                    '&:hover': { backgroundColor: 'transparent' },
                   }}
                 >
                   <ListItemText
@@ -196,7 +264,7 @@ const NoteList = React.memo(() => {
                     sx={{
                       color: palette.secondary[400],
                     }}
-                    primary={isSelected ? values.title : title }
+                    primary={isSelected ? values?.title : title}
                     primaryTypographyProps={{ noWrap: true }}
                     secondary={
                       <Typography
@@ -206,13 +274,13 @@ const NoteList = React.memo(() => {
                           color: palette.grey[600],
                         }}
                       >
-                          {isSelected ? values.body : body}
+                        {isSelected ? values?.body : body}
                       </Typography>
                     }
                   />
                 </ListItemButton>
               </ListItem>
-            )
+            );
           })}
         </List>
       ) : (
@@ -222,14 +290,14 @@ const NoteList = React.memo(() => {
             paddingTop: '0.5rem',
             borderTop: `thin solid ${palette.grey[800]}`,
             borderRight: isDesktop ? `thin solid ${palette.grey[800]}` : 0,
-            borderTopRightRadius: isDesktop ? '0.5rem' : 0
+            borderTopRightRadius: isDesktop ? '0.5rem' : 0,
           }}
         >
           <EmptyState EmptyIcon={Icon} text='No notes' />
         </Box>
       )}
     </div>
-  )
+  );
 })
 
 NoteList.displayName = '/NoteList'
