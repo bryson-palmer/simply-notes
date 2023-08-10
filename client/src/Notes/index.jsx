@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { Form, Formik } from 'formik'
 import * as yup from 'yup'
@@ -11,7 +11,7 @@ import Button from '@mui/material/Button'
 import Drawer from '@/Drawer'
 import useCreateNote from '@/hooks/useCreateNote'
 import useUpdateNote from '@/hooks/useUpdateNote'
-import useGetNotes from '@/hooks/useGetNotes'
+import useGetNote from '@/hooks/useGetNote'
 import NoteForm from '@/Notes/NoteForm'
 import { useScreenSize, useStore } from '@/store/store'
 
@@ -29,11 +29,12 @@ const validationSchema = yup.object({
 const Notes = React.memo(() => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const [selectedNote, setSelectedNote] = useState({
-    id: (crypto?.randomUUID() || '').replaceAll('-', ''),
+    id: '',
     title: '',
     body: '',
     folder: '',
   })
+  console.log("🚀 ~ file: index.jsx:37 ~ Notes ~ selectedNote:", selectedNote)
 
   const { palette } = useTheme()
   const screenSize = useScreenSize()
@@ -44,11 +45,9 @@ const Notes = React.memo(() => {
   const selectedFolderID = useStore(store => store.selectedFolderID)
 
   // Api query
+  const { data: note } = useGetNote(selectedNoteID)
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
-  const { data: notes } = useGetNotes()
-
-  const note = useMemo(() => notes?.find(note => note.id === selectedNoteID), [notes, selectedNoteID])
 
   const isDesktop = screenSize === 'large' || screenSize === 'desktop'
   const drawerWidth = () => {
@@ -70,8 +69,6 @@ const Notes = React.memo(() => {
   }
 
   const handleSubmit = useCallback(values => {
-    // Avoid submitting if values haven't changed. Might have to handle this in the NoteForm
-    // Avoid submitting if we are currently submitting
     // For a new note either, submit immediatley or wait a much longer period to submit.
     isNewNote
       ? createNote.mutate(values)
@@ -84,7 +81,8 @@ const Notes = React.memo(() => {
     if (selectedFolderID) {
       setSelectedNote(prev => ({
         ...prev,
-        folder: selectedFolderID
+        folder: selectedFolderID,
+        // id: (crypto?.randomUUID() || '').replaceAll('-', '')
       }))
     }
   }, [selectedFolderID])
