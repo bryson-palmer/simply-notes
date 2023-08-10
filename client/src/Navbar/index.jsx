@@ -27,7 +27,7 @@ const Navbar = () => {
   const handleIsNewNote = useCallback(() => {
     setSelectedNoteID(null)  // without this, selected note becomes blank, as it becomes a "new note"
     setIsNewNote(true)
-  }, [setIsNewNote])
+  }, [setIsNewNote, setSelectedNoteID])
 
   return (
     <FlexBetween

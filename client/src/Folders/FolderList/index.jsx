@@ -153,6 +153,7 @@ const FolderList = () => {
           borderRight: isDesktop ? `thin solid ${palette.grey[800]}` : 'none',
         }}
       >
+        {/* New folder list item */}
         {isNewFolder ? (
           <FolderForm
             setEditableFolderID={setEditableFolderID}
