@@ -39,6 +39,7 @@ const NoteList = React.memo(() => {
   
   // Store
   const setIsNewNote = useStore(store => store.setIsNewNote)
+  const isNewNote = useStore(store => store.isNewNote)
   const selectedNoteID = useStore(store => store.selectedNoteID)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   
@@ -92,7 +93,7 @@ const NoteList = React.memo(() => {
     if (!notes?.length) {
       setSelectedNoteID(null)
       // Deleted the selectedNoteID
-    } else if (notes.length && (!selectedNoteID || !isSelectedInNotes)) {
+    } else if (notes.length && !isNewNote && (!selectedNoteID || !isSelectedInNotes)) {
       setSelectedNoteID(notes[0].id)
       // If we've added a new note w/o an id
       // Then set the selected note to the last (new) note in the list

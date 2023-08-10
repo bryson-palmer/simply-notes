@@ -19,11 +19,13 @@ const Navbar = () => {
   const { data, isLoading, isError} = useGetFolders() // React Query folders
   const screenSize = useScreenSize()
   const setIsNewNote = useStore(store => store.setIsNewNote)
+  const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const isDisabled = useMemo(() => isLoading || isError || !data?.length, [data?.length, isError, isLoading])
 
   const handleIsNewNote = useCallback(() => {
+    setSelectedNoteID(null)  // without this, selected note becomes blank, as it becomes a "new note"
     setIsNewNote(true)
   }, [setIsNewNote])
 
