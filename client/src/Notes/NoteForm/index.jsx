@@ -24,7 +24,7 @@ const NoteForm = React.memo(() => {
   const screenSize = useScreenSize()
   const isNewNote = useStore(store => store.isNewNote)
   const setIsNewNote = useStore(store => store.setIsNewNote)
-  const {handleChange, submitForm, values } = useFormikContext()
+  const {dirty, handleChange, isSubmitting, submitForm, values } = useFormikContext()
 
   const form = document.getElementById('form')
   const titleInput = document.getElementById('title')
@@ -38,19 +38,26 @@ const NoteForm = React.memo(() => {
 
     const handleKeyUp = () => {
       clearTimeout(timer.current)
-      timer.current = setTimeout(() => submitForm(), 300)
+      timer.current = setTimeout(() => {
+        // If values haven't changed
+        // Or we're currently submitting bail on this submission
+        if (!dirty || isSubmitting) return
+        return submitForm()
+      }, 300)
     }
 
     if (form) {
       form.addEventListener('keypress', () => handleKeyPress(timer))
       form.addEventListener('keyup', () => handleKeyUp(timer))
     }
-  }, [form, submitForm])
+  }, [dirty, form, isSubmitting, submitForm])
 
+  // Focus the title input if we have a new note
   useEffect(() => {
     if (Boolean(titleInput) && isNewNote) return titleInput.focus({ focusVisible: true })
   }, [isNewNote, titleInput])
   
+  // Listen for when a user enters out of the title input and put them in the body input
   useEffect(() => {
     if (titleInput) {
       titleInput.addEventListener("keypress", e => {
