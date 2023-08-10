@@ -29,7 +29,7 @@ const validationSchema = yup.object({
 const Notes = React.memo(() => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const [selectedNote, setSelectedNote] = useState({
-    id: '',
+    id: (crypto?.randomUUID() || '').replaceAll('-', ''),
     title: '',
     body: '',
     folder: '',
