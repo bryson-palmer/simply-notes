@@ -5,11 +5,10 @@ from constants import DB_FILE
 from app_setup import app
 
 
-def create_or_modify_note(request):
+def create_or_modify_note(request, is_new_note=False):
     # read in existing notes
     user_id = session.get('user_id')
     note = request.json
-    is_new_note = False
     id = note.get('id') # ID from post request, if updating note
     if id is None or id == '':
         id = uuid.uuid4().hex # a 32-character lowercase hexadecimal string
@@ -43,7 +42,7 @@ def create_or_modify_note(request):
 def notes():
     if request.method == 'POST':
         # rather than fetching notes, we are creating a new one
-        return create_or_modify_note(request)
+        return create_or_modify_note(request, is_new_note=True)  # force a new note; allows front-end to specify ID of note
 
     user_id = session.get('user_id')
     folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
