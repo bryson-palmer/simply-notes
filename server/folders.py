@@ -22,7 +22,7 @@ def folders():
 
         folders=[]
         for result in results:
-            (id, folderName) = result[:2]  # _ is user_id, we don't include that data!!!
+            (id, folderName) = result[:2]  # next two entries are user_id, last_modified, in that order
             folder = dict(id=id, folderName=folderName)
             folders.append(folder)
         
