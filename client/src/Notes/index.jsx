@@ -26,28 +26,35 @@ const validationSchema = yup.object({
     .string('Must be a string'),
 })
 
+const INITIAL_NOTE = {
+  body: '',
+  folder:  null,
+  id: null,
+  title: '',
+}
+
 const Notes = React.memo(() => {
   const [openDrawer, setOpenDrawer] = useState(false)
-  const [selectedNote, setSelectedNote] = useState({
-    id: '',
-    title: '',
-    body: '',
-    folder: '',
-  })
-  console.log("🚀 ~ file: index.jsx:37 ~ Notes ~ selectedNote:", selectedNote)
-
+  
   const { palette } = useTheme()
   const screenSize = useScreenSize()
   // Store
   const isNewNote = useStore(store => store.isNewNote)
+  console.log("🚀 ~ file: index.jsx:36 ~ Notes ~ isNewNote:", isNewNote)
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const selectedNoteID = useStore(store => store.selectedNoteID)
+  console.log("🚀 ~ file: index.jsx:46 ~ Notes ~ selectedNoteID:", selectedNoteID)
+  const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   const selectedFolderID = useStore(store => store.selectedFolderID)
 
   // Api query
   const { data: note } = useGetNote(selectedNoteID)
+  console.log("🚀 ~ index.jsx:50 ~ Notes ~ [note?.id]:", note?.id)
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
+
+  const [newNoteState, setSelectedNote] = useState(INITIAL_NOTE)
+  console.log("🚀 ~ index.jsx:37 ~ Notes ~ [newNoteState.id]:", newNoteState?.id)
 
   const isDesktop = screenSize === 'large' || screenSize === 'desktop'
   const drawerWidth = () => {
@@ -69,28 +76,37 @@ const Notes = React.memo(() => {
   }
 
   const handleSubmit = useCallback(values => {
+    console.log('SUBMIT: handling submit')
+    console.log("🚀 ~ file: index.jsx:72 ~ handleSubmit ~ values:", values)
     // For a new note either, submit immediatley or wait a much longer period to submit.
-    isNewNote
+    console.log("🚀 ~ file: index.jsx:74 ~ handleSubmit ~ isNewNote:", isNewNote)
+    console.log("🚀 ~ file: index.jsx:75 ~ Notes ~ selectedNoteID:", selectedNoteID)
+    isNewNote && values?.id
       ? createNote.mutate(values)
       : updateNote.mutate(values)
     
-    setIsNewNote(false)
-  }, [createNote, isNewNote, setIsNewNote, updateNote])
 
+    setSelectedNoteID(values.id)
+    setIsNewNote(false)
+
+  }, [createNote, isNewNote, selectedNoteID, setIsNewNote, setSelectedNoteID, updateNote])
+  
   useEffect(() => {
-    if (selectedFolderID) {
+    console.log('4.Updating newNoteState with folder id and a new cyrpto id.')
+    if (selectedFolderID && isNewNote && !newNoteState?.id) {
       setSelectedNote(prev => ({
         ...prev,
         folder: selectedFolderID,
-        // id: (crypto?.randomUUID() || '').replaceAll('-', '')
+        id: (crypto?.randomUUID() || '').replaceAll('-', '')
       }))
     }
-  }, [selectedFolderID])
- 
+  }, [isNewNote, note, selectedFolderID, newNoteState?.id])
+  
   return (
     <Formik
       enableReinitialize
-      initialValues={selectedFolderID && !isNewNote ? note : selectedNote}
+      key={note?.id}
+      initialValues={selectedFolderID && !isNewNote ? note : newNoteState}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >

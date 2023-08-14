@@ -8,7 +8,7 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
-import useGetNotes from '@/hooks/useGetNotes'
+import useGetNote from '@/hooks/useGetNotes'
 import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from "@/store/store"
 import EmptyState from '@/UI/EmptyState'
@@ -18,12 +18,11 @@ const NoteForm = React.memo(() => {
 
   // Api query
   const { data: folders = [] } = useGetFolders()
-  const { data: notes } = useGetNotes()
+  const { isLoading } = useGetNote()
 
   // Store
   const screenSize = useScreenSize()
   const isNewNote = useStore(store => store.isNewNote)
-  const setIsNewNote = useStore(store => store.setIsNewNote)
   const {dirty, handleChange, isSubmitting, submitForm, values } = useFormikContext()
 
   const form = document.getElementById('form')
@@ -34,6 +33,10 @@ const NoteForm = React.memo(() => {
   let timer = useRef(0)
 
   useEffect(() => {
+    console.log('3.Auto saving note form')
+    // if (isNewNote && Boolean(values?.id)) {
+    //   submitForm() 
+    // }
     const handleKeyPress = () => clearTimeout(timer.current)
 
     const handleKeyUp = () => {
@@ -41,16 +44,17 @@ const NoteForm = React.memo(() => {
       timer.current = setTimeout(() => {
         // If values haven't changed
         // Or we're currently submitting bail on this submission
-        if (!dirty || isSubmitting) return
+        if (isSubmitting || isLoading) return
         return submitForm()
-      }, 300)
+      }, 500)
     }
 
     if (form) {
+
       form.addEventListener('keypress', () => handleKeyPress(timer))
       form.addEventListener('keyup', () => handleKeyUp(timer))
     }
-  }, [dirty, form, isSubmitting, submitForm])
+  }, [dirty, form, isLoading, isNewNote, isSubmitting, submitForm, values?.id])
 
   // Focus the title input if we have a new note
   useEffect(() => {
@@ -68,15 +72,15 @@ const NoteForm = React.memo(() => {
     }
   }, [titleInput])
 
-  useEffect(() => {
-    // Need to watch for loading as well
-    // Like if (loading) return
-    if (!notes?.length) {
-      setIsNewNote(true)
-    } else {
-      setIsNewNote(false)
-    }
-  }, [notes?.length, setIsNewNote])
+  // useEffect(() => {
+  //   // Need to watch for loading as well
+  //   // Like if (loading) return
+  //   if (!notes?.length) {
+  //     setIsNewNote(true)
+  //   } else {
+  //     setIsNewNote(false)
+  //   }
+  // }, [notes?.length, setIsNewNote])
 
   if (!folders?.length) {
     if (isDesktop) {
@@ -102,6 +106,7 @@ const NoteForm = React.memo(() => {
       flexDirection='column'
     >
       <TextField
+        autoFocus
         fullWidth
         multiline
         id='title'

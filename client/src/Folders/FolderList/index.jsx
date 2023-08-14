@@ -39,10 +39,6 @@ const FolderList = () => {
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
   const { data: folders = [], isFetching: foldersIsFetching, isLoading: foldersIsLoading } = useGetFolders()
-  // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ foldersIsStale:", foldersIsStale)
-  // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ foldersIsLoading:", foldersIsLoading)
-  // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ foldersIsFetching:", foldersIsFetching)
-  // console.log("🚀 ~ file: index.jsx:45 ~ FolderList ~ folders?.length:", folders?.length)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const folderListWidth = useMemo(() => {

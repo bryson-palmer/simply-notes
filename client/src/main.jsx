@@ -5,14 +5,16 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import App from './App'
 import './index.css'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      staleTime: 5000
-    }
-  }
-}) // Here we can pass in some default values
+const queryClient = new QueryClient()
+// Here we can pass in some default values
+// {
+//   defaultOptions: {
+//     queries: {
+//       // refetchOnWindowFocus: false,
+//       // staleTime: 5000
+//     }
+//   }
+// }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
