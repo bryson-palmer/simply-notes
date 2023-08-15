@@ -81,10 +81,13 @@ const NoteList = React.memo(() => {
   }, [selectedNoteID, setIsNewNote, setSelectedNoteID])
 
   const handleDeleteNote = useCallback(id => {
-    setSelectedNoteID(null)
     deleteNote.mutate(id)
-    shouldFocusFirstNote.current = true // Never sets to true
-  }, [deleteNote, setSelectedNoteID])
+    // keep selected note unless we're deleting the selected one
+    if (id == selectedNoteID) {
+      setSelectedNoteID(null)
+      shouldFocusFirstNote.current = true // Never sets to true
+    }
+  }, [deleteNote, selectedNoteID, setSelectedNoteID])
 
   useEffect(() => {
     // This side effect is for setting the selected note id and the is new note bool.
