@@ -93,14 +93,14 @@ const Notes = React.memo(() => {
   
   useEffect(() => {
     console.log('4.Updating newNoteState with folder id and a new cyrpto id.')
-    if (selectedFolderID && isNewNote && !newNoteState?.id) {
+    if (selectedFolderID && isNewNote) {
       setSelectedNote(prev => ({
         ...prev,
         folder: selectedFolderID,
         id: (crypto?.randomUUID() || '').replaceAll('-', '')
       }))
     }
-  }, [isNewNote, note, selectedFolderID, newNoteState?.id])
+  }, [isNewNote, selectedFolderID])
   
   return (
     <Formik
