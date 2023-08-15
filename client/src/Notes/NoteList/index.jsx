@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useFormikContext } from 'formik'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
@@ -27,20 +26,24 @@ const NoteList = React.memo(() => {
     isAllChecked: false,
     checkedIds: []
   })
-
+  
   const { palette } = useTheme()
-  const { values } = useFormikContext()
-
-  // Api query
-  const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
-  const screenSize = useScreenSize()
-  const deleteNote = useDeleteNote()
+  const shouldFocusFirstNote = useRef(false)
   
   // Store
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const isNewNote = useStore(store => store.isNewNote)
   const selectedNoteID = useStore(store => store.selectedNoteID)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
+
+  // Api query
+  // Fetches notes by currently selected folder id from the store
+  const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
+  console.log("🚀 ~ index.jsx:42 ~ NoteList ~ notes:", notes)
+  const screenSize = useScreenSize()
+  const deleteNote = useDeleteNote()
+
+  const isSelectedInNotes = useMemo(() => Boolean(notes?.length && notes?.some(note => note.id === selectedNoteID)), [notes, selectedNoteID])
   
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const notesListWidth = useMemo(() => {
@@ -77,33 +80,73 @@ const NoteList = React.memo(() => {
 
   const handleDeleteNote = useCallback(id => {
     deleteNote.mutate(id)
-  }, [deleteNote])
-
+    // keep selected note unless we're deleting the selected one
+    if (id == selectedNoteID) {
+      setSelectedNoteID(null)
+      shouldFocusFirstNote.current = true // Never sets to true
+    }
+  }, [deleteNote, selectedNoteID, setSelectedNoteID])
 
   useEffect(() => {
-    if (notesIsLoading) return // Don't continue with side effect if loading is true
-    const isSelectedInNotes = notes?.length && notes?.some(note => note.id === selectedNoteID)
-    // Deleted all notes
-    if (!notes?.length) {
+    // This side effect is for setting the selected note id and the is new note bool.
+    console.log('2.Setting selectedNoteID and isNewNote in Note List side effect')
+    // When notes have finished loading and there are none, then clean up selected note id and set is new not to true
+    if (!notes?.length && !notesIsLoading) {
+      console.log('  Setting selectedNoteID to: ', null, ' and isNewNote to: ', true)
       setSelectedNoteID(null)
-      // Deleted the selectedNoteID
-    } else if (notes.length && !isNewNote && (!selectedNoteID || !isSelectedInNotes)) {
-      setSelectedNoteID(notes[0].id)
-      // If we've added a new note w/o an id
-      // Then set the selected note to the last (new) note in the list
-    // } else if (Boolean(notesLength) && notes.length === notesLength + 1) {
-    //   setSelectedNoteID(notes[notes.length -1]?.id)
-    } else {
-      // Default set user selected note
-      setSelectedNoteID(selectedNoteID)
+      setIsNewNote(true)
+      return
     }
-  }, [isNewNote, notes, notesIsLoading, selectedNoteID, setSelectedNoteID])
+
+    // When we have a new note, we have no notes, or notes is still loading, then bail out
+    if (isNewNote || notesIsLoading || !notes?.length /* || (selectedNoteID && isSelectedInNotes) */) return
+
+    // If we've deleted a note, then should focus first note should be true and we follow this logic.
+    console.log("🚀 ~ file: index.jsx:104 ~ useEffect ~ shouldFocusFirstNote.current:", shouldFocusFirstNote.current)
+    if (shouldFocusFirstNote.current) {
+      console.log('shouldFocusFirstNote because we deleted')
+      if (notes?.length) {
+        console.log('1...')
+        if (!isSelectedInNotes) {
+          console.log('2...')
+          if (!notesIsLoading) {
+            console.log('3...')
+            console.log('  Setting [selectedNoteID] to: ', notes[0]?.id)
+            setSelectedNoteID(notes[0]?.id)
+            setIsNewNote(false)
+            shouldFocusFirstNote.current = false
+          }
+        }
+      }
+    
+    }
+  }, [isNewNote, isSelectedInNotes, notes, notesIsLoading, selectedNoteID, setIsNewNote, setSelectedNoteID, shouldFocusFirstNote])
+
+  // useEffect(() => {
+  //   if (notesIsLoading) return // Don't continue with side effect if loading is true
+  //   const isSelectedInNotes = notes?.length && notes?.some(note => note.id === selectedNoteID)
+  //   // Deleted all notes
+  //   if (!notes?.length) {
+  //     setSelectedNoteID(null)
+  //     // Deleted the selectedNoteID
+  //   } else if (notes.length && !isNewNote && (!selectedNoteID || !isSelectedInNotes)) {
+  //     setSelectedNoteID(notes[0].id)
+  //     // If we've added a new note w/o an id
+  //     // Then set the selected note to the last (new) note in the list
+  //   // } else if (Boolean(notesLength) && notes.length === notesLength + 1) {
+  //   //   setSelectedNoteID(notes[notes.length -1]?.id)
+  //   } else {
+  //     // Default set user selected note
+  //     setSelectedNoteID(selectedNoteID)
+  //   }
+  // }, [isNewNote, notes, notesIsLoading, selectedNoteID, setSelectedNoteID])
 
   return (
     <div
       style={{
         width: notesListWidth,
         paddingTop: '0.5rem',
+        transition: 'all 1s ease-in-out',
       }}
     >
       <ListHeader listState={listState} setListState={setListState} />
@@ -119,7 +162,8 @@ const NoteList = React.memo(() => {
             borderTopRightRadius: isDesktop ? '0.5rem' : 0,
           }}
         >
-          {isNewNote ? (
+          {/* A new note's place in the list */}
+          {/* {isNewNote ? (
             <ListItem
               dense
               disablePadding
@@ -129,6 +173,7 @@ const NoteList = React.memo(() => {
                 borderRadius: '0.5rem',
                 paddingLeft: '1rem',
                 marginLeft: '0.5rem',
+                transition: 'all 1s ease-in-out',
                 backgroundColor: palette.background.light,
               }}
               secondaryAction={
@@ -191,7 +236,7 @@ const NoteList = React.memo(() => {
                 }
               />
             </ListItem>
-          ) : null}
+          ) : null} */}
 
           {notes?.map(({ id, title, body }) => {
             const labelId = `notes-list-label-${id}`;
@@ -207,6 +252,7 @@ const NoteList = React.memo(() => {
                   borderRadius: '0.5rem',
                   paddingLeft: '1rem',
                   marginLeft: '0.5rem',
+                  transition: 'all 1s ease-in-out',
                   backgroundColor: isSelected
                     ? palette.background.light
                     : 'inherit',
@@ -255,6 +301,7 @@ const NoteList = React.memo(() => {
                   role={undefined}
                   onClick={handleSelectNote(id)}
                   sx={{
+                    transition: 'all 1s ease-in-out',
                     padding: '0 38px 0 0 !important',
                     '&:hover': { backgroundColor: 'transparent' },
                   }}
@@ -264,7 +311,7 @@ const NoteList = React.memo(() => {
                     sx={{
                       color: palette.secondary[400],
                     }}
-                    primary={isSelected ? values?.title : title}
+                    primary={title}
                     primaryTypographyProps={{ noWrap: true }}
                     secondary={
                       <Typography
@@ -274,7 +321,7 @@ const NoteList = React.memo(() => {
                           color: palette.grey[600],
                         }}
                       >
-                        {isSelected ? values?.body : body}
+                        {body}
                       </Typography>
                     }
                   />
