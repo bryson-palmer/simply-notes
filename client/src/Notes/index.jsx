@@ -56,11 +56,16 @@ const Notes = React.memo(() => {
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
 
+<<<<<<< HEAD
   const [newNoteState, setSelectedNote] = useState(INITIAL_NOTE)
   console.log(
     '🚀 ~ index.jsx:37 ~ Notes ~ [newNoteState.id]:',
     newNoteState?.id
   )
+=======
+  const [newNoteState, setNewNoteState] = useState(INITIAL_NOTE)
+  console.log("🚀 ~ index.jsx:37 ~ Notes ~ [newNoteState.id]:", newNoteState?.id)
+>>>>>>> wip2
 
   const isDesktop = screenSize === 'large' || screenSize === 'desktop'
   const drawerWidth = () => {
@@ -112,10 +117,16 @@ const Notes = React.memo(() => {
   )
 
   useEffect(() => {
+    // when creating a new note, create new ID and set 
     console.log('4.Updating newNoteState with folder id and a new cyrpto id.')
     if (selectedFolderID && isNewNote) {
+<<<<<<< HEAD
       let id = (crypto?.randomUUID() || ').replaceAll('-', ')
       setSelectedNote((prev) => ({
+=======
+      let id = (crypto?.randomUUID() || '').replaceAll('-', '')
+      setNewNoteState(prev => ({
+>>>>>>> wip2
         ...prev,
         folder: selectedFolderID,
         id: id,
