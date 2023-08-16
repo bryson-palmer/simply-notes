@@ -28,7 +28,7 @@ def folders():
         if not folders:
             # special workaround for first-time users;
             # give them a temporary default folder without creating a table entry
-            folders = [dict(id=None, folderName='Default Folder')]
+            folders = [dict(id='undefined', folderName='Default Folder')]
         
         connection.close()
         return folders
