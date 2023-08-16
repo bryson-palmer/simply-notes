@@ -39,6 +39,8 @@ def notes():
 
     user_id = session.get('user_id')
     folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
+    if folder_id == 'undefined':
+        folder_id=None
 
     # if we get here, we are fetching all notes
     connection = sqlite3.connect(DB_FILE)
