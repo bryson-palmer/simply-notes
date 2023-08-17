@@ -3,7 +3,7 @@ import uuid
 from flask import request, session
 
 from app_setup import app
-from constants import DB_FILE
+from constants import DB_FILE, DEFAULT_FOLDER_ID, DEFAULT_FOLDER_NAME
 from users import create_new_user_if_uninitialized
 
 
@@ -26,9 +26,7 @@ def folders():
             folder = dict(id=id, folderName=folderName)
             folders.append(folder)
         if not folders:
-            # special workaround for first-time users;
-            # give them a temporary default folder without creating a table entry
-            folders = [dict(id='undefined', folderName='Default Folder')]
+            folders = [create_default_all_notes_folder()]
         
         connection.close()
         return folders
@@ -50,22 +48,26 @@ def folders():
             cursor.execute('UPDATE FOLDERS SET folderName="%s" where id="%s" and user_id="%s"' % (folder_name, id, user_id))
         connection.commit()
         
-        # as a quirk where a new user does not initially get a folder for just visiting the site
-        # we force all unassociated notes to be associated with the first folder
-        if is_new_folder:
-            # if this was the first folder was saved, update all notes to use this folder
-            folders_count = cursor.execute('SELECT 0 FROM FOLDERS WHERE id="%s" and user_id="%s"' % (id, user_id))
-            if folders_count == 1:
-                cursor.execute('''
-                               UPDATE NOTES
-                               SET folder_id="%s"
-                               WHERE user_id="%s"
-                               ''' % (id, user_id))
-
-
         connection.close()
 
         return id
+
+
+def create_default_all_notes_folder():
+    ''' a folder with null ID. But we create it so the user can rename it.
+        Will be regenerated if user deletes all folders. This folder is
+        special because of the null ID -- allows user to see ALL notes
+    '''
+    id = DEFAULT_FOLDER_ID
+    user_id = session.get('user_id')
+    folder_name = DEFAULT_FOLDER_NAME
+    connection = sqlite3.connect(DB_FILE)
+    cursor = connection.cursor()
+    cursor.execute(f'INSERT INTO FOLDERS (id, folderName, user_id) VALUES ("{id}", "{folder_name}", "{user_id}")')
+    connection.commit()
+    connection.close()
+    return dict(id=DEFAULT_FOLDER_ID, name=DEFAULT_FOLDER_NAME)
+
 
 @app.route('/folders/<id>', methods=['DELETE'])
 def folder_delete(id):

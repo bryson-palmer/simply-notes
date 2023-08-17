@@ -1,7 +1,7 @@
 from flask import Flask, request, session
 import uuid
 import sqlite3
-from constants import DB_FILE
+from constants import DB_FILE, DEFAULT_FOLDER_ID
 from app_setup import app
 
 
@@ -46,8 +46,9 @@ def notes():
 
     user_id = session.get('user_id')
     folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
-    if folder_id == 'undefined':
-        folder_id=None
+    # special 'All Notes' folder shows all notes
+    if folder_id == DEFAULT_FOLDER_ID:
+        folder_id = None
 
     # if we get here, we are fetching all notes
     connection = sqlite3.connect(DB_FILE)
