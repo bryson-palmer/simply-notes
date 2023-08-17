@@ -40,7 +40,7 @@ def notes():
     user_id = session.get('user_id')
     folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
     # special 'All Notes' folder shows all notes
-    if folder_id == DEFAULT_FOLDER_ID:
+    if folder_id == str(DEFAULT_FOLDER_ID):  # have to compare strings, since folder_id is a str
         folder_id = None
 
     # if we get here, we are fetching all notes
