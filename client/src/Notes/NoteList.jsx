@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useFormikContext } from 'formik'
-import { PropTypes } from 'prop-types/prop-types'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DescriptionIcon from '@mui/icons-material/Description'
@@ -29,7 +27,6 @@ const NoteList = React.memo(() => {
   })
   
   const { palette } = useTheme()
-  const { values } = useFormikContext()
   const shouldFocusFirstNote = useRef(false)
   
   // Store
@@ -313,7 +310,7 @@ const NoteList = React.memo(() => {
                     sx={{
                       color: palette.secondary[400],
                     }}
-                    primary={isSelected ? values?.title : title}
+                    primary={title}
                     primaryTypographyProps={{ noWrap: true }}
                     secondary={
                       <Typography
@@ -323,7 +320,7 @@ const NoteList = React.memo(() => {
                           color: palette.grey[600],
                         }}
                       >
-                        {isSelected ? values?.body : body}
+                        {body}
                       </Typography>
                     }
                   />
@@ -350,8 +347,5 @@ const NoteList = React.memo(() => {
 })
 
 NoteList.displayName = '/NoteList'
-NoteList.propTypes = {
-  setIsNewNote: PropTypes.func,
-}
 
 export default NoteList
