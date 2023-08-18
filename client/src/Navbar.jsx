@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 import AddIcon from '@mui/icons-material/Add'
@@ -9,20 +9,18 @@ import Button from '@mui/material/Button'
 import Fade from '@mui/material/Fade'
 import IconButton from '@mui/material/IconButton'
 
-import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from '@/store/store'
 import FlexBetween from '@/ui/FlexBetween'
 import StyledTooltip from '@/ui/StyledTooltip'
 
-const Navbar = () => {
+const Navbar = React.memo(() => {
   const { palette } = useTheme()
-  const { data, isLoading, isError} = useGetFolders() // React Query folders
   const screenSize = useScreenSize()
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
+  const selectedFolderID = useStore(store => store.selectedFolderID)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
-  const isDisabled = useMemo(() => isLoading || isError || !data?.length, [data?.length, isError, isLoading])
 
   const handleIsNewNote = useCallback(() => {
     setSelectedNoteID(null)  // without this, selected note becomes blank, as it becomes a "new note"
@@ -69,7 +67,7 @@ const Navbar = () => {
       {/* Right Side */}
       <FlexBetween gap='1rem'>
         <IconButton
-          disabled={isDisabled}
+          disabled={!selectedFolderID}
           onClick={handleIsNewNote}
           sx={{
             color: palette.secondary[400],
@@ -96,7 +94,7 @@ const Navbar = () => {
       </FlexBetween>
     </FlexBetween>
   )
-}
+})
 
 Navbar.displayName = 'Navbar'
 
