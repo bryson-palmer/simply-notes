@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { PropTypes } from 'prop-types/prop-types'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DescriptionIcon from '@mui/icons-material/Description'
@@ -348,8 +347,5 @@ const NoteList = React.memo(() => {
 })
 
 NoteList.displayName = '/NoteList'
-NoteList.propTypes = {
-  setIsNewNote: PropTypes.func,
-}
 
 export default NoteList
