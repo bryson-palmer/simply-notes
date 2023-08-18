@@ -18,7 +18,7 @@ import useGetNotes from '@/hooks/useGetNotes'
 import useDeleteNote from '@/hooks/useDeleteNote'
 import ListHeader from '@/Notes/ListHeader'
 import  { useScreenSize, useStore } from '@/store/store'
-import EmptyState from '@/UI/EmptyState'
+import EmptyState from '@/ui/EmptyState'
 
 const NoteList = React.memo(() => {
   // Checkbox notes list state
