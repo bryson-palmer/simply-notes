@@ -6,6 +6,6 @@ export default function useDeleteFolder() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: folderId => folderAPI.delete(folderId),
-    onSuccess: () => queryClient.invalidateQueries('folders')
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['folders'] })
   })
 }

@@ -6,6 +6,6 @@ export default function useUpdateNote() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: note => noteAPI.update(note),
-    onSuccess: () => queryClient.invalidateQueries('notes')
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] })
   })
 }

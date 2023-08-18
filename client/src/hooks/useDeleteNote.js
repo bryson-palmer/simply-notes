@@ -6,6 +6,6 @@ export default function useDeleteNote() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: noteId => noteAPI.delete(noteId),
-    onSuccess: () => queryClient.invalidateQueries('notes')
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] })
   })
 }

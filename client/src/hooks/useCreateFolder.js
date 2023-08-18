@@ -6,6 +6,6 @@ export default function useCreateFolder() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: folder => folderAPI.create(folder),
-    onSuccess: () => queryClient.invalidateQueries('folders')
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['folders'] })
   })
 }

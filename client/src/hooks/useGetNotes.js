@@ -10,5 +10,6 @@ export default function useGetNotes() {
     queryKey: ['notes', selectedFolderID],
     queryFn: () => noteAPI.getAll(selectedFolderID),
     enabled: Boolean(selectedFolderID),
+    // keepPreviousData: true,
   })
 }
