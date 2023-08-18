@@ -11,8 +11,8 @@ import IconButton from '@mui/material/IconButton'
 
 import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from '@/store/store'
-import FlexBetween from '@/UI/FlexBetween'
-import StyledTooltip from '@/UI/StyledTooltip'
+import FlexBetween from '@/ui/FlexBetween'
+import StyledTooltip from '@/ui/StyledTooltip'
 
 const Navbar = () => {
   const { palette } = useTheme()

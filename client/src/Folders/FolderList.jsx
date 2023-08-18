@@ -23,8 +23,8 @@ import useDeleteFolder from '@/hooks/useDeleteFolder'
 import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from '@/store/store'
 
-import EmptyState from '@/UI/EmptyState'
-import StyledTooltip from '@/UI/StyledTooltip'
+import EmptyState from '@/ui/EmptyState'
+import StyledTooltip from '@/ui/StyledTooltip'
 
 const FolderList = () => {
   const [editableFolderID, setEditableFolderID] = useState('')
