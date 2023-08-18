@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import FolderIcon from '@mui/icons-material/Folder'
@@ -26,19 +26,18 @@ import { useScreenSize, useStore } from '@/store/store'
 import EmptyState from '@/ui/EmptyState'
 import StyledTooltip from '@/ui/StyledTooltip'
 
-const FolderList = () => {
+const FolderList = React.memo(() => {
   const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
-  // console.log("🚀 ~ file: index.jsx:36 ~ FolderList ~ isNewFolder:", isNewFolder)
   const [anchorEl, setAnchorEl] = useState(null)
 
   const { palette } = useTheme()
   const screenSize = useScreenSize()
   const deleteFolder = useDeleteFolder()
+  const { data: folders = [], isFetching: foldersIsFetching, isLoading: foldersIsLoading } = useGetFolders()
   
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
-  const { data: folders = [], isFetching: foldersIsFetching, isLoading: foldersIsLoading } = useGetFolders()
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const folderListWidth = useMemo(() => {
@@ -47,16 +46,27 @@ const FolderList = () => {
     if (screenSize === 'desktop' || screenSize === 'mobile') return 176
   }, [screenSize])
 
+  const ALL_NOTES_ID = 'undefined'
+  const isDisabled = useMemo(() => {
+    if (folders?.length === 1 && folders[0]?.id === ALL_NOTES_ID) {
+      return true
+    } else {
+      return false
+    }
+  }, [ALL_NOTES_ID, folders])
+
   const open = Boolean(anchorEl)
   const Icon = () => <FolderIcon />
  
   const handleNewFolder = useCallback(() => {
     // if we are about to add a new folder form, remove form from other folder
-    setIsNewFolder(!isNewFolder)
-    if (isNewFolder) {
-      setEditableFolderID('')
-    }
-  }, [isNewFolder])
+    setIsNewFolder(prevState => {
+      if (prevState) {
+        setEditableFolderID('')
+      }
+      return !prevState
+    })
+  }, [])
 
   // using useCallback makes it re-render?
   const handleFolderDoubleClick = useCallback(id => {
@@ -190,6 +200,7 @@ const FolderList = () => {
                         aria-label='IconButton'
                         aria-expanded={open ? 'true' : undefined}
                         onClick={handleAnchorElClick}
+                        disabled={isDisabled}
                         sx={{
                           color: palette.grey[400],
                         }}
@@ -306,6 +317,8 @@ const FolderList = () => {
       </List>
     </Box>
   )
-}
+})
+
+FolderList.displayName = '/FolderList'
 
 export default FolderList
