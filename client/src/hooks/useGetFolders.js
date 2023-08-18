@@ -4,8 +4,7 @@ import { folderAPI } from '@/apis/folderAPI'
 
 export default function useGetFolders() {
   return useQuery({
-    queryKey: ['folder'],
+    queryKey: ['folders'],
     queryFn: () => folderAPI.getAll(),
-    enabled: true
   })
 }
