@@ -1,52 +1,52 @@
-import React, { useEffect, useMemo, useRef } from "react"
+import React, { useEffect, /* useMemo, */ useRef } from "react"
+import { PropTypes } from 'prop-types/prop-types'
 
-import { useFormikContext } from "formik"
-
-import DescriptionIcon from '@mui/icons-material/Description'
+// import DescriptionIcon from '@mui/icons-material/Description'
 import { useTheme } from "@mui/material"
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
+// import Typography from '@mui/material/Typography'
 
 import useGetNote from '@/hooks/useGetNotes'
-import useGetFolders from '@/hooks/useGetFolders'
-import { useScreenSize, useStore } from "@/store/store"
-import EmptyState from '@/UI/EmptyState'
+// import useGetFolders from '@/hooks/useGetFolders'
+import { /* useScreenSize, */ useStore } from "@/store/store"
+// import EmptyState from '@/ui/EmptyState'
 
-const NoteForm = React.memo(() => {
+const NoteForm = React.memo(({formik}) => {
   const { palette } = useTheme()
 
   // Api query
-  const { data: folders = [] } = useGetFolders()
   const { isLoading } = useGetNote()
+  // const { data: folders = [] } = useGetFolders()
 
   // Store
-  const screenSize = useScreenSize()
+  // const screenSize = useScreenSize()
   const isNewNote = useStore(store => store.isNewNote)
-  const {dirty, handleChange, isSubmitting, submitForm, values } = useFormikContext()
+  const {dirty, handleChange, isSubmitting, submitForm, values } = formik
 
   const form = document.getElementById('form')
   const titleInput = document.getElementById('title')
 
-  const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
-  const Icon = () => <DescriptionIcon />
+  // const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
+  // const Icon = () => <DescriptionIcon />
   let timer = useRef(0)
 
   useEffect(() => {
-    console.log('3.Auto saving note form')
+    console.log('4.NoteForm useEffect')
+    // If values haven't changed
+    // Or we're currently submitting bail on this submission
+    if (!dirty || isSubmitting || isLoading) return
+
     // if (isNewNote && Boolean(values?.id)) {
     //   submitForm() 
     // }
+
     const handleKeyPress = () => clearTimeout(timer.current)
 
     const handleKeyUp = () => {
+      console.log('  Clearing timer, waiting 500ms, and auto submitting form')
       clearTimeout(timer.current)
-      timer.current = setTimeout(() => {
-        // If values haven't changed
-        // Or we're currently submitting bail on this submission
-        if (isSubmitting || isLoading) return
-        return submitForm()
-      }, 500)
+      timer.current = setTimeout(() => submitForm(), 500)
     }
 
     if (form) {
@@ -82,22 +82,22 @@ const NoteForm = React.memo(() => {
   //   }
   // }, [notes?.length, setIsNewNote])
 
-  if (!folders?.length) {
-    if (isDesktop) {
-      return (
-        <Typography
-          sx={{
-            color: palette.grey[400],
-            textAlign: 'center',
-            paddingTop: '3rem'
-          }}
-        >
-          Add a new folder to get started
-        </Typography>
-      )
-    }
-      return <EmptyState EmptyIcon={Icon} text='Add a new folder to get started' />
-  }
+  // if (!folders?.length) {
+  //   if (isDesktop) {
+  //     return (
+  //       <Typography
+  //         sx={{
+  //           color: palette.grey[400],
+  //           textAlign: 'center',
+  //           paddingTop: '3rem'
+  //         }}
+  //       >
+  //         Add a new folder to get started
+  //       </Typography>
+  //     )
+  //   }
+  //     return <EmptyState EmptyIcon={Icon} text='Add a new folder to get started' />
+  // }
   
   return (
     <Box
@@ -150,5 +150,25 @@ const NoteForm = React.memo(() => {
 })
 
 NoteForm.displayName = '/NoteForm'
+NoteForm.propTypes = {
+  formik: PropTypes.shape({
+    dirty: PropTypes.bool,
+    handleChange: PropTypes.func,
+    isSubmitting: PropTypes.bool,
+    isValid: PropTypes.bool,
+    setSubmitting: PropTypes.func,
+    submitForm: PropTypes.func,
+    touched: PropTypes.shape({
+      id: PropTypes.bool,
+      title: PropTypes.bool,
+      body: PropTypes.bool
+    }),
+    values: PropTypes.shape({
+      id: PropTypes.string,
+      title: PropTypes.string,
+      body: PropTypes.string
+    })
+  }),
+}
 
 export default NoteForm
