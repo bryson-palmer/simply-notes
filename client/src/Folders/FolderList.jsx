@@ -18,6 +18,7 @@ import ListItemText from '@mui/material/ListItemText'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 
+import { ALL_NOTES_ID /*, INITIAL_NOTE */ } from '@/constants/constants'
 import FolderForm from '@/Folders/FolderForm'
 import useDeleteFolder from '@/hooks/useDeleteFolder'
 import useGetFolders from '@/hooks/useGetFolders'
@@ -38,26 +39,28 @@ const FolderList = React.memo(() => {
   
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
-
+  // const setCurrentNote = useStore(store => store.setCurrentNote)
+  const setIsNewNote = useStore(store => store.setIsNewNote)
+  // const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
+  
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const folderListWidth = useMemo(() => {
     if (screenSize === 'large') return 250
     if (screenSize === 'tablet') return 200
     if (screenSize === 'desktop' || screenSize === 'mobile') return 176
   }, [screenSize])
-
-  const ALL_NOTES_ID = 'undefined'
+  
   const isDisabled = useMemo(() => {
     if (folders?.length === 1 && folders[0]?.id === ALL_NOTES_ID) {
       return true
     } else {
       return false
     }
-  }, [ALL_NOTES_ID, folders])
-
-  const open = Boolean(anchorEl)
+  }, [folders])
+  
+  const open = useMemo(() => Boolean(anchorEl), [anchorEl])
   const Icon = () => <FolderIcon />
- 
+  
   const handleNewFolder = useCallback(() => {
     // if we are about to add a new folder form, remove form from other folder
     setIsNewFolder(prevState => {
@@ -67,8 +70,15 @@ const FolderList = React.memo(() => {
       return !prevState
     })
   }, [])
+  
+  const handleFolderClick = useCallback(id => {
+    if (id === selectedFolderID) return
+    console.log('FOLDER SELECT')
+    console.log('Setting selectedFolderID and setting is new note to false')
+    setSelectedFolderID(id)
+    setIsNewNote(false)
+  }, [selectedFolderID, setIsNewNote, setSelectedFolderID])
 
-  // using useCallback makes it re-render?
   const handleFolderDoubleClick = useCallback(id => {
     setEditableFolderID(id)
     setSelectedFolderID(id)
@@ -76,7 +86,7 @@ const FolderList = React.memo(() => {
     handleAnchorElClose()
   }, [setSelectedFolderID])
 
-  const handleAnchorElClick = e => setAnchorEl(e.currentTarget)
+  const handleAnchorElClick = ({ currentTarget }) => setAnchorEl(currentTarget)
 
   const handleAnchorElClose = () => setAnchorEl(null)
 
@@ -92,10 +102,13 @@ const FolderList = React.memo(() => {
   }
 
   useEffect(() => {
+    console.log('1.FolderList useEffect')
     if (!folders.length || foldersIsLoading) return
     const isSelectedFolderInList = folders.some(folder => folder.id === selectedFolderID)
     // If no selected folder id or the selected folder id isn't in the list of folders
     if (!selectedFolderID || !isSelectedFolderInList) {
+      console.log('  Setting selected folder id to first in list')
+      console.log('  [folders[0]?.id]: ', folders[0]?.id)
       setSelectedFolderID(folders[0]?.id)
     }
   }, [folders, foldersIsLoading, selectedFolderID, setSelectedFolderID])
@@ -189,7 +202,7 @@ const FolderList = React.memo(() => {
                 dense
                 key={labelId}
                 id={id}
-                onClick={() => setSelectedFolderID(id)}
+                onClick={() => handleFolderClick(id)}
                 onDoubleClick={() => handleFolderDoubleClick(id)}
                 secondaryAction={
                   selectedFolderID === id ? (
