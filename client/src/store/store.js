@@ -25,6 +25,8 @@ export const useScreenSize = () => {
 export const useStore = create(
   persist(
     (set) => ({
+      currentNote: null,
+      setCurrentNote: (note) => set(() => ({ currentNote: {...note} })),
       isNewNote: false,
       setIsNewNote: (bool) => set(() => ({ isNewNote: bool })),
       selectedFolderID: null,
