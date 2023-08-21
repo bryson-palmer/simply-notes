@@ -86,17 +86,38 @@ const NoteList = React.memo(() => {
   }, [notes, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedNoteID])
 
   const handleDeleteNote = useCallback(id => {
+    let list_is_empty = (notes?.length <= 1)
+    let notes_copy = [...notes]
+    // list_is_empty if the deleted note will make the notes list empty
     deleteNote.mutate(id)
     // keep selected note unless we're deleting the selected one
     if (id === selectedNoteID) {
       console.log('DELETED NOTE')
       console.log('Setting selected note id and current note to defaults')
       console.log(`Setting shouldFocusFirstNote depending on notes length [${notes?.length} <= 1]`)
-      setSelectedNoteID(null)
-      setCurrentNote(INITIAL_NOTE)
-      shouldFocusFirstNote.current = notes?.length <= 1 ? false : true
+      if (list_is_empty) {
+        // that was our last note. Display a new-note
+        setSelectedNoteID(null)
+        setCurrentNote(INITIAL_NOTE)
+        setIsNewNote(true)
+      } else {
+        // need to focus another note. Find the note below the one we were deleting. Or above if none below
+        let deleting_index = notes_copy.findIndex(obj => obj.id === id)
+        let new_index = 0
+        if (deleting_index !== -1) {
+          // we know where the old note was, set new note to be note below our deleted note
+          new_index = deleting_index + 1
+          if (notes_copy.length <= new_index) {
+            new_index = deleting_index - 1
+          }
+          new_index = Math.max(0, new_index)  // make sure we don't have a negative index
+        }
+        let note_to_focus = notes_copy[new_index]
+        setSelectedNoteID(note_to_focus?.id)
+        setCurrentNote(note_to_focus)
+      }
     }
-  }, [deleteNote, notes?.length, selectedNoteID, setCurrentNote, setSelectedNoteID])
+  }, [deleteNote, notes, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedNoteID])
 
   useEffect(() => {
     // Folders have changed and forcing clean up functions
