@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Form, Formik } from 'formik'
 import * as yup from 'yup'
@@ -8,10 +8,12 @@ import { useTheme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 
+import { INITIAL_NOTE } from '@/constants/constants'
 import Drawer from '@/Drawer'
 import useCreateNote from '@/hooks/useCreateNote'
-import useUpdateNote from '@/hooks/useUpdateNote'
 import useGetNote from '@/hooks/useGetNote'
+import useGetNotes from '@/hooks/useGetNotes'
+import useUpdateNote from '@/hooks/useUpdateNote'
 import NoteForm from '@/Notes/NoteForm'
 import { useScreenSize, useStore } from '@/store/store'
 
@@ -26,38 +28,28 @@ const validationSchema = yup.object({
     .string('Must be a string'),
 })
 
-const INITIAL_NOTE = {
-  body: '',
-  folder:  null,
-  id: null,
-  title: '',
-}
-
 const Notes = React.memo(() => {
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const { palette } = useTheme()
   const screenSize = useScreenSize()
+
   // Store
+  const currentNote = useStore((store) => store.currentNote)
+  const setCurrentNote = useStore((store) => store.setCurrentNote)
   const isNewNote = useStore((store) => store.isNewNote)
-  console.log('🚀 ~ file: index.jsx:36 ~ Notes ~ isNewNote:', isNewNote)
   const setIsNewNote = useStore((store) => store.setIsNewNote)
   const selectedNoteID = useStore((store) => store.selectedNoteID)
-  console.log(
-    '🚀 ~ file: index.jsx:46 ~ Notes ~ selectedNoteID:',
-    selectedNoteID
-  )
   const setSelectedNoteID = useStore((store) => store.setSelectedNoteID)
   const selectedFolderID = useStore((store) => store.selectedFolderID)
-
+  
   // Api query
+  const { data: notes } = useGetNotes()
   const { data: note } = useGetNote(selectedNoteID)
-  console.log('🚀 ~ index.jsx:50 ~ Notes ~ [note?.id]:', note?.id)
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
-
-  const [newNoteState, setNewNoteState] = useState(INITIAL_NOTE)
-  console.log("🚀 ~ index.jsx:37 ~ Notes ~ [newNoteState.id]:", newNoteState?.id)
+  
+  const isSelectedInNotes = useMemo(() => Boolean(notes?.length && notes?.some(note => note.id === selectedNoteID)), [notes, selectedNoteID])
 
   const isDesktop = screenSize === 'large' || screenSize === 'desktop'
   const drawerWidth = () => {
@@ -80,17 +72,9 @@ const Notes = React.memo(() => {
 
   const handleSubmit = useCallback(
     (values) => {
-      console.log('SUBMIT: handling submit')
-      console.log('🚀 ~ file: index.jsx:72 ~ handleSubmit ~ values:', values)
+      console.log('SUBMIT')
+      console.log('[values]:', values)
       // For a new note either, submit immediatley or wait a much longer period to submit.
-      console.log(
-        '🚀 ~ file: index.jsx:74 ~ handleSubmit ~ isNewNote:',
-        isNewNote
-      )
-      console.log(
-        '🚀 ~ file: index.jsx:75 ~ Notes ~ selectedNoteID:',
-        selectedNoteID
-      )
       isNewNote && values?.id
         ? createNote.mutate(values)
         : updateNote.mutate(values)
@@ -98,29 +82,47 @@ const Notes = React.memo(() => {
       setSelectedNoteID(values.id)
       setIsNewNote(false)
     },
-    [
-      createNote,
-      isNewNote,
-      selectedNoteID,
-      setIsNewNote,
-      setSelectedNoteID,
-      updateNote,
-    ]
+    [createNote, isNewNote, setIsNewNote, setSelectedNoteID, updateNote]
   )
 
+  const count = useRef(0)
   useEffect(() => {
-    // when creating a new note, create new ID and set 
-    console.log('4.Updating newNoteState with folder id and a new cyrpto id.')
-    if (selectedFolderID && isNewNote) {
-      let id = (crypto?.randomUUID() || '').replaceAll('-', '')
-      setNewNoteState(prev => ({
-        ...prev,
-        folder: selectedFolderID,
-        id: id,
-      }))
-      setSelectedNoteID(id) // make sure our new note ID is set as well
+    console.log('2.Notes index useEffect ')
+    console.log('  [count]:', count.current += 1)
+    console.log('  [selectedFolderID]: ', selectedFolderID, '[isNewNote]: ', isNewNote)
+    console.log("  [selectedNoteID]:", selectedNoteID)
+    console.log("  [isSelectedInNotes]:", isSelectedInNotes)
+    console.log("  [currentNote]:", currentNote)
+    console.log('  [notes]:', notes)
+    console.log('  [note]:', note)
+    
+    if (currentNote?.folder && currentNote?.folder !== selectedFolderID && !isSelectedInNotes) {
+      console.log('  Parallel first step for out of sync values with NoteList')
+      console.log("  folder ids don't match and we have a current note folder id and selected note is not in notes")
+      console.log('  Setting selected note id and current note to defaults')
+      setCurrentNote(INITIAL_NOTE)
+      setSelectedNoteID(null)
     }
-  }, [isNewNote, selectedFolderID, setSelectedNoteID])
+
+    if (selectedFolderID && isNewNote) {
+      // when creating a new note, create new ID and set 
+      let id = (crypto?.randomUUID() || '').replaceAll('-', '')
+      console.log('  We have a selected folder id and its a new note')
+      console.log('  Updating current note with folder id and a new cyrpto id.')
+      console.log('  [selectedFolderID]', selectedFolderID, '[crypto id]', id)
+      setCurrentNote({
+        ...INITIAL_NOTE,
+        folder: selectedFolderID,
+        id: id
+      })
+      // Must have a selected note on first load to stop this id from being set and making an api call
+      console.log('  Also setting selected note id to: ', id)
+      return setSelectedNoteID(id)
+    }
+    // if (selectedFolderID && !isNewNote && note) {
+    //   setCurrentNote(note)
+    // }
+  }, [selectedFolderID, isNewNote, setCurrentNote, setSelectedNoteID, isSelectedInNotes])
 
   return (
     <Box
@@ -181,8 +183,8 @@ const Notes = React.memo(() => {
       >
         <Formik
           enableReinitialize
-          key={note?.id}
-          initialValues={selectedFolderID && !isNewNote ? note : newNoteState}
+          key={note?.id ?? currentNote?.id}
+          initialValues={selectedFolderID && !isNewNote ? note : currentNote} // Determine which note values to use for initialvalues.
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
