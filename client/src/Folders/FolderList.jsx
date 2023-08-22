@@ -18,7 +18,7 @@ import ListItemText from '@mui/material/ListItemText'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 
-import { ALL_NOTES_ID /*, INITIAL_NOTE */ } from '@/constants/constants'
+import { ALL_NOTES_ID, INITIAL_NOTE } from '@/constants/constants'
 import FolderForm from '@/Folders/FolderForm'
 import useDeleteFolder from '@/hooks/useDeleteFolder'
 import useGetFolders from '@/hooks/useGetFolders'
@@ -39,9 +39,9 @@ const FolderList = React.memo(() => {
   
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
-  // const setCurrentNote = useStore(store => store.setCurrentNote)
+  const setCurrentNote = useStore(store => store.setCurrentNote)
   const setIsNewNote = useStore(store => store.setIsNewNote)
-  // const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
+  const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const folderListWidth = useMemo(() => {
@@ -77,7 +77,11 @@ const FolderList = React.memo(() => {
     console.log('Setting selectedFolderID and setting is new note to false')
     setSelectedFolderID(id)
     setIsNewNote(false)
-  }, [selectedFolderID, setIsNewNote, setSelectedFolderID])
+    if (id !== ALL_NOTES_ID) {
+      setSelectedNoteID(null)
+      setCurrentNote(INITIAL_NOTE)
+    }
+  }, [selectedFolderID, setCurrentNote, setIsNewNote, setSelectedFolderID, setSelectedNoteID])
 
   const handleFolderDoubleClick = useCallback(id => {
     setEditableFolderID(id)
