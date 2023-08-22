@@ -28,7 +28,7 @@ const NoteList = React.memo(() => {
   })
   
   const { palette } = useTheme()
-  const shouldFocusFirstNote = useRef(false)
+  // const shouldFocusFirstNote = useRef(false)
   
   // Store
   const setIsNewNote = useStore(store => store.setIsNewNote)
@@ -76,10 +76,6 @@ const NoteList = React.memo(() => {
 
   const handleSelectNote = useCallback(id => () => {
     if (id === selectedNoteID) return
-
-    console.log('SELECTED NEW NOTE')
-    console.log('Setting selected note id and current note to id passed in')
-    console.log('Setting isNewNote to', false)
     setSelectedNoteID(id)
     setCurrentNote(notes.find(note => note.id === id))
     setIsNewNote(false)
@@ -92,9 +88,6 @@ const NoteList = React.memo(() => {
     deleteNote.mutate(id)
     // keep selected note unless we're deleting the selected one
     if (id === selectedNoteID) {
-      console.log('DELETED NOTE')
-      console.log('Setting selected note id and current note to defaults')
-      console.log(`Setting shouldFocusFirstNote depending on notes length [${notes?.length} <= 1]`)
       if (list_is_empty) {
         // that was our last note. Display a new-note
         setSelectedNoteID(null)
@@ -119,18 +112,18 @@ const NoteList = React.memo(() => {
     }
   }, [deleteNote, notes, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedNoteID])
 
-  useEffect(() => {
-    // Folders have changed and forcing clean up functions
-    if (selectedNoteID && selectedFolderID !== currentNote?.folder && selectedFolderID !== 'undefined') {
-      console.log('1.NoteList useEffect')
-      console.log('  Setting currentNote and selectedNoteID to defaults')
-      console.log('  First step in out of sync values')
-      console.log("  [selectedNoteID]:", selectedNoteID)
-      setCurrentNote(INITIAL_NOTE)
-      setSelectedNoteID(null)
-      return
-    }
-  }, [currentNote?.folder, selectedFolderID, selectedNoteID, setCurrentNote, setSelectedNoteID])
+  // useEffect(() => {
+  //   // Folders have changed and forcing clean up functions
+  //   if (selectedNoteID && selectedFolderID !== currentNote?.folder && selectedFolderID !== 'undefined') {
+  //     console.log('1.NoteList useEffect')
+  //     console.log('  Setting currentNote and selectedNoteID to defaults')
+  //     console.log('  First step in out of sync values')
+  //     console.log("  [selectedNoteID]:", selectedNoteID)
+  //     setCurrentNote(INITIAL_NOTE)
+  //     setSelectedNoteID(null)
+  //     return
+  //   }
+  // }, [currentNote?.folder, selectedFolderID, selectedNoteID, setCurrentNote, setSelectedNoteID])
 
   useEffect(() => {
     // When notes have finished loading and there are none, then clean up selected note id and set is new note to true
@@ -139,51 +132,51 @@ const NoteList = React.memo(() => {
       console.log('  No notes')
       console.log('  Setting isNewNote to: ', true)
       console.log('  Setting shouldFocusFirstNote.current to: ', false)
-      shouldFocusFirstNote.current = false
+      // shouldFocusFirstNote.current = false
       // setSelectedNoteID(null)
       setIsNewNote(true)
       return
     }
   }, [currentNote?.id, notes?.length, notesIsLoading, setIsNewNote])
 
-  useEffect(() => {
-    // If we've deleted a note or we changed folders with notes, then should focus first note should be true and we follow this logic.
-    if (notes?.length && currentNote?.folder &&(selectedFolderID === notes[0]?.folder || selectedFolderID === 'undefined')) {
-      console.log('2.NoteList useEffect')
-      console.log("  We have notes and folders don't match or folder id is undefined")
-      console.log('  Setting shouldFocusFirstNote.current to: ', true)
-      shouldFocusFirstNote.current = true
-    }
-  }, [currentNote?.folder, notes, selectedFolderID])
+  // useEffect(() => {
+  //   // If we've deleted a note or we changed folders with notes, then should focus first note should be true and we follow this logic.
+  //   if (notes?.length && currentNote?.folder &&(selectedFolderID === notes[0]?.folder || selectedFolderID === 'undefined')) {
+  //     console.log('2.NoteList useEffect')
+  //     console.log("  We have notes and folders don't match or folder id is undefined")
+  //     console.log('  Setting shouldFocusFirstNote.current to: ', true)
+  //     shouldFocusFirstNote.current = true
+  //   }
+  // }, [currentNote?.folder, notes, selectedFolderID])
 
-  const count = useRef(0)
-  useEffect(() => {
-    // This side effect is for setting the selected note id and the is new note bool.
-    // When we have a new note or notes is still loading, then bail out
-    if (isNewNote || notesIsLoading) return
+  // const count = useRef(0)
+  // useEffect(() => {
+  //   // This side effect is for setting the selected note id and the is new note bool.
+  //   // When we have a new note or notes is still loading, then bail out
+  //   if (isNewNote || notesIsLoading) return
 
-    console.log('3.NoteList useEffect')
-    console.log('  [count]:', count.current += 1)
-    console.log("  [notes]:", notes)
-    console.log("  [isNewNote]:", isNewNote, 'should be false')
-    console.log("  [currentNote]:", currentNote)
-    console.log("  [shouldFocusFirstNote.current]:", shouldFocusFirstNote.current)
+  //   console.log('3.NoteList useEffect')
+  //   console.log('  [count]:', count.current += 1)
+  //   console.log("  [notes]:", notes)
+  //   console.log("  [isNewNote]:", isNewNote, 'should be false')
+  //   console.log("  [currentNote]:", currentNote)
+  //   // console.log("  [shouldFocusFirstNote.current]:", shouldFocusFirstNote.current)
 
-    if (shouldFocusFirstNote.current) {
-      console.log('  shouldFocusFirstNote is true')
-      if (!isSelectedInNotes) {
-        console.log('....selected note id is not in notes')
-        console.log('1...notes?.length', notes?.length)
-        console.log('2...!isSelectedInNotes', !isSelectedInNotes)
-        console.log('3...!notesIsLoading', !notesIsLoading)
-        setIsNewNote(false)
-        shouldFocusFirstNote.current = false;
-        setSelectedNoteID(notes[0]?.id)
-        setCurrentNote(notes[0])
-        // return
-      }
-    }
-  }, [currentNote, isNewNote, isSelectedInNotes, notes, notesIsLoading, setCurrentNote, setIsNewNote, setSelectedNoteID])
+  //   // if (shouldFocusFirstNote.current) {
+  //     // console.log('  shouldFocusFirstNote is true')
+  //     if (!isSelectedInNotes) {
+  //       console.log('....selected note id is not in notes')
+  //       console.log('1...notes?.length', notes?.length)
+  //       console.log('2...!isSelectedInNotes', !isSelectedInNotes)
+  //       console.log('3...!notesIsLoading', !notesIsLoading)
+  //       setIsNewNote(false)
+  //       // shouldFocusFirstNote.current = false;
+  //       setSelectedNoteID(notes[0]?.id)
+  //       setCurrentNote(notes[0])
+  //       // return
+  //     }
+  //   // }
+  // }, [currentNote, isNewNote, isSelectedInNotes, notes, notesIsLoading, setCurrentNote, setIsNewNote, setSelectedNoteID])
 
   // useEffect(() => {
   //   if (notesIsLoading) return // Don't continue with side effect if loading is true
