@@ -38,6 +38,7 @@ const NoteList = React.memo(() => {
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const selectedNoteID = useStore(store => store.selectedNoteID)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
+  const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
 
   // Api query
   // Fetches notes by currently selected folder id from the store
@@ -76,10 +77,11 @@ const NoteList = React.memo(() => {
 
   const handleSelectNote = useCallback(id => () => {
     if (id === selectedNoteID) return
+    setNoteByFolderID(selectedFolderID, id)
     setSelectedNoteID(id)
     setCurrentNote(notes.find(note => note.id === id))
     setIsNewNote(false)
-  }, [notes, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedNoteID])
+  }, [notes, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID])
 
   const handleDeleteNote = useCallback(id => {
     let list_is_empty = (notes?.length <= 1)
