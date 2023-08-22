@@ -42,6 +42,7 @@ const FolderList = React.memo(() => {
   const setCurrentNote = useStore(store => store.setCurrentNote)
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
+  const noteByFolderID = useStore(store => store.noteByFolderID)
   
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const folderListWidth = useMemo(() => {
@@ -73,15 +74,19 @@ const FolderList = React.memo(() => {
   
   const handleFolderClick = useCallback(id => {
     if (id === selectedFolderID) return
-    console.log('FOLDER SELECT')
-    console.log('Setting selectedFolderID and setting is new note to false')
     setSelectedFolderID(id)
     setIsNewNote(false)
     if (id !== ALL_NOTES_ID) {
-      setSelectedNoteID(null)
-      setCurrentNote(INITIAL_NOTE)
+      let noteID = noteByFolderID[id]
+      if (noteID !== undefined) {
+        setSelectedNoteID(noteID)
+        // note we don't setCurrentNote() because we don't have access to the note. Has to be handled by use-effect?
+      } else {
+        setSelectedNoteID(null)
+        setCurrentNote(INITIAL_NOTE)
+      }
     }
-  }, [selectedFolderID, setCurrentNote, setIsNewNote, setSelectedFolderID, setSelectedNoteID])
+  }, [noteByFolderID, selectedFolderID, setCurrentNote, setIsNewNote, setSelectedFolderID, setSelectedNoteID])
 
   const handleFolderDoubleClick = useCallback(id => {
     setEditableFolderID(id)

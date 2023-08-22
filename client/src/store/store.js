@@ -30,10 +30,17 @@ export const useStore = create(
       isNewNote: false,
       setIsNewNote: (bool) => set(() => ({ isNewNote: bool })),
       selectedFolderID: null,
-      setSelectedFolderID: (folderId) =>
-        set(() => ({ selectedFolderID: folderId })),
+      setSelectedFolderID: (folderID) =>
+        set(() => ({ selectedFolderID: folderID })),
       selectedNoteID: null,
       setSelectedNoteID: (id) => set(() => ({ selectedNoteID: id })),
+      noteByFolderID: {},
+      // we're slightly abusing a setter here; we actually update store.noteByFolderID, then return it
+      // to be stored by the setter
+      setNoteByFolderID: (folderID, noteID) => set((store) => {
+        store.noteByFolderID[folderID] = noteID
+        return store.noteByFolderID
+      })
     }),
     {
       // Local Storage key name
