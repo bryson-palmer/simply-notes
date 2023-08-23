@@ -75,15 +75,16 @@ const FolderList = React.memo(() => {
   const handleFolderClick = useCallback(id => {
     if (id === selectedFolderID) return
     setSelectedFolderID(id)
-    setIsNewNote(false)
     if (id !== ALL_NOTES_ID) {
       let noteID = noteByFolderID[id]
       if (noteID !== undefined) {
+        setIsNewNote(false)
         setSelectedNoteID(noteID)
         // note we don't setCurrentNote() because we don't have access to the note. Has to be handled by use-effect?
       } else {
         setSelectedNoteID(null)
         setCurrentNote(INITIAL_NOTE)
+        setIsNewNote(true)
       }
     }
   }, [noteByFolderID, selectedFolderID, setCurrentNote, setIsNewNote, setSelectedFolderID, setSelectedNoteID])

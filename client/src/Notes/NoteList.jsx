@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DescriptionIcon from '@mui/icons-material/Description'
@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography'
 import { INITIAL_NOTE } from '@/constants/constants'
 import useGetNotes from '@/hooks/useGetNotes'
 import useDeleteNote from '@/hooks/useDeleteNote'
+import useCreateNote from '@/hooks/useCreateNote'
 import ListHeader from '@/Notes/ListHeader'
 import  { useScreenSize, useStore } from '@/store/store'
 import EmptyState from '@/ui/EmptyState'
@@ -32,20 +33,21 @@ const NoteList = React.memo(() => {
   // Store
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const isNewNote = useStore(store => store.isNewNote)
-  // const currentNote = useStore(store => store.currentNote)
+  const currentNote = useStore(store => store.currentNote)
   const setCurrentNote = useStore(store => store.setCurrentNote)
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const selectedNoteID = useStore(store => store.selectedNoteID)
-  console.log("🚀 [selectedNoteID]:", selectedNoteID)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
 
   // Api query
+  // Fetches notes by currently selected folder id from the store
   const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
   const screenSize = useScreenSize()
   const deleteNote = useDeleteNote()
+  const {isLoading: noteIsCreating = false} = useCreateNote()
 
-  // const isSelectedInNotes = useMemo(() => Boolean(notes?.length && notes?.some(note => note.id === selectedNoteID)), [notes, selectedNoteID])
+  const isSelectedInNotes = useMemo(() => Boolean(notes?.length && notes?.some(note => note.id === selectedNoteID)), [notes, selectedNoteID])
   
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const notesListWidth = useMemo(() => {
@@ -112,19 +114,6 @@ const NoteList = React.memo(() => {
       }
     }
   }, [deleteNote, notes, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedNoteID])
-
-  useEffect(() => {
-    // This side effect is for syncing the selectedNoteID and currentNote.
-    if (isNewNote || notesIsLoading) return
-
-    console.log('NoteList useEffect')
-    if (!notes?.length) {
-      console.log('  No notes')
-      console.log('  Setting isNewNote to: ', true)
-      setIsNewNote(true)
-    }
-  }, [isNewNote, notes?.length, notesIsLoading, setIsNewNote])
-
   return (
     <div
       style={{

@@ -42,6 +42,7 @@ const Notes = React.memo(() => {
   const selectedNoteID = useStore((store) => store.selectedNoteID)
   const setSelectedNoteID = useStore((store) => store.setSelectedNoteID)
   const selectedFolderID = useStore((store) => store.selectedFolderID)
+  const setNoteByFolderID = useStore((store) => store.setNoteByFolderID)
   
   // Api query
   const { data: notes, isLoading: notesIsLoading } = useGetNotes()
@@ -79,10 +80,12 @@ const Notes = React.memo(() => {
         ? createNote.mutate(values)
         : updateNote.mutate(values)
 
+      console.log('setting notebyfolderid ====', values?.folder, values?.id)
+      setNoteByFolderID(values.folder, values.id)
       setSelectedNoteID(values.id)
       setIsNewNote(false)
     },
-    [createNote, isNewNote, setIsNewNote, setSelectedNoteID, updateNote]
+    [createNote, isNewNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID, updateNote]
   )
 
   console.log("  [isSelectedInNotes]:", isSelectedInNotes)
@@ -107,7 +110,7 @@ const Notes = React.memo(() => {
   useEffect(() => {
     // This useEffect is adding a new note id and syncing the folder id to the new note
     console.log('2.Notes index useEffect ')
-    if (isNewNote && selectedFolderID) { // && selectedNoteID !== currentNote?.id
+    if (isNewNote && selectedFolderID && selectedNoteID !== currentNote?.id) { // 
       let id = (crypto?.randomUUID() || '').replaceAll('-', '')
       console.log('  New note')
       console.log('  Updating currentNote with folder id and a new cyrpto id.')
@@ -120,7 +123,7 @@ const Notes = React.memo(() => {
       // Must have a selected note on first load to stop this id from being set and making an api call
       return setSelectedNoteID(id)
     }
-  }, [isNewNote, selectedFolderID, setCurrentNote, setSelectedNoteID])
+  }, [currentNote?.id, isNewNote, selectedFolderID, selectedNoteID, setCurrentNote, setSelectedNoteID])
 
   return (
     <Box

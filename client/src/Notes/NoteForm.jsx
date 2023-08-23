@@ -22,6 +22,7 @@ const NoteForm = React.memo(({formik}) => {
   // Store
   // const screenSize = useScreenSize()
   const isNewNote = useStore(store => store.isNewNote)
+  const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
   const {dirty, handleChange, isSubmitting, submitForm, values } = formik
 
   const form = document.getElementById('form')
@@ -31,6 +32,7 @@ const NoteForm = React.memo(({formik}) => {
   // const Icon = () => <DescriptionIcon />
   let timer = useRef(0)
 
+  console.log('form values---~~', values, dirty, isSubmitting, isLoading)
   useEffect(() => {
     console.log('4.NoteForm useEffect')
     // If values haven't changed
