@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Form, Formik } from 'formik'
 import * as yup from 'yup'
@@ -44,8 +44,8 @@ const Notes = React.memo(() => {
   const selectedFolderID = useStore((store) => store.selectedFolderID)
   
   // Api query
-  const { data: notes } = useGetNotes()
-  const { data: note } = useGetNote(selectedNoteID)
+  const { data: notes, isLoading: notesIsLoading } = useGetNotes()
+  const { data: note, isLoading: noteIsLoading } = useGetNote(selectedNoteID)
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
   
@@ -85,30 +85,32 @@ const Notes = React.memo(() => {
     [createNote, isNewNote, setIsNewNote, setSelectedNoteID, updateNote]
   )
 
-  const count = useRef(0)
-  useEffect(() => {
-    console.log('2.Notes index useEffect ')
-    console.log('  [count]:', count.current += 1)
-    console.log('  [selectedFolderID]: ', selectedFolderID, '[isNewNote]: ', isNewNote)
-    console.log("  [selectedNoteID]:", selectedNoteID)
-    console.log("  [isSelectedInNotes]:", isSelectedInNotes)
-    console.log("  [currentNote]:", currentNote)
-    console.log('  [notes]:', notes)
-    console.log('  [note]:', note)
-    
-    if (currentNote?.folder && currentNote?.folder !== selectedFolderID && !isSelectedInNotes) {
-      console.log('  Parallel first step for out of sync values with NoteList')
-      console.log("  folder ids don't match and we have a current note folder id and selected note is not in notes")
-      console.log('  Setting selected note id and current note to defaults')
-      setCurrentNote(INITIAL_NOTE)
-      setSelectedNoteID(null)
-    }
+  console.log("  [isSelectedInNotes]:", isSelectedInNotes)
+  console.log("  [currentNote]:", currentNote)
+  console.log('  [notes]:', notes)
+  console.log('  [note]:', note)
 
-    if (selectedFolderID && isNewNote) {
-      // when creating a new note, create new ID and set 
+  useEffect(() => {
+    // This useEffect is addressing loading a note after a new folder is selected
+    if (notesIsLoading || noteIsLoading) return
+    console.log('1.Notes index useEffect ')
+
+    // We don't reload the currentNote if the ids are the same to avoid flickering
+    // If the ids aren't then we sync up currentNote with the note
+    if (!isNewNote && note?.id !== currentNote?.id) {
+      console.log('  Setting currentNote to note')
+      setCurrentNote(note)
+      return
+    }
+  }, [currentNote?.id, isNewNote, note, noteIsLoading, notesIsLoading, setCurrentNote])
+
+  useEffect(() => {
+    // This useEffect is adding a new note id and syncing the folder id to the new note
+    console.log('2.Notes index useEffect ')
+    if (isNewNote && selectedFolderID) { // && selectedNoteID !== currentNote?.id
       let id = (crypto?.randomUUID() || '').replaceAll('-', '')
-      console.log('  We have a selected folder id and its a new note')
-      console.log('  Updating current note with folder id and a new cyrpto id.')
+      console.log('  New note')
+      console.log('  Updating currentNote with folder id and a new cyrpto id.')
       console.log('  [selectedFolderID]', selectedFolderID, '[crypto id]', id)
       setCurrentNote({
         ...INITIAL_NOTE,
@@ -116,13 +118,9 @@ const Notes = React.memo(() => {
         id: id
       })
       // Must have a selected note on first load to stop this id from being set and making an api call
-      console.log('  Also setting selected note id to: ', id)
       return setSelectedNoteID(id)
     }
-    // if (selectedFolderID && !isNewNote && note) {
-    //   setCurrentNote(note)
-    // }
-  }, [selectedFolderID, isNewNote, setCurrentNote, setSelectedNoteID, isSelectedInNotes])
+  }, [isNewNote, selectedFolderID, setCurrentNote, setSelectedNoteID])
 
   return (
     <Box
@@ -184,7 +182,7 @@ const Notes = React.memo(() => {
         <Formik
           enableReinitialize
           key={note?.id ?? currentNote?.id}
-          initialValues={selectedFolderID && !isNewNote ? note : currentNote} // Determine which note values to use for initialvalues.
+          initialValues={selectedFolderID && !isNewNote ? note : {...currentNote}} // Determine which note values to use for initialvalues.
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
