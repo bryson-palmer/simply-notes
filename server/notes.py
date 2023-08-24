@@ -21,6 +21,13 @@ def create_or_modify_note(request, is_new_note=False):
     
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
+    if not is_new_note:
+        # support creating note from the UPDATE_NOTE backend, to simplify front end process
+        cursor.execute('SELECT 1 FROM NOTES WHERE folder_id="%s" and user_id="%s" and id="%s"' % (folder, user_id, id))
+        note_exists = cursor.fetchone()
+        print('note', note_exists)
+        if not note_exists or not note_exists[0]:  # looking for  either (,) or (None,)
+            is_new_note = True
     if is_new_note:
         cursor.execute(f'INSERT INTO NOTES (id, title, body, user_id, folder_id) VALUES ("{id}", "{title}", "{body}", "{user_id}", "{folder}")')
     if not is_new_note:
