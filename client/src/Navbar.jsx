@@ -24,20 +24,8 @@ const Navbar = React.memo(() => {
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
 
   const handleIsNewNote = useCallback(() => {
-    // DUPLICATE CODE TO NOTEFORM
-    setSelectedNoteID(null)  // without this, selected note becomes blank, as it becomes a "new note"
-    let id = (crypto?.randomUUID() || '').replaceAll('-', '')
-      console.log('  New note')
-      console.log('  Updating currentNote with folder id and a new cyrpto id.')
-      console.log('  [selectedFolderID]', selectedFolderID, '[crypto id]', id)
-      setCurrentNote({
-        ...INITIAL_NOTE,
-        folder: selectedFolderID,
-        id: id
-      })
-      // Must have a selected note on first load to stop this id from being set and making an api call
-      setSelectedNoteID(id)
-  }, [selectedFolderID, setCurrentNote, setSelectedNoteID])
+    setSelectedNoteID(null)  // noteform.jsx will detect this and generate a new note form
+  }, [setSelectedNoteID])
 
   return (
     <FlexBetween
