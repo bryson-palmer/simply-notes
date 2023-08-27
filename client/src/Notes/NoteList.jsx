@@ -109,17 +109,6 @@ const NoteList = React.memo(() => {
     }
   }, [deleteNote, notes, selectedNoteID, setCurrentNote, setSelectedNoteID])
 
-  useEffect(() => {
-    // This side effect is for syncing the selectedNoteID and currentNote.
-    if (notesIsLoading) return
-
-    console.log('NoteList useEffect')
-    if (!notes?.length) {
-      console.log('  No notes')
-      console.log('  Setting isNewNote to: ', true)
-      setCurrentNote(INITIAL_NOTE)
-    }
-  }, [notes?.length, notesIsLoading, setCurrentNote])
 
   return (
     <div
