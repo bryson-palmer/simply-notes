@@ -36,6 +36,7 @@ const NoteForm = React.memo(({formik}) => {
   let timer = useRef(0)
 
   useEffect(() => {
+    // ALMOST DUPLICATE CODE AS NAVBAR.jsx. TODO: only keep this version
     if (selectedNoteID === null) {
     let id = (crypto?.randomUUID() || '').replaceAll('-', '')
       setCurrentNote({

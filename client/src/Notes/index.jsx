@@ -99,23 +99,6 @@ const Notes = React.memo(() => {
     }
   }, [currentNote?.id, note, noteIsLoading, notesIsLoading, setCurrentNote])
 
-  useEffect(() => {
-    // This useEffect is adding a new note id and syncing the folder id to the new note
-    console.log('2.Notes index useEffect ')
-    if (selectedFolderID) { // && selectedNoteID !== currentNote?.id
-      let id = (crypto?.randomUUID() || '').replaceAll('-', '')
-      console.log('  New note')
-      console.log('  Updating currentNote with folder id and a new cyrpto id.')
-      console.log('  [selectedFolderID]', selectedFolderID, '[crypto id]', id)
-      setCurrentNote({
-        ...INITIAL_NOTE,
-        folder: selectedFolderID,
-        id: id
-      })
-      // Must have a selected note on first load to stop this id from being set and making an api call
-      return setSelectedNoteID(id)
-    }
-  }, [selectedFolderID, setCurrentNote, setSelectedNoteID])
 
   return (
     <Box

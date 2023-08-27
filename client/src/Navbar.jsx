@@ -24,6 +24,7 @@ const Navbar = React.memo(() => {
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
 
   const handleIsNewNote = useCallback(() => {
+    // DUPLICATE CODE TO NOTEFORM
     setSelectedNoteID(null)  // without this, selected note becomes blank, as it becomes a "new note"
     let id = (crypto?.randomUUID() || '').replaceAll('-', '')
       console.log('  New note')
