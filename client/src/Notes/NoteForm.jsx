@@ -8,8 +8,9 @@ import TextField from '@mui/material/TextField'
 // import Typography from '@mui/material/Typography'
 
 import useGetNote from '@/hooks/useGetNotes'
+import  { useStore } from '@/store/store'
+import { INITIAL_NOTE } from '@/constants/constants'
 // import useGetFolders from '@/hooks/useGetFolders'
-import { /* useScreenSize, */ useStore } from "@/store/store"
 // import EmptyState from '@/ui/EmptyState'
 
 const NoteForm = React.memo(({formik}) => {
@@ -21,7 +22,10 @@ const NoteForm = React.memo(({formik}) => {
 
   // Store
   // const screenSize = useScreenSize()
-  const isNewNote = useStore(store => store.isNewNote)
+  const selectedNoteID = useStore(store => store.selectedNoteID)
+  const selectedFolderID = useStore(store => store.selectedFolderID)
+  const setCurrentNote = useStore(store => store.setCurrentNote)
+  const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   const {dirty, handleChange, isSubmitting, submitForm, values } = formik
 
   const form = document.getElementById('form')
@@ -30,6 +34,19 @@ const NoteForm = React.memo(({formik}) => {
   // const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   // const Icon = () => <DescriptionIcon />
   let timer = useRef(0)
+
+  useEffect(() => {
+    if (selectedNoteID === null) {
+    let id = (crypto?.randomUUID() || '').replaceAll('-', '')
+      setCurrentNote({
+        ...INITIAL_NOTE,
+        folder: selectedFolderID,
+        id: id
+      })
+      // Must have a selected note on first load to stop this id from being set and making an api call
+      setSelectedNoteID(id)
+    }
+  }, [selectedFolderID, selectedNoteID, setCurrentNote, setSelectedNoteID])
 
   useEffect(() => {
     console.log('4.NoteForm useEffect')
@@ -50,16 +67,15 @@ const NoteForm = React.memo(({formik}) => {
     }
 
     if (form) {
-
       form.addEventListener('keypress', () => handleKeyPress(timer))
       form.addEventListener('keyup', () => handleKeyUp(timer))
     }
-  }, [dirty, form, isLoading, isNewNote, isSubmitting, submitForm, values?.id])
+  }, [dirty, form, isLoading, isSubmitting, submitForm, values?.id])
 
   // Focus the title input if we have a new note
   useEffect(() => {
-    if (Boolean(titleInput) && isNewNote) return titleInput.focus({ focusVisible: true })
-  }, [isNewNote, titleInput])
+    if (titleInput) return titleInput.focus({ focusVisible: true })
+  }, [titleInput])
   
   // Listen for when a user enters out of the title input and put them in the body input
   useEffect(() => {

@@ -12,20 +12,31 @@ import IconButton from '@mui/material/IconButton'
 import { useScreenSize, useStore } from '@/store/store'
 import FlexBetween from '@/ui/FlexBetween'
 import StyledTooltip from '@/ui/StyledTooltip'
+import { INITIAL_NOTE } from '@/constants/constants'
 
 const Navbar = React.memo(() => {
   const { palette } = useTheme()
   const screenSize = useScreenSize()
-  const setIsNewNote = useStore(store => store.setIsNewNote)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   const selectedFolderID = useStore(store => store.selectedFolderID)
+  const setCurrentNote = useStore(store => store.setCurrentNote)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
 
   const handleIsNewNote = useCallback(() => {
     setSelectedNoteID(null)  // without this, selected note becomes blank, as it becomes a "new note"
-    setIsNewNote(true)
-  }, [setIsNewNote, setSelectedNoteID])
+    let id = (crypto?.randomUUID() || '').replaceAll('-', '')
+      console.log('  New note')
+      console.log('  Updating currentNote with folder id and a new cyrpto id.')
+      console.log('  [selectedFolderID]', selectedFolderID, '[crypto id]', id)
+      setCurrentNote({
+        ...INITIAL_NOTE,
+        folder: selectedFolderID,
+        id: id
+      })
+      // Must have a selected note on first load to stop this id from being set and making an api call
+      setSelectedNoteID(id)
+  }, [selectedFolderID, setCurrentNote, setSelectedNoteID])
 
   return (
     <FlexBetween

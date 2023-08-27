@@ -27,8 +27,6 @@ export const useStore = create(
     (set) => ({
       currentNote: null,
       setCurrentNote: (note) => set(() => ({ currentNote: {...note} })),
-      isNewNote: false,
-      setIsNewNote: (bool) => set(() => ({ isNewNote: bool })),
       selectedFolderID: null,
       setSelectedFolderID: (folderID) =>
         set(() => ({ selectedFolderID: folderID })),

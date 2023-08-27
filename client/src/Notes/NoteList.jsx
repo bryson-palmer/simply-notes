@@ -30,8 +30,6 @@ const NoteList = React.memo(() => {
   const { palette } = useTheme()
   
   // Store
-  const setIsNewNote = useStore(store => store.setIsNewNote)
-  const isNewNote = useStore(store => store.isNewNote)
   // const currentNote = useStore(store => store.currentNote)
   const setCurrentNote = useStore(store => store.setCurrentNote)
   const selectedFolderID = useStore(store => store.selectedFolderID)
@@ -79,8 +77,7 @@ const NoteList = React.memo(() => {
     setNoteByFolderID(selectedFolderID, id)
     setSelectedNoteID(id)
     setCurrentNote(notes.find(note => note.id === id))
-    setIsNewNote(false)
-  }, [notes, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID])
+  }, [notes, selectedFolderID, selectedNoteID, setCurrentNote, setNoteByFolderID, setSelectedNoteID])
 
   const handleDeleteNote = useCallback(id => {
     let list_is_empty = (notes?.length <= 1)
@@ -93,7 +90,6 @@ const NoteList = React.memo(() => {
         // that was our last note. Display a new-note
         setSelectedNoteID(null)
         setCurrentNote(INITIAL_NOTE)
-        setIsNewNote(true)
       } else {
         // need to focus another note. Find the note below the one we were deleting. Or above if none below
         let deleting_index = notes_copy.findIndex(obj => obj.id === id)
@@ -111,19 +107,19 @@ const NoteList = React.memo(() => {
         setCurrentNote(note_to_focus)
       }
     }
-  }, [deleteNote, notes, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedNoteID])
+  }, [deleteNote, notes, selectedNoteID, setCurrentNote, setSelectedNoteID])
 
   useEffect(() => {
     // This side effect is for syncing the selectedNoteID and currentNote.
-    if (isNewNote || notesIsLoading) return
+    if (notesIsLoading) return
 
     console.log('NoteList useEffect')
     if (!notes?.length) {
       console.log('  No notes')
       console.log('  Setting isNewNote to: ', true)
-      setIsNewNote(true)
+      setCurrentNote(INITIAL_NOTE)
     }
-  }, [isNewNote, notes?.length, notesIsLoading, setIsNewNote])
+  }, [notes?.length, notesIsLoading, setCurrentNote])
 
   return (
     <div
@@ -224,7 +220,7 @@ const NoteList = React.memo(() => {
 
           {notes?.map(({ id, title, body }) => {
             const labelId = `notes-list-label-${id}`;
-            const isSelected = !isNewNote && id === selectedNoteID;
+            const isSelected = id === selectedNoteID;
 
             return (
               <ListItem

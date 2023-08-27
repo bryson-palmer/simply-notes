@@ -37,8 +37,6 @@ const Notes = React.memo(() => {
   // Store
   const currentNote = useStore((store) => store.currentNote)
   const setCurrentNote = useStore((store) => store.setCurrentNote)
-  const isNewNote = useStore((store) => store.isNewNote)
-  const setIsNewNote = useStore((store) => store.setIsNewNote)
   const selectedNoteID = useStore((store) => store.selectedNoteID)
   const setSelectedNoteID = useStore((store) => store.setSelectedNoteID)
   const selectedFolderID = useStore((store) => store.selectedFolderID)
@@ -75,14 +73,11 @@ const Notes = React.memo(() => {
       console.log('SUBMIT')
       console.log('[values]:', values)
       // For a new note either, submit immediatley or wait a much longer period to submit.
-      isNewNote && values?.id
-        ? createNote.mutate(values)
-        : updateNote.mutate(values)
+      updateNote.mutate(values)
 
       setSelectedNoteID(values.id)
-      setIsNewNote(false)
     },
-    [createNote, isNewNote, setIsNewNote, setSelectedNoteID, updateNote]
+    [createNote, setSelectedNoteID, updateNote]
   )
 
   console.log("  [isSelectedInNotes]:", isSelectedInNotes)
@@ -97,17 +92,17 @@ const Notes = React.memo(() => {
 
     // We don't reload the currentNote if the ids are the same to avoid flickering
     // If the ids aren't then we sync up currentNote with the note
-    if (!isNewNote && note?.id !== currentNote?.id) {
+    if (note?.id && note?.id !== currentNote?.id) {
       console.log('  Setting currentNote to note')
       setCurrentNote(note)
       return
     }
-  }, [currentNote?.id, isNewNote, note, noteIsLoading, notesIsLoading, setCurrentNote])
+  }, [currentNote?.id, note, noteIsLoading, notesIsLoading, setCurrentNote])
 
   useEffect(() => {
     // This useEffect is adding a new note id and syncing the folder id to the new note
     console.log('2.Notes index useEffect ')
-    if (isNewNote && selectedFolderID) { // && selectedNoteID !== currentNote?.id
+    if (selectedFolderID) { // && selectedNoteID !== currentNote?.id
       let id = (crypto?.randomUUID() || '').replaceAll('-', '')
       console.log('  New note')
       console.log('  Updating currentNote with folder id and a new cyrpto id.')
@@ -120,7 +115,7 @@ const Notes = React.memo(() => {
       // Must have a selected note on first load to stop this id from being set and making an api call
       return setSelectedNoteID(id)
     }
-  }, [isNewNote, selectedFolderID, setCurrentNote, setSelectedNoteID])
+  }, [selectedFolderID, setCurrentNote, setSelectedNoteID])
 
   return (
     <Box
@@ -182,7 +177,7 @@ const Notes = React.memo(() => {
         <Formik
           enableReinitialize
           key={note?.id ?? currentNote?.id}
-          initialValues={selectedFolderID && !isNewNote ? note : {...currentNote}} // Determine which note values to use for initialvalues.
+          initialValues={selectedFolderID ? note : {...currentNote}} // Determine which note values to use for initialvalues.
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >

@@ -40,7 +40,6 @@ const FolderList = React.memo(() => {
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
   const setCurrentNote = useStore(store => store.setCurrentNote)
-  const setIsNewNote = useStore(store => store.setIsNewNote)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   const noteByFolderID = useStore(store => store.noteByFolderID)
   
@@ -75,7 +74,6 @@ const FolderList = React.memo(() => {
   const handleFolderClick = useCallback(id => {
     if (id === selectedFolderID) return
     setSelectedFolderID(id)
-    setIsNewNote(false)
     if (id !== ALL_NOTES_ID) {
       let noteID = noteByFolderID[id]
       if (noteID !== undefined) {
@@ -86,7 +84,7 @@ const FolderList = React.memo(() => {
         setCurrentNote(INITIAL_NOTE)
       }
     }
-  }, [noteByFolderID, selectedFolderID, setCurrentNote, setIsNewNote, setSelectedFolderID, setSelectedNoteID])
+  }, [noteByFolderID, selectedFolderID, setCurrentNote, setSelectedFolderID, setSelectedNoteID])
 
   const handleFolderDoubleClick = useCallback(id => {
     setEditableFolderID(id)
