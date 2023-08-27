@@ -75,9 +75,9 @@ const Notes = React.memo(() => {
       // For a new note either, submit immediatley or wait a much longer period to submit.
       updateNote.mutate(values)
 
-      setSelectedNoteID(values.id)
+      // setSelectedNoteID(values.id)  # DO NOT DO THIS ANYMORE -- will lead to recursion if website loads on a blank note
     },
-    [createNote, setSelectedNoteID, updateNote]
+    [updateNote]
   )
 
   console.log("  [isSelectedInNotes]:", isSelectedInNotes)
