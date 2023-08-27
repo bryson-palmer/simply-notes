@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DescriptionIcon from '@mui/icons-material/Description'
@@ -39,7 +39,7 @@ const NoteList = React.memo(() => {
   const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
 
   // Api query
-  const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
+  const { data: notes = [], /*isLoading: notesIsLoading */} = useGetNotes()
   const screenSize = useScreenSize()
   const deleteNote = useDeleteNote()
 

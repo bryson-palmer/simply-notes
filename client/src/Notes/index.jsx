@@ -8,9 +8,7 @@ import { useTheme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 
-import { INITIAL_NOTE } from '@/constants/constants'
 import Drawer from '@/Drawer'
-import useCreateNote from '@/hooks/useCreateNote'
 import useGetNote from '@/hooks/useGetNote'
 import useGetNotes from '@/hooks/useGetNotes'
 import useUpdateNote from '@/hooks/useUpdateNote'
@@ -38,13 +36,11 @@ const Notes = React.memo(() => {
   const currentNote = useStore((store) => store.currentNote)
   const setCurrentNote = useStore((store) => store.setCurrentNote)
   const selectedNoteID = useStore((store) => store.selectedNoteID)
-  const setSelectedNoteID = useStore((store) => store.setSelectedNoteID)
   const selectedFolderID = useStore((store) => store.selectedFolderID)
   
   // Api query
   const { data: notes, isLoading: notesIsLoading } = useGetNotes()
   const { data: note, isLoading: noteIsLoading } = useGetNote(selectedNoteID)
-  const createNote = useCreateNote()
   const updateNote = useUpdateNote()
   
   const isSelectedInNotes = useMemo(() => Boolean(notes?.length && notes?.some(note => note.id === selectedNoteID)), [notes, selectedNoteID])

@@ -12,14 +12,12 @@ import IconButton from '@mui/material/IconButton'
 import { useScreenSize, useStore } from '@/store/store'
 import FlexBetween from '@/ui/FlexBetween'
 import StyledTooltip from '@/ui/StyledTooltip'
-import { INITIAL_NOTE } from '@/constants/constants'
 
 const Navbar = React.memo(() => {
   const { palette } = useTheme()
   const screenSize = useScreenSize()
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   const selectedFolderID = useStore(store => store.selectedFolderID)
-  const setCurrentNote = useStore(store => store.setCurrentNote)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
 
