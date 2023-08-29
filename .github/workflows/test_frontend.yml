@@ -18,8 +18,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: browser-actions/setup-geckodriver@latest
-    - run: geckodriver --version
+    - name: "Install Node"
+      uses: actions/setup-node@v1
+      with:
+        node-version: "18.x"
+    - name: "Install global packages"
+      run: npm install -g yarn
+    - name: Install yarn dependencies
+      run: yarn install
+    - name: config for port
+      run: echo VITE_BASE_URL=http://localhost:5000 > client/.env.local
+    - name: start yarn
+      run: yarn dev &
+
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
@@ -30,6 +41,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f client/tests/requirements.txt ]; then pip install -r client/tests/requirements.txt; fi
+        if [ -f server/requirements.txt ]; then pip install -r server/requirements.txt; fi
+    - name: run backend
+      run: python3 server/app.py &
+
+    - uses: browser-actions/setup-geckodriver@latest
+    - run: geckodriver --version
+    - run: which geckodriver
     - name: Test frontend with pytest & firefox & selenium
       run: |
         pytest client/tests/
