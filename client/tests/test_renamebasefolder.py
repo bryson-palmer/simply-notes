@@ -14,10 +14,12 @@ from selenium.webdriver.firefox.options import Options
 
 class TestRenamebasefolder():
   def setup_method(self, method):
-    options = Options()
-    options.profile = os.path.expanduser('~')  # This will expand the tilde to the home directory path
-    options.headless = True  # test runner cannot run in graphical mode
-    self.driver = webdriver.Firefox(options=options)
+    # options = Options()
+    # options.headless = True
+    # self.driver = webdriver.Firefox(options=options)
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")  # Enable headless mode
+    self.driver = webdriver.Chrome(options=options)
     self.vars = {}
   
   def teardown_method(self, method):
