@@ -119,6 +119,7 @@ const FolderList = () => {
               TransitionProps={{ timeout: 400 }}
             >
               <CreateNewFolder
+                id="newFolderButton"
                 sx={{
                   color: palette.secondary[400],
                   '&:hover': { color: palette.secondary[100] },
@@ -182,7 +183,9 @@ const FolderList = () => {
                           color: palette.grey[400],
                         }}
                       >
-                        <MoreVert />
+                        <MoreVert 
+                          id='optionsFolder'
+                        />
                       </IconButton>
                       <Menu
                         id='menuList'
@@ -201,6 +204,7 @@ const FolderList = () => {
                         }}
                       >
                         <MenuItem
+                          id='editFolderButton'
                           onClick={() => {
                             setEditableFolderID(id)
                             handleAnchorElClose()
@@ -218,6 +222,7 @@ const FolderList = () => {
                           Edit
                         </MenuItem>
                         <MenuItem
+                          id='deleteFolderButton'
                           onClick={() => {
                             handleFolderDelete(id)
                           }}
