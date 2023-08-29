@@ -63,6 +63,19 @@
       "targets": [],
       "value": ""
     }, {
+      "id": "15b12c8a-5fd9-4a9e-8335-372a2e0ef88a",
+      "comment": "",
+      "command": "sendKeys",
+      "target": "id=folderName",
+      "targets": [
+        ["id=folderName", "id"],
+        ["name=folderName", "name"],
+        ["css=#folderName", "css:finder"],
+        ["xpath=//input[@id='folderName']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "${KEY_ENTER}"
+    }, {
       "id": "a527f2ef-ecd3-4312-a0bf-78ef56d46e10",
       "comment": "click newly created folder to verify it exists",
       "command": "click",

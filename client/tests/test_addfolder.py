@@ -35,7 +35,16 @@ class TestAddfolder(BrowserSetup):
     self.driver.find_element(By.ID, "folderName").send_keys("new folder")
     # 6 | submit | id=folderName | 
     # firefox doesn't work if you send_keys(KEY_ENTER), so we submit() form instead
-    raise Exception("'submit' is not a supported command in Selenium WebDriver. Please re-record the step in the IDE.")
+    self.driver.find_element(By.ID, "folderName").send_keys(Keys.ENTER)
+    try:
+      # some other ways to try and submit the form, since the first way sometimes fails
+      self.driver.find_element(By.ID, "folderName").send_keys(Keys.RETURN)
+      self.driver.find_element(By.ID, 'folderName').submit()
+    except Exception:
+      pass
+    # comment out this exception. In my IDE, in order to test, I have to use the 'submit' on that form
+    # but in the code, I have to use the send_keys() here
+    # raise Exception("'submit' is not a supported command in Selenium WebDriver. Please re-record the step in the IDE.")
     # 7 | click | xpath=//span[contains(.,'new folder')] | 
     # click newly created folder to verify it exists
     self.driver.find_element(By.XPATH, "//span[contains(.,\'new folder\')]").click()
