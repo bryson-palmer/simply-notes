@@ -2,6 +2,7 @@
 import pytest
 import time
 import json
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
@@ -9,10 +10,13 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.firefox.options import Options
 
 class TestRenamebasefolder():
   def setup_method(self, method):
-    self.driver = webdriver.Firefox()
+    options = Options()
+    options.profile = os.path.expanduser('~')  # This will expand the tilde to the home directory path
+    self.driver = webdriver.Firefox(options=options)
     self.vars = {}
   
   def teardown_method(self, method):
