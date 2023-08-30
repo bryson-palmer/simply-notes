@@ -142,6 +142,7 @@ const Notes = React.memo(() => {
         >
           <Button
             disableRipple
+            id='toggleDrawer'
             onClick={toggleDrawer}
             startIcon={<ArrowBackIosNewIcon />}
             sx={{
