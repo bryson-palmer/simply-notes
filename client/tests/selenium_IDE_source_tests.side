@@ -1,0 +1,146 @@
+{
+  "id": "04ead153-67da-47fb-ba03-c392acd444eb",
+  "version": "2.0",
+  "name": "selenium_IDE_source_tests",
+  "url": "http://localhost:5173",
+  "tests": [{
+    "id": "68eeaa69-3661-482a-93d1-b2f464512a49",
+    "name": "add_folder",
+    "commands": [{
+      "id": "a0674e5f-8270-48c6-9130-7d6c931cab7d",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9a1c0323-26ab-4d64-9d08-752b797838b9",
+      "comment": "make window small enough that drawer toggle is visible",
+      "command": "setWindowSize",
+      "target": "743x851",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "fc21c055-3fec-4033-a625-7bd6a69bc7cf",
+      "comment": "slide out drawer",
+      "command": "click",
+      "target": "id=toggleDrawer",
+      "targets": [
+        ["id=toggleDrawer", "id"],
+        ["css=#toggleDrawer", "css:finder"],
+        ["xpath=//button[@id='toggleDrawer']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/aside/div/button", "xpath:idRelative"],
+        ["xpath=//aside/div/button", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "cc5987dd-d98a-487a-8301-2b4e72b262fb",
+      "comment": "click button to create new folder",
+      "command": "click",
+      "target": "css=#newFolderButton > path",
+      "targets": [
+        ["css=#newFolderButton > path", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "96703ea2-ce9f-4cd8-b3e7-d4fbc41eb8b9",
+      "comment": "new folder auto-focuses. Type in 'new folder'",
+      "command": "type",
+      "target": "id=folderName",
+      "targets": [
+        ["id=folderName", "id"],
+        ["name=folderName", "name"],
+        ["css=#folderName", "css:finder"],
+        ["xpath=//input[@id='folderName']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "new folder"
+    }, {
+      "id": "52b77f7e-41dc-456d-accd-2a3044db0a75",
+      "comment": "firefox doesn't work if you send_keys(KEY_ENTER), so we submit() form instead",
+      "command": "submit",
+      "target": "id=folderName",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "15b12c8a-5fd9-4a9e-8335-372a2e0ef88a",
+      "comment": "",
+      "command": "sendKeys",
+      "target": "id=folderName",
+      "targets": [
+        ["id=folderName", "id"],
+        ["name=folderName", "name"],
+        ["css=#folderName", "css:finder"],
+        ["xpath=//input[@id='folderName']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "${KEY_ENTER}"
+    }, {
+      "id": "a527f2ef-ecd3-4312-a0bf-78ef56d46e10",
+      "comment": "click newly created folder to verify it exists",
+      "command": "click",
+      "target": "xpath=//span[contains(.,'new folder')]",
+      "targets": [
+        ["css=.MuiTypography-root", "css:finder"],
+        ["xpath=//li[@id='dc7ed2477a374474976d14be390f25d2']/div/div[2]/span", "xpath:idRelative"],
+        ["xpath=//div[2]/span", "xpath:position"],
+        ["xpath=//span[contains(.,'new folder')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "a55c9841-8945-43a8-83dd-83b0d0e7cbc8",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "id=optionsFolder",
+      "targets": [
+        ["id=optionsFolder", "id"],
+        ["css=#optionsFolder", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "6a03b437-594e-42dc-b52c-13b87f267c47",
+      "comment": "open options on folder",
+      "command": "click",
+      "target": "id=optionsFolder",
+      "targets": [
+        ["id=optionsFolder", "id"],
+        ["css=#optionsFolder", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "e339ce30-75ea-4346-ac4b-b3016257300d",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "id=optionsFolder",
+      "targets": [
+        ["id=optionsFolder", "id"],
+        ["css=#optionsFolder", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "19b26186-7998-4bec-b3c8-850d91b20e0f",
+      "comment": "delete folder. Cleanup is nice so test is repeatable",
+      "command": "click",
+      "target": "id=deleteFolderButton",
+      "targets": [
+        ["id=deleteFolderButton", "id"],
+        ["css=#deleteFolderButton", "css:finder"],
+        ["xpath=//li[@id='deleteFolderButton']", "xpath:attributes"],
+        ["xpath=//div[@id='menuList']/div[3]/ul/li[2]", "xpath:idRelative"],
+        ["xpath=//li[2]", "xpath:position"],
+        ["xpath=//li[contains(.,'Delete')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "12031f0c-c3fc-4efb-8984-1179d5e1b0f4",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": []
+  }],
+  "urls": ["http://localhost:5173/"],
+  "plugins": []
+}

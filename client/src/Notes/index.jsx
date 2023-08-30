@@ -46,6 +46,7 @@ const Notes = React.memo(() => {
         <Box height='3.75rem' paddingLeft='0.5rem' transition='all 0.35s ease-in-out'>
           <Button
             disableRipple
+            id='toggleDrawer'
             onClick={toggleDrawer}
             startIcon={<ArrowBackIosNewIcon />}
             sx={{
