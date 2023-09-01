@@ -169,6 +169,27 @@ const Notes = React.memo(() => {
       setNoteByFolderID(selectedFolderID, selectedNoteID)
     }
   }, [isLookupIdInList, notes?.length, selectedFolderID, selectedNoteID, setNoteByFolderID])
+
+  useEffect(() => {
+    /*
+      This useEffect is for resetting the currentNote to the selectedFolderID and selectedNoteID and setting isNewNote to true.
+      If a folder's note list is empty and the user clicks a new folder, w/o making a new note, and then clicks back to the previous folder,
+      Then we need to set the currentNote to the selected values informed by the lookup in FolderList.
+    */
+    if (notes?.length || notesIsLoading || notesIsFetching) return
+
+    if (!notes?.length && !isCurrentIdInNotes) {
+      console.log('[NOTES_INDEX] useEffect')
+      console.log('  Back to new note')
+      setCurrentNote({
+        ...INITIAL_NOTE,
+        folder: selectedFolderID,
+        id: selectedNoteID
+      })
+      setIsNewNote(true)
+    }
+  }, [isCurrentIdInNotes, notes?.length, notesIsFetching, notesIsLoading, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote])
+
       let id = (crypto?.randomUUID() || '').replaceAll('-', '')
       console.log('  New note')
       console.log('  Updating currentNote with folder id and a new cyrpto id.')
