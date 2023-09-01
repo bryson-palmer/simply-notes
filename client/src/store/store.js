@@ -26,7 +26,7 @@ export const useStore = create(
   persist(
     (set) => ({
       currentNote: null,
-      setCurrentNote: (note) => set(() => ({ currentNote: {...note} })),
+      setCurrentNote: (note) => set(() => ({ currentNote: { ...note } })),
       isNewNote: false,
       setIsNewNote: (bool) => set(() => ({ isNewNote: bool })),
       selectedFolderID: null,
@@ -35,16 +35,29 @@ export const useStore = create(
       selectedNoteID: null,
       setSelectedNoteID: (id) => set(() => ({ selectedNoteID: id })),
       noteByFolderID: {},
-      // we're slightly abusing a setter here; we actually update store.noteByFolderID, then return it
-      // to be stored by the setter
-      setNoteByFolderID: (folderID, noteID) => set((store) => {
-        store.noteByFolderID[folderID] = noteID
-        return store.noteByFolderID
-      })
+      /*
+        we're slightly abusing a setter here; we actually update store.noteByFolderID, then return it
+        to be store via the setter
+      */
+      setNoteByFolderID: (
+        folderID = null,
+        noteID = null,
+        removeFolderKey = false
+      ) =>
+        set((store) => {
+          if (removeFolderKey) {
+            // When removeFolderKey is true, delete the folder property from the lookup
+            delete store.noteByFolderID[folderID];
+          } else {
+            // Set folderID key with the value of the noteID
+            store.noteByFolderID[folderID] = noteID;
+          }
+          return store.noteByFolderID;
+        }),
     }),
     {
       // Local Storage key name
-      name: "simple-notes",
+      name: 'simple-notes',
     }
   )
-);
+)
