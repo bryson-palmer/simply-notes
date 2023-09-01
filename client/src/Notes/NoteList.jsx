@@ -84,47 +84,69 @@ const NoteList = React.memo(() => {
   }, [notes, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID])
 
   const handleDeleteNote = useCallback(id => {
-    let list_is_empty = (notes?.length <= 1)
-    let notes_copy = [...notes]
-    // list_is_empty if the deleted note will make the notes list empty
+    console.log('[NOTE_DELETE]')
+    // listIsEmpty if the deleted note will make the notes list empty
+    const listIsEmpty = (notes?.length <= 1)
+    const notesCopy = [...notes]
+
     deleteNote.mutate(id)
-    // keep selected note unless we're deleting the selected one
+
+    // If deleting the selectedNoteID
     if (id === selectedNoteID) {
-      if (list_is_empty) {
-        // that was our last note. Display a new-note
+      console.log('  Deleting the selectedNoteID')
+      console.log('  [listIsEmpty]:', listIsEmpty)
+
+      if (listIsEmpty) {
+        /*
+          That was the last note in the list
+          Need to reset note variables to initial or null.
+          Should set the noteByFolderID lookup to null because that note doesn't exist
+        */
         setSelectedNoteID(null)
         setCurrentNote(INITIAL_NOTE)
+        setNoteByFolderID(selectedFolderID, null)
         setIsNewNote(true)
       } else {
-        // need to focus another note. Find the note below the one we were deleting. Or above if none below
-        let deleting_index = notes_copy.findIndex(obj => obj.id === id)
-        let new_index = 0
-        if (deleting_index !== -1) {
-          // we know where the old note was, set new note to be note below our deleted note
-          new_index = deleting_index + 1
-          if (notes_copy.length <= new_index) {
-            new_index = deleting_index - 1
+        /*
+          Determining a new selected note if there are still notes.
+          Find the note next in the list or previous if the deleted note was the last in the list
+        */
+        let deletingIndex = notesCopy.findIndex(obj => obj.id === id)
+        let newIndex = 0
+
+        if (deletingIndex !== -1) {
+          // we know where the old note was, set new note to be the next note in the list
+          newIndex = deletingIndex + 1
+          console.log('  Setting the next note in the list')
+
+          if (notesCopy.length <= newIndex) {
+            console.log('  Setting the previous note in the list')
+            newIndex = deletingIndex - 1
           }
-          new_index = Math.max(0, new_index)  // make sure we don't have a negative index
+          newIndex = Math.max(0, newIndex)
         }
-        let note_to_focus = notes_copy[new_index]
-        setSelectedNoteID(note_to_focus?.id)
-        setCurrentNote(note_to_focus)
+
+        /*
+          Updating note variables.
+          Should update the noteByFolderID look up because selectedNoteID and currentNote are getting updated
+        */
+        let noteToFocus = notesCopy[newIndex]
+        setSelectedNoteID(noteToFocus?.id)
+        setCurrentNote(noteToFocus)
+        setNoteByFolderID(selectedFolderID, noteToFocus?.id)
+
+        /*
+          Looking for any other folder with the same [folderID, noteID] and removing it from the lookup.
+          Another folder in the lookup is still set to the id we are going to delete.
+          Remove the note id from that folder as well
+        */
+        const otherFolderWithDeletingID = Object.entries(noteByFolderID).find(entry => entry[0] !== selectedFolderID && entry[1] === id)
+        if (otherFolderWithDeletingID !== undefined) {
+          setNoteByFolderID(otherFolderWithDeletingID[0], null)
+        }
       }
     }
-  }, [deleteNote, notes, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedNoteID])
-
-  useEffect(() => {
-    // This side effect is for syncing the selectedNoteID and currentNote.
-    if (isNewNote || notesIsLoading) return
-
-    console.log('NoteList useEffect')
-    if (!notes?.length) {
-      console.log('  No notes')
-      console.log('  Setting isNewNote to: ', true)
-      setIsNewNote(true)
-    }
-  }, [isNewNote, notes?.length, notesIsLoading, setIsNewNote])
+  }, [deleteNote, noteByFolderID, notes, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID])
 
   return (
     <div
