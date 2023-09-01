@@ -102,9 +102,10 @@ const FolderList = React.memo(() => {
   }, [noteByFolderID, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedFolderID, setSelectedNoteID])
 
   const handleFolderDoubleClick = useCallback(id => {
+    console.log('[FOLDER_EDIT]')
     setEditableFolderID(id)
     setSelectedFolderID(id)
-    setIsNewFolder(false)  // close New Folder form when editting another folder's name
+    setIsNewFolder(false)
     handleAnchorElClose()
   }, [setSelectedFolderID])
 
@@ -132,6 +133,12 @@ const FolderList = React.memo(() => {
   const handleEditFolderBlur = () => {
     setEditableFolderID('')
   }
+
+  // If we've somehow added a null folder name, this useEffect removes it from the list
+  // useEffect(() => {
+  //   const folderToRemove = null // Add folderID in quotes to remove folder from lookup.
+  //   setNoteByFolderID(folderToRemove, null, true)
+  // }, [setNoteByFolderID])
 
   useEffect(() => {
     if (!folders.length || foldersIsLoading) return
