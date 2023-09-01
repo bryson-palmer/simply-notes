@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DescriptionIcon from '@mui/icons-material/Description'
 import { useTheme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
+import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
@@ -21,7 +22,7 @@ import  { useScreenSize, useStore } from '@/store/store'
 import EmptyState from '@/ui/EmptyState'
 
 const NoteList = React.memo(() => {
-  // Checkbox notes list state
+  // Checkbox state for note list
   const [listState, setListState] = useState({
     isAllChecked: false,
     checkedIds: []
@@ -30,22 +31,20 @@ const NoteList = React.memo(() => {
   const { palette } = useTheme()
   
   // Store
+  const screenSize = useScreenSize()
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const isNewNote = useStore(store => store.isNewNote)
-  // const currentNote = useStore(store => store.currentNote)
+  const currentNote = useStore(store => store.currentNote)
   const setCurrentNote = useStore(store => store.setCurrentNote)
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const selectedNoteID = useStore(store => store.selectedNoteID)
-  console.log("🚀 [selectedNoteID]:", selectedNoteID)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
+  const noteByFolderID = useStore(store => store.noteByFolderID)
 
-  // Api query
-  const { data: notes = [], isLoading: notesIsLoading } = useGetNotes()
-  const screenSize = useScreenSize()
+  // Api
+  const { data: notes = [], isFetching: notesIsFetching, isLoading: notesIsLoading } = useGetNotes()
   const deleteNote = useDeleteNote()
-
-  // const isSelectedInNotes = useMemo(() => Boolean(notes?.length && notes?.some(note => note.id === selectedNoteID)), [notes, selectedNoteID])
   
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const notesListWidth = useMemo(() => {
@@ -76,6 +75,8 @@ const NoteList = React.memo(() => {
 
   const handleSelectNote = useCallback(id => () => {
     if (id === selectedNoteID) return
+    console.log('[NOTE_CLICK]', id)
+    console.log('  Updating all note variables (noteByFolderID, selectedNoteID, currentNote, isNewNote)')
     setNoteByFolderID(selectedFolderID, id)
     setSelectedNoteID(id)
     setCurrentNote(notes.find(note => note.id === id))
@@ -135,7 +136,7 @@ const NoteList = React.memo(() => {
     >
       <ListHeader listState={listState} setListState={setListState} />
 
-      {notes?.length ? (
+      {notes?.length && !notesIsLoading && !notesIsFetching ? (
         <List
           sx={{
             height: '88vh',
@@ -314,7 +315,9 @@ const NoteList = React.memo(() => {
             );
           })}
         </List>
-      ) : (
+      ) : null}
+
+      {!notes?.length && !notesIsLoading && !notesIsFetching ? (
         <Box
           sx={{
             height: '88vh',
@@ -326,7 +329,13 @@ const NoteList = React.memo(() => {
         >
           <EmptyState EmptyIcon={Icon} text='No notes' />
         </Box>
-      )}
+      ) : null}
+
+      {notesIsLoading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress sx={{ color: palette.secondary[400] }} />
+      </Box>
+      ) : null}
     </div>
   );
 })
