@@ -8,10 +8,9 @@ import { useTheme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 
-import { INITIAL_NOTE } from '@/constants/constants'
+import { ALL_NOTES_ID, INITIAL_NOTE } from '@/constants/constants'
 import Drawer from '@/Drawer'
 import useCreateNote from '@/hooks/useCreateNote'
-import useGetNote from '@/hooks/useGetNote'
 import useGetNotes from '@/hooks/useGetNotes'
 import useUpdateNote from '@/hooks/useUpdateNote'
 import NoteForm from '@/Notes/NoteForm'
@@ -32,9 +31,9 @@ const Notes = React.memo(() => {
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const { palette } = useTheme()
-  const screenSize = useScreenSize()
-
+  
   // Store
+  const screenSize = useScreenSize()
   const currentNote = useStore((store) => store.currentNote)
   const setCurrentNote = useStore((store) => store.setCurrentNote)
   const isNewNote = useStore((store) => store.isNewNote)
@@ -42,14 +41,18 @@ const Notes = React.memo(() => {
   const selectedNoteID = useStore((store) => store.selectedNoteID)
   const setSelectedNoteID = useStore((store) => store.setSelectedNoteID)
   const selectedFolderID = useStore((store) => store.selectedFolderID)
+  const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
+  const noteByFolderID = useStore(store => store.noteByFolderID)
   
   // Api query
-  const { data: notes, isLoading: notesIsLoading } = useGetNotes()
-  const { data: note, isLoading: noteIsLoading } = useGetNote(selectedNoteID)
+  const { data: notes, isFetching: notesIsFetching, isLoading: notesIsLoading } = useGetNotes()
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
-  
-  const isSelectedInNotes = useMemo(() => Boolean(notes?.length && notes?.some(note => note.id === selectedNoteID)), [notes, selectedNoteID])
+
+  const noteID = useMemo(() => noteByFolderID[selectedFolderID], [noteByFolderID, selectedFolderID])
+  const lookupNote = useMemo(() => notes?.find(note => note?.id === noteID), [noteID, notes])
+  const isLookupIdInList = useMemo(() => notes?.some(note => note?.id === noteID), [noteID, notes])
+  const isCurrentIdInNotes = useMemo(() => notes?.some(note => note?.id === currentNote?.id), [currentNote?.id, notes])
 
   const isDesktop = screenSize === 'large' || screenSize === 'desktop'
   const drawerWidth = () => {
@@ -70,25 +73,34 @@ const Notes = React.memo(() => {
     setOpenDrawer(!openDrawer)
   }
 
-  const handleSubmit = useCallback(
-    (values) => {
-      console.log('SUBMIT')
-      console.log('[values]:', values)
-      // For a new note either, submit immediatley or wait a much longer period to submit.
-      isNewNote && values?.id
-        ? createNote.mutate(values)
-        : updateNote.mutate(values)
+  const handleSubmit = useCallback(values => {
+    console.log('[SUBMIT]')
+    console.log('[values]:', values)
+    // For a new note either, submit immediatley or wait a much longer period to submit.
+    isNewNote && values?.id
+      ? createNote.mutate(values)
+      : updateNote.mutate(values)
 
-      setSelectedNoteID(values.id)
-      setIsNewNote(false)
-    },
-    [createNote, isNewNote, setIsNewNote, setSelectedNoteID, updateNote]
-  )
+    setSelectedNoteID(values.id)
+    setIsNewNote(false)
+  }, [createNote, isNewNote, setIsNewNote, setSelectedNoteID, updateNote])
 
-  console.log("  [isSelectedInNotes]:", isSelectedInNotes)
-  console.log("  [currentNote]:", currentNote)
-  console.log('  [notes]:', notes)
-  console.log('  [note]:', note)
+  // console.log(
+  //   '[COMPONENT_SCOPE]',
+  //   {
+  //     'isNewNote': isNewNote,
+  //     'notesIsLoading': notesIsLoading,
+  //     'notesIsFetching': notesIsFetching,
+  //     'notes': notes,
+  //     'currentNote': currentNote,
+  //     'selectedFolderID': selectedFolderID,
+  //     'selectedNoteID': selectedNoteID,
+  //     'noteID': noteID,
+  //     'noteByFolderID': noteByFolderID,
+  //     'isCurrentIdInNotes': isCurrentIdInNotes,
+  //     'isLookupIdInList': isLookupIdInList,
+  //   }
+  // )
 
   useEffect(() => {
     // This useEffect is addressing loading a note after a new folder is selected
