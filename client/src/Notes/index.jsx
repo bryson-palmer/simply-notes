@@ -155,9 +155,20 @@ const Notes = React.memo(() => {
   }, [currentNote, isCurrentIdInNotes, isLookupIdInList, isNewNote, lookupNote, noteID, notes, notesIsFetching, notesIsLoading, selectedFolderID, selectedNoteID, setCurrentNote, setNoteByFolderID, setSelectedNoteID])
 
   useEffect(() => {
-    // This useEffect is adding a new note id and syncing the folder id to the new note
-    console.log('2.Notes index useEffect ')
-    if (isNewNote && selectedFolderID) { // && selectedNoteID !== currentNote?.id
+    /*
+      This useEffect is for updating the noteByFolderID lookup.
+      Note id from lookup is not in list of notes
+      Update lookup with selectedNoteID
+    */
+    if (!selectedFolderID || !notes?.length) return
+
+    if (!isLookupIdInList) {
+      console.log('[NOTES_INDEX] useEffect')
+      console.log('  Syncing noteByFolderID lookup with selectedFolderID and selectedNoteID')
+
+      setNoteByFolderID(selectedFolderID, selectedNoteID)
+    }
+  }, [isLookupIdInList, notes?.length, selectedFolderID, selectedNoteID, setNoteByFolderID])
       let id = (crypto?.randomUUID() || '').replaceAll('-', '')
       console.log('  New note')
       console.log('  Updating currentNote with folder id and a new cyrpto id.')
