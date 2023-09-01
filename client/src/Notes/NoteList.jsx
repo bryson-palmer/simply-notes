@@ -318,7 +318,7 @@ const NoteList = React.memo(() => {
                     sx={{
                       color: palette.secondary[400],
                     }}
-                    primary={title}
+                    primary={isSelected ? currentNote?.title : title}
                     primaryTypographyProps={{ noWrap: true }}
                     secondary={
                       <Typography
@@ -328,7 +328,7 @@ const NoteList = React.memo(() => {
                           color: palette.grey[600],
                         }}
                       >
-                        {body}
+                        {isSelected ? currentNote?.body : body}
                       </Typography>
                     }
                   />
