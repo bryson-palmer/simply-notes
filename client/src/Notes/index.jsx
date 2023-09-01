@@ -103,18 +103,56 @@ const Notes = React.memo(() => {
   // )
 
   useEffect(() => {
-    // This useEffect is addressing loading a note after a new folder is selected
-    if (notesIsLoading || noteIsLoading) return
-    console.log('1.Notes index useEffect ')
+    /*
+      This useEffect is setting the currentNote when there are notes to select from.
+      The selectedFolderID and selectedNoteID have been set in the folder list.
+    */
+    if (isNewNote || notesIsLoading || notesIsFetching || !notes?.length) return
 
-    // We don't reload the currentNote if the ids are the same to avoid flickering
-    // If the ids aren't then we sync up currentNote with the note
-    if (!isNewNote && note?.id !== currentNote?.id) {
-      console.log('  Setting currentNote to note')
-      setCurrentNote(note)
+    const firstNote = notes[0]
+    const isSelectedIdInNotes = notes.some(note => note?.id === selectedNoteID)
+   
+    /*
+      We've made it in here because the selectedNoteID and the currentNote.id don't match.
+      Either id could be null as well. In addition, we aren't in the All Notes folder.
+      If the currentNote is in the note list, then that is set.
+      Otherwise, use the note from the lookup with the first note being the fallback
+    */
+    if (selectedNoteID !== currentNote?.id && selectedFolderID !== ALL_NOTES_ID) {
+      console.log('[NOTES_INDEX] useEffect')
+      console.log('  In any folder but All Notes: syncing note variables to currentNote, lookupNote, or firstNote')
+      console.log('  [USE_EFFECT_SCOPE]', {
+        'isSelectedIdInNotes': isSelectedIdInNotes,
+        'firstNote': firstNote,
+      })
+
+      setCurrentNote(isCurrentIdInNotes ? currentNote : lookupNote ?? firstNote)
+      setSelectedNoteID(isCurrentIdInNotes ? currentNote?.id : noteID ?? firstNote?.id)
+      setNoteByFolderID(selectedFolderID, (isCurrentIdInNotes ? currentNote?.id : noteID ?? firstNote?.id)) // Why set it here
       return
     }
-  }, [currentNote?.id, isNewNote, note, noteIsLoading, notesIsLoading, setCurrentNote])
+
+    /*
+      We've made it in here because the user has selected the All Notes folder.
+      The user has come from another folder where a new note has been set
+      but no values for the title or body have been saved.
+      In this case we want to set the last selected note id from the look up.
+      This prevents the view of the unsaved new note from the other folder in All Notes
+    */
+    if (selectedFolderID === ALL_NOTES_ID && isLookupIdInList && !isSelectedIdInNotes && !(currentNote?.title || currentNote?.body)) {
+      console.log('[NOTES_INDEX] useEffect')
+      console.log('  In All Notes folder: syncing currentNote and selectedNoteID to note id from lookup')
+      console.log('  [USE_EFFECT_SCOPE]', {
+        'isCurrentIdInNotes': isCurrentIdInNotes,
+        'isSelectedIdInNotes': isSelectedIdInNotes,
+        'firstNote': firstNote,
+      })
+
+      setCurrentNote(lookupNote)
+      setSelectedNoteID(noteID)
+      // setNoteByFolderID(selectedFolderID, secondNote?.id) // and not here
+    }
+  }, [currentNote, isCurrentIdInNotes, isLookupIdInList, isNewNote, lookupNote, noteID, notes, notesIsFetching, notesIsLoading, selectedFolderID, selectedNoteID, setCurrentNote, setNoteByFolderID, setSelectedNoteID])
 
   useEffect(() => {
     // This useEffect is adding a new note id and syncing the folder id to the new note
