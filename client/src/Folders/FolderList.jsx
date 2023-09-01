@@ -112,11 +112,21 @@ const FolderList = React.memo(() => {
 
   const handleAnchorElClose = () => setAnchorEl(null)
 
-  const handleFolderDelete = id => {
+  const handleFolderDelete = useCallback(id => {
+    console.log('[FOLDER_DELETE]')
+    console.log('  Remove folder from lookup')
+    console.log('  Resetting note variables')
     handleAnchorElClose()
     setEditableFolderID('')
     deleteFolder.mutate(id)
-  }
+    setSelectedFolderID(null)
+    // Remove folder entry in the lookup
+    setNoteByFolderID(id, null, true)
+    // Resetting note variables
+    setCurrentNote(INITIAL_NOTE)
+    setSelectedNoteID(null)
+    setIsNewNote(false)
+  }, [deleteFolder, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedFolderID, setSelectedNoteID])
 
   // when editting folder is unfocused, close it (return to list folder item)
   const handleEditFolderBlur = () => {
