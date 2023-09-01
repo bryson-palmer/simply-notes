@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
-import FolderIcon from '@mui/icons-material/Folder'
 import FolderOpenIcon from '@mui/icons-material/FolderOpen'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
@@ -23,8 +22,6 @@ import FolderForm from '@/Folders/FolderForm'
 import useDeleteFolder from '@/hooks/useDeleteFolder'
 import useGetFolders from '@/hooks/useGetFolders'
 import { useScreenSize, useStore } from '@/store/store'
-
-import EmptyState from '@/ui/EmptyState'
 import StyledTooltip from '@/ui/StyledTooltip'
 
 const FolderList = React.memo(() => {
@@ -33,16 +30,21 @@ const FolderList = React.memo(() => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const { palette } = useTheme()
+
+  // Store
   const screenSize = useScreenSize()
-  const deleteFolder = useDeleteFolder()
-  const { data: folders = [], isFetching: foldersIsFetching, isLoading: foldersIsLoading } = useGetFolders()
-  
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
   const setCurrentNote = useStore(store => store.setCurrentNote)
   const setIsNewNote = useStore(store => store.setIsNewNote)
+  const selectedNoteID = useStore(store => store.selectedNoteID)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   const noteByFolderID = useStore(store => store.noteByFolderID)
+  const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
+
+  // Api
+  const deleteFolder = useDeleteFolder()
+  const { data: folders = [], isFetching: foldersIsFetching, isLoading: foldersIsLoading } = useGetFolders()
   
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const folderListWidth = useMemo(() => {
@@ -60,10 +62,9 @@ const FolderList = React.memo(() => {
   }, [folders])
   
   const open = useMemo(() => Boolean(anchorEl), [anchorEl])
-  const Icon = () => <FolderIcon />
   
   const handleNewFolder = useCallback(() => {
-    // if we are about to add a new folder form, remove form from other folder
+    console.log('[NEW_FOLDER]')
     setIsNewFolder(prevState => {
       if (prevState) {
         setEditableFolderID('')
@@ -161,7 +162,7 @@ const FolderList = React.memo(() => {
               TransitionProps={{ timeout: 400 }}
             >
               <CreateNewFolderIcon
-                id="newFolderButton"
+                id='newFolderButton'
                 sx={{
                   color: palette.secondary[400],
                   '&:hover': { color: palette.secondary[100] },
@@ -268,9 +269,7 @@ const FolderList = React.memo(() => {
                         </MenuItem>
                         <MenuItem
                           id='deleteFolderButton'
-                          onClick={() => {
-                            handleFolderDelete(id)
-                          }}
+                          onClick={() => handleFolderDelete(id)}
                           sx={{
                             minHeight: 0,
                             '&:hover': {
@@ -333,14 +332,6 @@ const FolderList = React.memo(() => {
           </Box>
         ) : null}
 
-        {/* Empty state */}
-        {!folders.length && (!foldersIsLoading || !foldersIsFetching) ? (
-          <EmptyState
-            EmptyIcon={Icon}
-            isNewFolder={isNewFolder}
-            text={'No folders'}
-          />
-        ) : null}
       </List>
     </Box>
   )
