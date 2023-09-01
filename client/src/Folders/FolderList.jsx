@@ -75,19 +75,31 @@ const FolderList = React.memo(() => {
   
   const handleFolderClick = useCallback(id => {
     if (id === selectedFolderID) return
+
+    console.log('[FOLDER_CLICK]', id)
     setSelectedFolderID(id)
-    setIsNewNote(false)
     if (id !== ALL_NOTES_ID) {
-      let noteID = noteByFolderID[id]
-      if (noteID !== undefined) {
+      // previously selected noteID by folder id
+      const noteID = noteByFolderID[id]
+
+      if (noteID) {
+        console.log('  Setting selectedNoteID to lookup noteID')
         setSelectedNoteID(noteID)
-        // note we don't setCurrentNote() because we don't have access to the note. Has to be handled by use-effect?
+        setIsNewNote(false)
       } else {
+        // Without a noteID, reset selected note id and current note to stay in sync
+        console.log('  Resetting note variables for new note')
         setSelectedNoteID(null)
         setCurrentNote(INITIAL_NOTE)
+        setIsNewNote(true)
       }
+    } else {
+      // Prevent isNewNote from being true when changing folders
+      console.log('  Selecting All Notes and making sure isNewNote is false')
+      setIsNewNote(false)
+      setSelectedNoteID(selectedNoteID) // Is this needed? seems odd to have
     }
-  }, [noteByFolderID, selectedFolderID, setCurrentNote, setIsNewNote, setSelectedFolderID, setSelectedNoteID])
+  }, [noteByFolderID, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedFolderID, setSelectedNoteID])
 
   const handleFolderDoubleClick = useCallback(id => {
     setEditableFolderID(id)
