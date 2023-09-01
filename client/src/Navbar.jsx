@@ -9,6 +9,7 @@ import Button from '@mui/material/Button'
 import Fade from '@mui/material/Fade'
 import IconButton from '@mui/material/IconButton'
 
+import { INITIAL_NOTE } from '@/constants/constants'
 import { useScreenSize, useStore } from '@/store/store'
 import FlexBetween from '@/ui/FlexBetween'
 import StyledTooltip from '@/ui/StyledTooltip'
@@ -19,13 +20,22 @@ const Navbar = React.memo(() => {
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
   const selectedFolderID = useStore(store => store.selectedFolderID)
+  const setCurrentNote = useStore(store => store.setCurrentNote)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
 
   const handleIsNewNote = useCallback(() => {
-    setSelectedNoteID(null)  // without this, selected note becomes blank, as it becomes a "new note"
+    console.log('[NEW_NOTE]:')
+    /*
+      When adding a new note,
+      reset selected note id and current note
+      to stay in sync
+      *** Opportunity to move these three into a util function since it gets used a few times ***
+    */
+    setSelectedNoteID(null)
+    setCurrentNote(INITIAL_NOTE)
     setIsNewNote(true)
-  }, [setIsNewNote, setSelectedNoteID])
+  }, [setCurrentNote, setIsNewNote, setSelectedNoteID])
 
   return (
     <FlexBetween
