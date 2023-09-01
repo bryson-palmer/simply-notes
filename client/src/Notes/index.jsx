@@ -190,19 +190,35 @@ const Notes = React.memo(() => {
     }
   }, [isCurrentIdInNotes, notes?.length, notesIsFetching, notesIsLoading, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote])
 
+  useEffect(() => {
+    /*
+      This useEffect is setting the currentNote, selectedNoteID, and noteByFolderID
+      with the selectedFolderID and new crypto id when there is a new note. 
+    */
+    if (isNewNote && selectedFolderID && !currentNote?.id) {
       let id = (crypto?.randomUUID() || '').replaceAll('-', '')
-      console.log('  New note')
-      console.log('  Updating currentNote with folder id and a new cyrpto id.')
-      console.log('  [selectedFolderID]', selectedFolderID, '[crypto id]', id)
+      console.log('[NOTES_INDEX] useEffect')
+      console.log('  New note with [selectedFolderID]', selectedFolderID, '[crypto id]', id)
       setCurrentNote({
         ...INITIAL_NOTE,
         folder: selectedFolderID,
         id: id
       })
-      // Must have a selected note on first load to stop this id from being set and making an api call
-      return setSelectedNoteID(id)
+      setSelectedNoteID(id)
+      setNoteByFolderID(selectedFolderID, id)
+
+      /*
+        When creating a new note and if the All Notes folder id is present in the lookup
+        but has no value, then add the new id from this new note
+        Fixes issue of showing a blank note in the All Notes folder note list
+      */
+      const isAllNotesFolderPresent = Object.keys(noteByFolderID).includes(ALL_NOTES_ID)
+      if (isAllNotesFolderPresent && !noteByFolderID[ALL_NOTES_ID]) {
+        console.log("  Updating noteByFolderID lookup because the All Notes folder value is null")
+        setNoteByFolderID(ALL_NOTES_ID, id)
+      }
     }
-  }, [isNewNote, selectedFolderID, setCurrentNote, setSelectedNoteID])
+  }, [currentNote?.id, isNewNote, noteByFolderID, selectedFolderID, setCurrentNote, setNoteByFolderID, setSelectedNoteID])
 
   return (
     <Box
