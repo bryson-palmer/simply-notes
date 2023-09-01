@@ -1,41 +1,51 @@
-import React, { useEffect, /* useMemo, */ useRef } from "react"
+import React, { useCallback, useEffect, useRef } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 
-// import DescriptionIcon from '@mui/icons-material/Description'
-import { useTheme } from "@mui/material"
+import { useTheme } from '@mui/material'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
-// import Typography from '@mui/material/Typography'
 
-import useGetNote from '@/hooks/useGetNotes'
-// import useGetFolders from '@/hooks/useGetFolders'
-import { /* useScreenSize, */ useStore } from "@/store/store"
-// import EmptyState from '@/ui/EmptyState'
+import useGetNotes from '@/hooks/useGetNotes'
+import { useStore } from '@/store/store'
 
-const NoteForm = React.memo(({formik}) => {
+const NoteForm = React.memo(({ formik }) => {
   const { palette } = useTheme()
 
   // Api query
-  const { isLoading } = useGetNote()
-  // const { data: folders = [] } = useGetFolders()
+  const { isLoading: notesIsLoading } = useGetNotes()
 
   // Store
-  // const screenSize = useScreenSize()
   const isNewNote = useStore(store => store.isNewNote)
-  const {dirty, handleChange, isSubmitting, submitForm, values } = formik
+  const currentNote = useStore(store => store.currentNote)
+  const setCurrentNote = useStore(store => store.setCurrentNote)
+  const {dirty, isSubmitting, setValues, submitForm, values } = formik
 
   const form = document.getElementById('form')
   const titleInput = document.getElementById('title')
 
-  // const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
-  // const Icon = () => <DescriptionIcon />
-  let timer = useRef(0)
+  const handleInputChange = useCallback(({ id, value }) => {
+    /*
+      Setting formik and currentNote values here so that we avoid fetching from the backend for the user's view of the note. Avoid the flicker!!!
+    */
+    // Set formik values
+    setValues(prevValues => ({...prevValues,
+      [id]: value}
+    ))
 
+    // Set currentNote store values
+    setCurrentNote({
+      ...values,
+      [id]: value
+    })
+  }, [setCurrentNote, setValues, values])
+
+  let timer = useRef(0)
   useEffect(() => {
-    console.log('4.NoteForm useEffect')
-    // If values haven't changed
-    // Or we're currently submitting bail on this submission
-    if (!dirty || isSubmitting || isLoading) return
+    /*
+      If values haven't changed, we're currently submitting,
+      or notes are loading, then bail on this submission
+    */
+    if (!dirty || isSubmitting || notesIsLoading) return
 
     // if (isNewNote && Boolean(values?.id)) {
     //   submitForm() 
@@ -44,17 +54,15 @@ const NoteForm = React.memo(({formik}) => {
     const handleKeyPress = () => clearTimeout(timer.current)
 
     const handleKeyUp = () => {
-      console.log('  Clearing timer, waiting 500ms, and auto submitting form')
       clearTimeout(timer.current)
       timer.current = setTimeout(() => submitForm(), 500)
     }
 
     if (form) {
-
       form.addEventListener('keypress', () => handleKeyPress(timer))
       form.addEventListener('keyup', () => handleKeyUp(timer))
     }
-  }, [dirty, form, isLoading, isNewNote, isSubmitting, submitForm, values?.id])
+  }, [dirty, form, notesIsLoading, isNewNote, isSubmitting, submitForm, values?.id])
 
   // Focus the title input if we have a new note
   useEffect(() => {
@@ -64,40 +72,13 @@ const NoteForm = React.memo(({formik}) => {
   // Listen for when a user enters out of the title input and put them in the body input
   useEffect(() => {
     if (titleInput) {
-      titleInput.addEventListener("keypress", e => {
-        if (e.key === "Enter") {
-          document.getElementById("body").focus({ focusVisible: true })
+      titleInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+          document.getElementById('body').focus({ focusVisible: true })
         }
       })
     }
   }, [titleInput])
-
-  // useEffect(() => {
-  //   // Need to watch for loading as well
-  //   // Like if (loading) return
-  //   if (!notes?.length) {
-  //     setIsNewNote(true)
-  //   } else {
-  //     setIsNewNote(false)
-  //   }
-  // }, [notes?.length, setIsNewNote])
-
-  // if (!folders?.length) {
-  //   if (isDesktop) {
-  //     return (
-  //       <Typography
-  //         sx={{
-  //           color: palette.grey[400],
-  //           textAlign: 'center',
-  //           paddingTop: '3rem'
-  //         }}
-  //       >
-  //         Add a new folder to get started
-  //       </Typography>
-  //     )
-  //   }
-  //     return <EmptyState EmptyIcon={Icon} text='Add a new folder to get started' />
-  // }
   
   return (
     <Box
@@ -113,8 +94,8 @@ const NoteForm = React.memo(({formik}) => {
         name='title'
         variant='standard'
         placeholder='Well, hello there.'
-        value={values?.title ?? ''}
-        onChange={handleChange}
+        value={currentNote?.title ?? ''}
+        onChange={({ target }) => handleInputChange(target)}
         sx={{
           '& [class*=MuiInputBase-root]': {
               color: palette.secondary[400],
@@ -136,8 +117,8 @@ const NoteForm = React.memo(({formik}) => {
         id='body'
         name='body'
         variant='standard'
-        value={values?.body?.trimStart() ?? ''}
-        onChange={handleChange}
+        value={currentNote?.body?.trimStart() ?? ''}
+        onChange={({ target }) => handleInputChange(target)}
         sx={{
           '& [class*=MuiInputBase-root]': { color: palette.grey[400], padding: 0, alignItems: 'initial' },
           '& [class*=MuiInputBase-root]:before': { border: 'none' },
@@ -153,9 +134,9 @@ NoteForm.displayName = '/NoteForm'
 NoteForm.propTypes = {
   formik: PropTypes.shape({
     dirty: PropTypes.bool,
-    handleChange: PropTypes.func,
     isSubmitting: PropTypes.bool,
     isValid: PropTypes.bool,
+    setValues: PropTypes.func,
     setSubmitting: PropTypes.func,
     submitForm: PropTypes.func,
     touched: PropTypes.shape({
