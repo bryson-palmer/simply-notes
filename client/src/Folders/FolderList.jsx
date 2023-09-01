@@ -134,16 +134,19 @@ const FolderList = React.memo(() => {
   }
 
   useEffect(() => {
-    console.log('1.FolderList useEffect')
     if (!folders.length || foldersIsLoading) return
+    
     const isSelectedFolderInList = folders.some(folder => folder.id === selectedFolderID)
     // If no selected folder id or the selected folder id isn't in the list of folders
     if (!selectedFolderID || !isSelectedFolderInList) {
-      console.log('  Setting selected folder id to first in list')
-      console.log('  [folders[0]?.id]: ', folders[0]?.id)
-      setSelectedFolderID(folders[0]?.id)
+      console.log('[FOLDER_LIST] useEffect')
+      console.log('  Auto setting first folder id and last known noteID')
+      const firstFolderID = folders[0]?.id
+      const firstNoteID = noteByFolderID[firstFolderID]
+      setSelectedFolderID(firstFolderID)
+      setSelectedNoteID(firstNoteID)
     }
-  }, [folders, foldersIsLoading, selectedFolderID, setSelectedFolderID])
+  }, [folders, foldersIsLoading, noteByFolderID, selectedFolderID, setNoteByFolderID, setSelectedFolderID, setSelectedNoteID])
 
   useEffect(() => {
     if (!editableFolderID || !selectedFolderID) return
