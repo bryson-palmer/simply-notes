@@ -97,9 +97,9 @@ const FolderList = React.memo(() => {
       // Prevent isNewNote from being true when changing folders
       console.log('  Selecting All Notes and making sure isNewNote is false')
       setIsNewNote(false)
-      setSelectedNoteID(selectedNoteID) // Is this needed? seems odd to have
+      setNoteByFolderID(id, selectedNoteID)
     }
-  }, [noteByFolderID, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setSelectedFolderID, setSelectedNoteID])
+  }, [noteByFolderID, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedFolderID, setSelectedNoteID])
 
   const handleFolderDoubleClick = useCallback(id => {
     console.log('[FOLDER_EDIT]')
