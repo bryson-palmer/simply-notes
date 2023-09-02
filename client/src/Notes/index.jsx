@@ -86,19 +86,19 @@ const Notes = React.memo(() => {
   }, [createNote, isNewNote, setIsNewNote, setSelectedNoteID, updateNote])
 
   // console.log(
-  //   '[COMPONENT_SCOPE]',
+  //   '  [COMPONENT_SCOPE]',
   //   {
-  //     'isNewNote': isNewNote,
-  //     'notesIsLoading': notesIsLoading,
-  //     'notesIsFetching': notesIsFetching,
-  //     'notes': notes,
   //     'currentNote': currentNote,
-  //     'selectedFolderID': selectedFolderID,
-  //     'selectedNoteID': selectedNoteID,
-  //     'noteID': noteID,
-  //     'noteByFolderID': noteByFolderID,
   //     'isCurrentIdInNotes': isCurrentIdInNotes,
   //     'isLookupIdInList': isLookupIdInList,
+  //     'isNewNote': isNewNote,
+  //     'noteByFolderID': noteByFolderID,
+  //     'noteID': noteID,
+  //     'notes': notes,
+  //     'notesIsFetching': notesIsFetching,
+  //     'notesIsLoading': notesIsLoading,
+  //     'selectedFolderID': selectedFolderID,
+  //     'selectedNoteID': selectedNoteID,
   //   }
   // )
 
@@ -122,13 +122,13 @@ const Notes = React.memo(() => {
       console.log('[NOTES_INDEX] useEffect')
       console.log('  In any folder but All Notes: syncing note variables to currentNote, lookupNote, or firstNote')
       console.log('  [USE_EFFECT_SCOPE]', {
-        'isSelectedIdInNotes': isSelectedIdInNotes,
         'firstNote': firstNote,
+        'isSelectedIdInNotes': isSelectedIdInNotes,
       })
 
       setCurrentNote(isCurrentIdInNotes ? currentNote : lookupNote ?? firstNote)
       setSelectedNoteID(isCurrentIdInNotes ? currentNote?.id : noteID ?? firstNote?.id)
-      setNoteByFolderID(selectedFolderID, (isCurrentIdInNotes ? currentNote?.id : noteID ?? firstNote?.id)) // Why set it here
+      setNoteByFolderID(selectedFolderID, (isCurrentIdInNotes ? currentNote?.id : noteID ?? firstNote?.id))
       return
     }
 
@@ -143,7 +143,7 @@ const Notes = React.memo(() => {
       console.log('[NOTES_INDEX] useEffect')
       console.log('  In All Notes folder: syncing currentNote and selectedNoteID to note id from lookup')
       console.log('  [USE_EFFECT_SCOPE]', {
-        'isCurrentIdInNotes': isCurrentIdInNotes,
+        'firstNote': firstNote,
         'isSelectedIdInNotes': isSelectedIdInNotes,
         'firstNote': firstNote,
       })
@@ -164,11 +164,11 @@ const Notes = React.memo(() => {
 
     if (!isLookupIdInList) {
       console.log('[NOTES_INDEX] useEffect')
-      console.log('  Syncing noteByFolderID lookup with selectedFolderID and selectedNoteID')
-
-      setNoteByFolderID(selectedFolderID, selectedNoteID)
-    }
-  }, [isLookupIdInList, notes?.length, selectedFolderID, selectedNoteID, setNoteByFolderID])
+      console.log('  In All Notes folder: syncing currentNote and selectedNoteID to firstNote')
+      console.log('  [USE_EFFECT_SCOPE]', {
+        'firstNote': firstNote,
+        'isSelectedIdInNotes': isSelectedIdInNotes,
+      })
 
   useEffect(() => {
     /*
