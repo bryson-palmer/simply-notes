@@ -107,7 +107,7 @@ const Notes = React.memo(() => {
       This useEffect is setting the currentNote when there are notes to select from.
       The selectedFolderID and selectedNoteID have been set in the folder list.
     */
-    if (isNewNote || notesIsLoading || notesIsFetching || !notes?.length) return
+    if (isNewNote || notesIsLoading || notesIsFetching || !notes?.length || !selectedFolderID) return
 
     const firstNote = notes[0]
     const isSelectedIdInNotes = notes.some(note => note?.id === selectedNoteID)
