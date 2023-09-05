@@ -1,0 +1,31 @@
+ul > li.incoming {
+  animation: 0.6s incoming both;
+}
+::view-transition-old(outgoing) {
+  animation: 1s outgoing both;
+}
+
+@keyframes outgoing {
+  0% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+  100% {
+    translate: 100px -50px;
+    scale: 3.2;
+    opacity: 0;
+  }
+}
+@keyframes incoming {
+  0% {
+    scale: 1.6;
+    opacity: 0;
+    translate: -100px 0;
+  }
+  100% {
+    scale: 1;
+    opacity: 1;
+    translate: 0 0;
+  }
+}
