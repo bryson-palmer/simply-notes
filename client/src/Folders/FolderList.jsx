@@ -1,84 +1,159 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import {
-  Box,
-  Fade,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  useTheme,
-} from '@mui/material'
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
+import FolderOpenIcon from '@mui/icons-material/FolderOpen'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 
-import {
-  CreateNewFolder,
-  Folder as FolderIcon,
-  FolderOpen,
-  MoreVert
-} from '@mui/icons-material'
-import { useFolders } from '@/store/store-selectors'
+import { useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
+import Fade from '@mui/material/Fade'
+import IconButton from '@mui/material/IconButton'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+
+import { ALL_NOTES_ID, INITIAL_NOTE } from '@/constants/constants'
 import FolderForm from '@/Folders/FolderForm'
-import { useDeleteFolder, useScreenSize, useSelectedFolderID, useSetSelectedFolderID } from '@/store/store-selectors'
-import EmptyState from '@/UI/EmptyState'
-import StyledTooltip from '@/UI/StyledTooltip'
+import useDeleteFolder from '@/hooks/useDeleteFolder'
+import useGetFolders from '@/hooks/useGetFolders'
+import { useScreenSize, useStore } from '@/store/store'
+import StyledTooltip from '@/ui/StyledTooltip'
 
-const FolderList = () => {
-  const { palette } = useTheme()
-  const folders = useFolders()
-  const deleteFolder = useDeleteFolder()
-  const screenSize = useScreenSize()
-  const selectedFolderID = useSelectedFolderID()
-  const setSelectedFolderID = useSetSelectedFolderID()
-
+const FolderList = React.memo(() => {
   const [editableFolderID, setEditableFolderID] = useState('')
   const [isNewFolder, setIsNewFolder] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
 
+  const { palette } = useTheme()
+
+  // Store
+  const screenSize = useScreenSize()
+  const selectedFolderID = useStore(store => store.selectedFolderID)
+  const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
+  const setCurrentNote = useStore(store => store.setCurrentNote)
+  const setIsNewNote = useStore(store => store.setIsNewNote)
+  const selectedNoteID = useStore(store => store.selectedNoteID)
+  const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
+  const noteByFolderID = useStore(store => store.noteByFolderID)
+  const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
+
+  // Api
+  const deleteFolder = useDeleteFolder()
+  const { data: folders = [], isFetching: foldersIsFetching, isLoading: foldersIsLoading } = useGetFolders()
+  
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const folderListWidth = useMemo(() => {
     if (screenSize === 'large') return 250
     if (screenSize === 'tablet') return 200
     if (screenSize === 'desktop' || screenSize === 'mobile') return 176
   }, [screenSize])
-
-  const open = Boolean(anchorEl)
-  const Icon = () => <FolderIcon />
- 
-  const handleNewFolder = useCallback(() => {
-    // if we are about to add a new folder form, remove form from other folder
-    setIsNewFolder(!isNewFolder)
-    if (isNewFolder) {
-      setEditableFolderID('')
+  
+  const isDisabled = useMemo(() => {
+    if (folders?.length === 1 && folders[0]?.id === ALL_NOTES_ID) {
+      return true
+    } else {
+      return false
     }
-  }, [isNewFolder])
+  }, [folders])
+  
+  const open = useMemo(() => Boolean(anchorEl), [anchorEl])
+  
+  const handleNewFolder = useCallback(() => {
+    console.log('[NEW_FOLDER]')
+    setIsNewFolder(prevState => {
+      if (prevState) {
+        setEditableFolderID('')
+      }
+      return !prevState
+    })
+  }, [])
+  
+  const handleFolderClick = useCallback(id => {
+    if (id === selectedFolderID) return
 
-  // using useCallback makes it re-render?
+    console.log('[FOLDER_CLICK]', id)
+    setSelectedFolderID(id)
+    if (id !== ALL_NOTES_ID) {
+      // previously selected noteID by folder id
+      const noteID = noteByFolderID[id]
+
+      if (noteID) {
+        console.log('  Setting selectedNoteID to lookup noteID')
+        setSelectedNoteID(noteID)
+        setIsNewNote(false)
+      } else {
+        // Without a noteID, reset selected note id and current note to stay in sync
+        console.log('  Resetting note variables for new note')
+        setSelectedNoteID(null)
+        setCurrentNote(INITIAL_NOTE)
+        setIsNewNote(true)
+      }
+    } else {
+      // Prevent isNewNote from being true when changing folders
+      console.log('  Selecting All Notes and making sure isNewNote is false')
+      setIsNewNote(false)
+      setNoteByFolderID(id, selectedNoteID)
+    }
+  }, [noteByFolderID, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedFolderID, setSelectedNoteID])
+
   const handleFolderDoubleClick = useCallback(id => {
+    console.log('[FOLDER_EDIT]')
     setEditableFolderID(id)
     setSelectedFolderID(id)
-    setIsNewFolder(false)  // close New Folder form when editting another folder's name
+    setIsNewFolder(false)
     handleAnchorElClose()
   }, [setSelectedFolderID])
 
-  const handleAnchorElClick = e => setAnchorEl(e.currentTarget)
+  const handleAnchorElClick = ({ currentTarget }) => setAnchorEl(currentTarget)
 
   const handleAnchorElClose = () => setAnchorEl(null)
 
-  const handleFolderDelete = (id) => {
+  const handleFolderDelete = useCallback(id => {
+    console.log('[FOLDER_DELETE]')
+    console.log('  Remove folder from lookup')
+    console.log('  Resetting note variables')
     handleAnchorElClose()
     setEditableFolderID('')
-    setSelectedFolderID('')  // this doesn't seem to work?
-    deleteFolder(id)
-  }
+    deleteFolder.mutate(id)
+    setSelectedFolderID(null)
+    // Remove folder entry in the lookup
+    setNoteByFolderID(id, null, true)
+    // Resetting note variables
+    setCurrentNote(INITIAL_NOTE)
+    setSelectedNoteID(null)
+    setIsNewNote(false)
+  }, [deleteFolder, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedFolderID, setSelectedNoteID])
 
   // when editting folder is unfocused, close it (return to list folder item)
   const handleEditFolderBlur = () => {
     setEditableFolderID('')
   }
+
+  // If we've somehow added a null folder name, this useEffect removes it from the list
+  // useEffect(() => {
+  //   const folderToRemove = null // Add folderID in quotes to remove folder from lookup.
+  //   setNoteByFolderID(folderToRemove, null, true)
+  // }, [setNoteByFolderID])
+
+  useEffect(() => {
+    if (!folders.length || foldersIsLoading) return
+    
+    const isSelectedFolderInList = folders.some(folder => folder.id === selectedFolderID)
+    // If no selected folder id or the selected folder id isn't in the list of folders
+    if (!selectedFolderID || !isSelectedFolderInList) {
+      console.log('[FOLDER_LIST] useEffect')
+      console.log('  Auto setting first folder id and last known noteID')
+      const firstFolderID = folders[0]?.id
+      const firstNoteID = noteByFolderID[firstFolderID]
+      setSelectedFolderID(firstFolderID)
+      setSelectedNoteID(firstNoteID)
+    }
+  }, [folders, foldersIsLoading, noteByFolderID, selectedFolderID, setNoteByFolderID, setSelectedFolderID, setSelectedNoteID])
 
   useEffect(() => {
     if (!editableFolderID || !selectedFolderID) return
@@ -118,8 +193,8 @@ const FolderList = () => {
               TransitionComponent={Fade}
               TransitionProps={{ timeout: 400 }}
             >
-              <CreateNewFolder
-                id="newFolderButton"
+              <CreateNewFolderIcon
+                id='newFolderButton'
                 sx={{
                   color: palette.secondary[400],
                   '&:hover': { color: palette.secondary[100] },
@@ -140,6 +215,7 @@ const FolderList = () => {
           borderRight: isDesktop ? `thin solid ${palette.grey[800]}` : 'none',
         }}
       >
+        {/* New folder list item */}
         {isNewFolder ? (
           <FolderForm
             setEditableFolderID={setEditableFolderID}
@@ -150,7 +226,8 @@ const FolderList = () => {
           />
         ) : null}
 
-        {folders.length ? (
+        {/* Data state */}
+        {folders?.length ? (
           folders?.map(({ id, folderName }) => {
             const labelId = `folders-list-label-${id}`
 
@@ -168,7 +245,7 @@ const FolderList = () => {
                 dense
                 key={labelId}
                 id={id}
-                onClick={() => setSelectedFolderID(id)}
+                onClick={() => handleFolderClick(id)}
                 onDoubleClick={() => handleFolderDoubleClick(id)}
                 secondaryAction={
                   selectedFolderID === id ? (
@@ -179,11 +256,12 @@ const FolderList = () => {
                         aria-label='IconButton'
                         aria-expanded={open ? 'true' : undefined}
                         onClick={handleAnchorElClick}
+                        disabled={isDisabled}
                         sx={{
                           color: palette.grey[400],
                         }}
                       >
-                        <MoreVert 
+                        <MoreVertIcon
                           id='optionsFolder'
                         />
                       </IconButton>
@@ -223,9 +301,7 @@ const FolderList = () => {
                         </MenuItem>
                         <MenuItem
                           id='deleteFolderButton'
-                          onClick={() => {
-                            handleFolderDelete(id)
-                          }}
+                          onClick={() => handleFolderDelete(id)}
                           sx={{
                             minHeight: 0,
                             '&:hover': {
@@ -268,7 +344,7 @@ const FolderList = () => {
                   sx={{ '&:hover': { backgroundColor: 'transparent' } }}
                 >
                   <ListItemIcon>
-                    <FolderOpen />
+                    <FolderOpenIcon />
                   </ListItemIcon>
                   <ListItemText
                     primaryTypographyProps={{ noWrap: true }}
@@ -279,16 +355,20 @@ const FolderList = () => {
               </ListItem>
             )
           })
-        ) : (
-          <EmptyState
-            EmptyIcon={Icon}
-            isNewFolder={isNewFolder}
-            text={'No folders'}
-          />
-        )}
+        ) : null}
+
+        {/* Loading state */}
+        {!folders?.length && (foldersIsLoading || foldersIsFetching) ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress sx={{ color: palette.secondary[400] }} />
+          </Box>
+        ) : null}
+
       </List>
     </Box>
   )
-}
+})
+
+FolderList.displayName = '/FolderList'
 
 export default FolderList

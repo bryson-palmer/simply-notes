@@ -3,13 +3,13 @@ import React, { useMemo } from 'react'
 import { PropTypes } from 'prop-types/prop-types'
 
 import { Global, useTheme } from '@emotion/react'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { styled } from '@mui/material/styles'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 
 import FolderList from '@/Folders/FolderList'
 import NoteList from '@/Notes/NoteList'
-import { useNotes, useScreenSize } from '@/store/store-selectors'
+import { useScreenSize, useStore } from '@/store/store'
 
 const Drawer = React.memo(({
   drawerWidth,
@@ -17,8 +17,8 @@ const Drawer = React.memo(({
   toggleDrawer
 }) => {
   const { palette } = useTheme()
-  const notes = useNotes()
   const screenSize = useScreenSize()
+  const selectedFolderID = useStore(store => store.selectedFolderID)
 
   const isDesktop = useMemo(() => screenSize === 'desktop' || screenSize === 'large', [screenSize])
 
@@ -54,7 +54,7 @@ const Drawer = React.memo(({
 
       <StyledBox>
         <FolderList />
-        <NoteList key={`${notes[0]?.folder}`} />
+        <NoteList key={selectedFolderID} />
       </StyledBox>
     </SwipeableDrawer>
   )

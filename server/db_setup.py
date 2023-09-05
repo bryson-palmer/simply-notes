@@ -43,4 +43,56 @@ def create_update_tables():
         cursor.execute(add_user_to_folders_table)
         # cursor.execute(f'PRAGMA user_version = {version + 1}')
         connection.commit()
+
+     # add last_modified to folders and notes tables
+    cursor.execute("SELECT COUNT(*) FROM pragma_table_info('NOTES') WHERE name='last_modified'")
+    result = cursor.fetchone()
+    has_last_modified = result[0]  # will return 0 or 1+
+    if not has_last_modified:
+        cursor.execute(
+            """
+                ALTER TABLE NOTES ADD COLUMN
+                last_modified TEXT
+            """
+        )
+        connection.commit()
+        cursor.execute(
+            """
+                ALTER TABLE FOLDERS ADD COLUMN
+                last_modified TEXT
+            """
+        )
+        connection.commit()
+
+
+    # re-drop triggers each time so they get re-created below
+    cursor.execute('DROP TRIGGER IF EXISTS update_NOTES_last_modified')
+    cursor.execute('DROP TRIGGER IF EXISTS insert_NOTES_last_modified')
+    connection.commit()
+   
+    # now add date-triggers for update/insert of notes and folders
+    notes_update_trigger_last_modified = '''
+        CREATE TRIGGER update_NOTES_last_modified
+                AFTER UPDATE
+                    ON NOTES
+        BEGIN
+            UPDATE NOTES
+            SET last_modified = strftime('%Y-%m-%d %H:%M:%S:%s', 'now', 'localtime') 
+            WHERE id = OLD.id and user_id = OLD.user_id and folder_id = OLD.folder_id;
+        END;
+    '''
+    notes_insert_trigger_last_modified = '''
+        CREATE TRIGGER insert_NOTES_last_modified
+                AFTER INSERT
+                    ON NOTES
+        BEGIN
+            UPDATE NOTES
+            SET last_modified = strftime('%Y-%m-%d %H:%M:%S:%s', 'now', 'localtime') 
+            WHERE id = NEW.id and user_id = NEW.user_id and folder_id = NEW.folder_id;
+        END;
+    '''
+
+    cursor.execute(notes_update_trigger_last_modified)
+    cursor.execute(notes_insert_trigger_last_modified)
+    connection.commit()
     connection.close()

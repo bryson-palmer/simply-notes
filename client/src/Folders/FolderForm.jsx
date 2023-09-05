@@ -1,9 +1,12 @@
+import FolderOpenIcon from '@mui/icons-material/FolderOpen'
+import { useTheme } from '@mui/material'
+import ListItem from '@mui/material/ListItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import TextField from '@mui/material/TextField'
 import { Form, Formik } from 'formik'
-import { ListItem, ListItemIcon, TextField, useTheme } from '@mui/material'
-import { FolderOpen } from '@mui/icons-material'
 import { PropTypes } from 'prop-types/prop-types'
 import * as yup from 'yup'
-import { useCreateFolder } from '@/store/store-selectors'
+import useCreateFolder from '@/hooks/useCreateFolder'
 
 const FolderFormComponent = ({ formik }) => {
   const { handleChange, values } = formik
@@ -23,7 +26,7 @@ const FolderFormComponent = ({ formik }) => {
       }}
     >
       <ListItemIcon>
-        <FolderOpen />
+        <FolderOpenIcon />
       </ListItemIcon>
       <TextField
         autoFocus
@@ -76,14 +79,12 @@ const FolderForm = ({ id, folderName, setEditableFolderID, setIsNewFolder, onBlu
   const createFolder = useCreateFolder()
 
   const handleFolderSubmit = (folder) => {
-    createFolder(folder)
+    createFolder.mutate(folder)
     setEditableFolderID('')
     setIsNewFolder(false)
   }
 
   const handleStopFolderSubmit = async (e, dirty, handleSubmit) => {
-    console.log("🚀 ~ file: index.jsx:85 ~ handleStopFolderSubmit ~ dirty:", dirty)
-    console.log("🚀 ~ file: index.jsx:85 ~ handleStopFolderSubmit ~ e:", e)
     e.preventDefault()
     if (!dirty) {
       return false
@@ -93,10 +94,7 @@ const FolderForm = ({ id, folderName, setEditableFolderID, setIsNewFolder, onBlu
     }
   }
 
-  const handleOnBlur = () => {
-    console.log('handle on blur')
-    onBlur()
-  }
+  const handleOnBlur = () => onBlur()
 
   return (
     <Formik

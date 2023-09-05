@@ -1,6 +1,9 @@
 import os
 import sqlite3
 
+DEFAULT_FOLDER_ID = 'undefined'  # keyword id for a 'default' folder
+DEFAULT_FOLDER_NAME = 'All Notes'
+
 DIRNAME = os.path.dirname(__file__)  # removes filename from path to just get directory
 FILENAME = os.path.join(DIRNAME, '../client/mockData/db.json')
 SECRET_FILE = os.path.join('/data', '.env.local')

@@ -2,43 +2,48 @@ import { useCallback, useEffect } from 'react'
 
 import { PropTypes } from 'prop-types/prop-types'
 
-import { useTheme } from '@emotion/react'
-import { Box, Checkbox, IconButton, ListItem, ListItemIcon } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import { useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import IconButton from '@mui/material/IconButton'
+import ListItem from '@mui/material/ListItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
 
-import { useDeleteNote, useNotes } from '@/store/store-selectors'
+import useDeleteNote from '@/hooks/useDeleteNote'
+import useGetNotes from '@/hooks/useGetNotes'
 
 const ListHeader = ({ listState, setListState }) => {
   const { palette } = useTheme()
   const deleteNote = useDeleteNote()
-  const notes = useNotes()
+  const { data: notes = [] } = useGetNotes()
   const { checkedIds, isAllChecked} = listState
   
   const handleAllNotesChecked = useCallback(() => setListState(prevListState => ({
     ...prevListState,
     isAllChecked: !prevListState.isAllChecked,
-    checkedIds: prevListState.isAllChecked ? []: notes.map(({ id }) => id)
+    checkedIds: prevListState.isAllChecked ? []: notes?.map(({ id }) => id)
   })), [notes, setListState])
   
   const handleDeleteCheckedNotes = useCallback(() => {
     if (!Array.isArray(checkedIds) || checkedIds.length < 1) return
-    deleteNote(checkedIds)
+    deleteNote.mutate(checkedIds)
 
   }, [checkedIds, deleteNote])
 
   useEffect(() => {
-    if (!notes.length) {  
+    if (!notes?.length) {  
       return setListState(prevListState => ({
         ...prevListState,
         isAllChecked: false,
         checkedIds: []
       }))
     }
-  }, [isAllChecked, checkedIds.length, notes.length, setListState])
+  }, [isAllChecked, checkedIds.length, notes?.length, setListState])
 
   return (
     <>
-      {notes.length ? (
+      {notes?.length ? (
         <ListItem
           dense
           disablePadding

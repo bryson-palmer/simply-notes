@@ -1,15 +1,14 @@
 from flask import Flask, request, session
 import uuid
 import sqlite3
-from constants import DB_FILE
+from constants import DB_FILE, DEFAULT_FOLDER_ID
 from app_setup import app
 
 
-def create_or_modify_note(request):
+def create_or_modify_note(request, is_new_note=False):
     # read in existing notes
     user_id = session.get('user_id')
     note = request.json
-    is_new_note = False
     id = note.get('id') # ID from post request, if updating note
     if id is None or id == '':
         id = uuid.uuid4().hex # a 32-character lowercase hexadecimal string
@@ -43,19 +42,22 @@ def create_or_modify_note(request):
 def notes():
     if request.method == 'POST':
         # rather than fetching notes, we are creating a new one
-        return create_or_modify_note(request)
+        return create_or_modify_note(request, is_new_note=True)  # force a new note; allows front-end to specify ID of note
 
     user_id = session.get('user_id')
     folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
+    # special 'All Notes' folder shows all notes
+    if folder_id == str(DEFAULT_FOLDER_ID):  # have to compare strings, since folder_id is a str
+        folder_id = None
 
     # if we get here, we are fetching all notes
     connection = sqlite3.connect(DB_FILE)
     connection.row_factory = sqlite3.Row  # results come back as dictionaries
     cursor = connection.cursor()
     if folder_id:
-        cursor.execute('SELECT * FROM NOTES WHERE user_id="%s" and folder_id="%s"' % (user_id, folder_id,))
+        cursor.execute('SELECT * FROM NOTES WHERE user_id="%s" and folder_id="%s" ORDER BY last_modified DESC' % (user_id, folder_id,))
     else:
-        cursor.execute('SELECT * FROM NOTES WHERE user_id="%s"' % (user_id,))
+        cursor.execute('SELECT * FROM NOTES WHERE user_id="%s" ORDER BY last_modified DESC' % (user_id,))
     results = cursor.fetchall()  # [['uadfsdf', 'title', 'body', None], []...]
     notes = []
     for result in results:

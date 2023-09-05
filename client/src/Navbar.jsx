@@ -1,25 +1,41 @@
-import { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Add as AddIcon, Create as CreateIcon, Pix as PixIcon } from '@mui/icons-material'
-import { Button, Fade, IconButton,  useTheme } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import CreateIcon from '@mui/icons-material/Create'
+import PixIcon from '@mui/icons-material/Pix'
+import { useTheme } from '@mui/material'
+import Button from '@mui/material/Button'
+import Fade from '@mui/material/Fade'
+import IconButton from '@mui/material/IconButton'
 
-import { useFolders, useScreenSize, useSetIsNewNote } from '@/store/store-selectors'
-import FlexBetween from '@/UI/FlexBetween'
-import StyledTooltip from '@/UI/StyledTooltip'
+import { INITIAL_NOTE } from '@/constants/constants'
+import { useScreenSize, useStore } from '@/store/store'
+import FlexBetween from '@/ui/FlexBetween'
+import StyledTooltip from '@/ui/StyledTooltip'
 
-const Navbar = () => {
+const Navbar = React.memo(() => {
   const { palette } = useTheme()
-  const folders = useFolders()
   const screenSize = useScreenSize()
-  const setIsNewNote = useSetIsNewNote()
+  const setIsNewNote = useStore(store => store.setIsNewNote)
+  const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
+  const selectedFolderID = useStore(store => store.selectedFolderID)
+  const setCurrentNote = useStore(store => store.setCurrentNote)
 
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
-  const isDisabled = useMemo(() => !folders.length, [folders.length])
 
   const handleIsNewNote = useCallback(() => {
+    console.log('[NEW_NOTE]:')
+    /*
+      When adding a new note,
+      reset selected note id and current note
+      to stay in sync
+      *** Opportunity to move these three into a util function since it gets used a few times ***
+    */
+    setSelectedNoteID(null)
+    setCurrentNote(INITIAL_NOTE)
     setIsNewNote(true)
-  }, [setIsNewNote])
+  }, [setCurrentNote, setIsNewNote, setSelectedNoteID])
 
   return (
     <FlexBetween
@@ -61,7 +77,7 @@ const Navbar = () => {
       {/* Right Side */}
       <FlexBetween gap='1rem'>
         <IconButton
-          disabled={isDisabled}
+          disabled={!selectedFolderID}
           onClick={handleIsNewNote}
           sx={{
             color: palette.secondary[400],
@@ -88,7 +104,7 @@ const Navbar = () => {
       </FlexBetween>
     </FlexBetween>
   )
-}
+})
 
 Navbar.displayName = 'Navbar'
 
