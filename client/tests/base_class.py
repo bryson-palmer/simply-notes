@@ -45,9 +45,9 @@ class BrowserSetup():
     options = Options()
     # supply --headless=false when running pytest in order to see browser
     options.headless = not '--headless=false' in sys.argv
+    service = Service()
     if self._ubuntu_version.startswith('Ubuntu 22.04'):
       # workaround for default install of firefox on ubuntu 22.04
-      service = Service()
       try:
           result = subprocess.check_output(["which", "geckodriver"], stderr=subprocess.STDOUT, text=True)
           geckodriver_path = result.strip()
