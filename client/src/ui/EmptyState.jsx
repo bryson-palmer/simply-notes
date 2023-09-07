@@ -25,6 +25,7 @@ const EmptyState = ({ EmptyIcon, isNewFolder=false, text='' }) => {
             position='relative'
           >
             <SvgIcon
+              id='empty-state-icon'
               sx={{
                 color: palette.grey[100],
                 fontSize: '7rem',
