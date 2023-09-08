@@ -75,9 +75,10 @@ def note(id):
     if request.method == 'PUT':
         return create_or_modify_note(request)
     
+    user_id = session.get('user_id')
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
-    cursor.execute('SELECT * FROM NOTES WHERE id=?', (id,))
+    cursor.execute('SELECT * FROM NOTES WHERE user_id=? and id=?', (user_id, id))
     note = cursor.fetchone()
     if note is None:
         return {}  # if ID was invalid
@@ -90,15 +91,16 @@ def note(id):
 @app.route('/notes/<id>', methods=['DELETE'])
 def note_delete(id):
     tuple_ids = tuple(id.split(','))
+    user_id = session.get('user_id')
 
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
 
     if len(tuple_ids) == 1:
-        cursor.execute('DELETE FROM NOTES WHERE id=?', (tuple_ids[0],))
+        cursor.execute('DELETE FROM NOTES WHERE user_id=? and id=?', (user_id, tuple_ids[0]))
     else:
         question_marks = ', '.join('?' for _ in tuple_ids)  # aka '?, ?, ?' if 3 id's passed
-        cursor.execute(f'DELETE FROM NOTES WHERE id IN ({question_marks})', tuple_ids)
+        cursor.execute(f'DELETE FROM NOTES WHERE user_id=? and id IN ({question_marks})', (user_id, *tuple_ids))
 
     connection.commit()
     connection.close()

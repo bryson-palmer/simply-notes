@@ -72,15 +72,16 @@ def create_default_all_notes_folder():
 @app.route('/folders/<id>', methods=['DELETE'])
 def folder_delete(id):
     tuple_ids = tuple(id.split(','))
+    user_id = session.get('user_id')
 
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
 
     if len(tuple_ids) == 1:
-        cursor.execute('DELETE FROM FOLDERS WHERE id = ?', (tuple_ids[0],))
+        cursor.execute('DELETE FROM FOLDERS WHERE user_id=? and id = ?', (user_id, tuple_ids[0]))
     else:
         question_marks = ', '.join('?' for _ in tuple_ids)  # aka '?, ?, ?' if 3 id's passed
-        cursor.execute(f'DELETE FROM FOLDERS WHERE id IN ({question_marks})', tuple_ids)
+        cursor.execute(f'DELETE FROM FOLDERS WHERE user_id=? and id IN ({question_marks})', (user_id, tuple_ids))
     
     connection.commit()
     connection.close()
