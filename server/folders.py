@@ -17,7 +17,7 @@ def folders():
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
     if request.method == 'GET':
-        cursor.execute('SELECT * FROM FOLDERS WHERE user_id="%s"' % user_id)
+        cursor.execute('SELECT * FROM FOLDERS WHERE user_id=?', (user_id,))
         results = cursor.fetchall()
 
         folders=[]
@@ -43,9 +43,9 @@ def folders():
             is_new_folder = True
 
         if is_new_folder:
-            cursor.execute(f'INSERT INTO FOLDERS (id, folderName, user_id) VALUES ("{id}", "{folder_name}", "{user_id}")')
+            cursor.execute('INSERT INTO FOLDERS (id, folderName, user_id) VALUES (?, ?, ?)', (id, folder_name, user_id))
         if not is_new_folder:
-            cursor.execute('UPDATE FOLDERS SET folderName="%s" where id="%s" and user_id="%s"' % (folder_name, id, user_id))
+            cursor.execute('UPDATE FOLDERS SET folderName=? where id=? and user_id=?', (folder_name, id, user_id))
         connection.commit()
         
         connection.close()
@@ -63,7 +63,7 @@ def create_default_all_notes_folder():
     folder_name = DEFAULT_FOLDER_NAME
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
-    cursor.execute(f'INSERT INTO FOLDERS (id, folderName, user_id) VALUES ("{id}", "{folder_name}", "{user_id}")')
+    cursor.execute(f'INSERT INTO FOLDERS (id, folderName, user_id) VALUES (?, ?, ?)', (id, folder_name, user_id))
     connection.commit()
     connection.close()
     return dict(id=DEFAULT_FOLDER_ID, name=DEFAULT_FOLDER_NAME)
@@ -77,9 +77,10 @@ def folder_delete(id):
     cursor = connection.cursor()
 
     if len(tuple_ids) == 1:
-        cursor.execute(f'DELETE FROM FOLDERS WHERE id = "{tuple_ids[0]}"')
+        cursor.execute('DELETE FROM FOLDERS WHERE id = ?', (tuple_ids[0],))
     else:
-        cursor.execute(f'DELETE FROM FOLDERS WHERE id IN {tuple_ids}')
+        question_marks = ', '.join('?' for _ in tuple_ids)  # aka '?, ?, ?' if 3 id's passed
+        cursor.execute(f'DELETE FROM FOLDERS WHERE id IN ({question_marks})', tuple_ids)
     
     connection.commit()
     connection.close()

@@ -10,10 +10,10 @@ def get_new_user_id():
     already_exists = True
     while already_exists:
         id = uuid.uuid4().hex
-        cursor.execute('SELECT * FROM USERS WHERE id="%s"' % id)
+        cursor.execute('SELECT * FROM USERS WHERE id=?', (id,))
         already_exists = cursor.fetchone()
     # only fill in ID
-    cursor.execute('INSERT INTO USERS (id) VALUES ("%s")' % id)
+    cursor.execute('INSERT INTO USERS (id) VALUES (?)', (id,))
     connection.commit()
     connection.close()
     return id
