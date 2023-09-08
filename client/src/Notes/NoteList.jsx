@@ -245,9 +245,9 @@ const NoteList = React.memo(() => {
             </ListItem>
           ) : null} */}
 
-          {notes?.map(({ id, title, body }) => {
+          {notes?.map(({ id, title, body }, index) => {
             const labelId = `notes-list-label-${id}`;
-            const isSelected = !isNewNote && id === selectedNoteID;
+            const isSelected = !isNewNote && id === selectedNoteID
 
             return (
               <ListItem
@@ -268,14 +268,14 @@ const NoteList = React.memo(() => {
                   <IconButton
                     disableRipple
                     onClick={() => handleDeleteNote(id)}
-                    aria-label={`delete-note -${id}`}
+                    aria-label={`delete-note-${id}`}
                     edge='end'
                     sx={{
                       color: palette.grey[300],
                       '&:hover': { color: palette.primary[200] },
                     }}
                   >
-                    <DeleteForeverIcon />
+                    <DeleteForeverIcon id={`delete-note-${index}`} />
                   </IconButton>
                 }
               >
