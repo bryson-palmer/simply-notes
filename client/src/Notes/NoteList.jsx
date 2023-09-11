@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DescriptionIcon from '@mui/icons-material/Description'
@@ -20,6 +20,7 @@ import useDeleteNote from '@/hooks/useDeleteNote'
 import ListHeader from '@/Notes/ListHeader'
 import  { useScreenSize, useStore } from '@/store/store'
 import EmptyState from '@/ui/EmptyState'
+import './styles.css'
 
 const NoteList = React.memo(() => {
   // Checkbox state for note list
@@ -34,6 +35,8 @@ const NoteList = React.memo(() => {
   const screenSize = useScreenSize()
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const isNewNote = useStore(store => store.isNewNote)
+  const newNoteID = useStore(store => store.newNoteID)
+  const setNewNoteID = useStore(store => store.setNewNoteID)
   const currentNote = useStore(store => store.currentNote)
   const setCurrentNote = useStore(store => store.setCurrentNote)
   const selectedFolderID = useStore(store => store.selectedFolderID)
@@ -46,6 +49,7 @@ const NoteList = React.memo(() => {
   const { data: notes = [], isFetching: notesIsFetching, isLoading: notesIsLoading } = useGetNotes()
   const deleteNote = useDeleteNote()
   
+  const hasViewTransition = Boolean(document.startViewTransition)
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const notesListWidth = useMemo(() => {
     if (screenSize === 'large') return 350
@@ -148,6 +152,23 @@ const NoteList = React.memo(() => {
     }
   }, [deleteNote, noteByFolderID, notes, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID])
 
+  useEffect(() => {
+    /*
+      This side effect is for handling the animation for a new note being added to the list.
+    */
+   if (hasViewTransition && newNoteID && newNoteID === notes[0]?.id) {
+      const listItemEl = document.querySelector(`#note-${newNoteID}`)
+      const transition = document.startViewTransition(() => {
+        listItemEl.classList.add('incoming')
+        listItemEl.style.viewTransitionName = `#note-${newNoteID}`
+      })
+
+      transition.updateCallbackDone.then(() => {
+          setNewNoteID(null)
+      })
+    }
+  }, [hasViewTransition, newNoteID, notes, setNewNoteID])
+
   return (
     <div
       style={{
@@ -174,13 +195,14 @@ const NoteList = React.memo(() => {
             <ListItem
               dense
               disablePadding
+              id='new-note'
+              key={`note-${currentNote?.id}`}
               sx={{
                 width: 'calc(100% - 0.5rem)',
                 height: '3rem',
                 borderRadius: '0.5rem',
                 paddingLeft: '1rem',
                 marginLeft: '0.5rem',
-                transition: 'all 1s ease-in-out',
                 backgroundColor: palette.background.light,
               }}
               secondaryAction={
@@ -228,7 +250,7 @@ const NoteList = React.memo(() => {
                 sx={{
                   color: palette.secondary[400],
                 }}
-                primary={values?.title}
+                primary={currentNote?.title}
                 primaryTypographyProps={{ noWrap: true }}
                 secondary={
                   <Typography
@@ -238,7 +260,7 @@ const NoteList = React.memo(() => {
                       color: palette.grey[600],
                     }}
                   >
-                    {values?.body}
+                    {currentNote?.body}
                   </Typography>
                 }
               />
@@ -246,20 +268,24 @@ const NoteList = React.memo(() => {
           ) : null} */}
 
           {notes?.map(({ id, title, body }, index) => {
-            const labelId = `notes-list-label-${id}`;
+            const labelId = `note-${id}`;
             const isSelected = !isNewNote && id === selectedNoteID
 
             return (
               <ListItem
                 dense
                 disablePadding
+                id={labelId}
                 key={labelId}
+                style={{ viewTransitionName: labelId }}
                 sx={{
                   width: 'calc(100% - 0.5rem)',
                   borderRadius: '0.5rem',
                   paddingLeft: '1rem',
                   marginLeft: '0.5rem',
-                  transition: 'all 1s ease-in-out',
+                  visibility: hasViewTransition && newNoteID === id
+                    ? 'hidden'
+                    : 'visible',
                   backgroundColor: isSelected
                     ? palette.background.light
                     : 'inherit',
@@ -269,6 +295,7 @@ const NoteList = React.memo(() => {
                     disableRipple
                     onClick={() => handleDeleteNote(id)}
                     aria-label={`delete-note-${id}`}
+                    id={`delete-note-${id}`}
                     edge='end'
                     sx={{
                       color: palette.grey[300],
