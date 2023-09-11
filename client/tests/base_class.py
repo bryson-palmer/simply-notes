@@ -21,6 +21,7 @@ class PauseFox(webdriver.Firefox):
       try:
         element = super().find_element(by, selector)
         assert element.is_displayed() and element.is_enabled()
+        break
       except:
         continue  # keep trying until timeout
     return element
