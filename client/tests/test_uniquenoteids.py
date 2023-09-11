@@ -41,7 +41,7 @@ class TestUniquenoteids(BrowserSetup):
     self.driver.set_window_size(1024, 768)
 
     # --------------------
-    # create two folders, x & y.
+    # create three folders, x & y & z.
     # 4 | click | css=#newFolderButton > path | 
     self.driver.find_element(By.CSS_SELECTOR, "#newFolderButton > path").click()
     # 5 | type | id=folderName | x
@@ -55,6 +55,13 @@ class TestUniquenoteids(BrowserSetup):
     self.driver.find_element(By.ID, "folderName").send_keys("y")
     # 9 | sendKeys | id=folderName | ${KEY_ENTER}
     self._submit_folder_form()
+    # 7 | click | css=#newFolderButton > path | 
+    self.driver.find_element(By.CSS_SELECTOR, "#newFolderButton > path").click()
+    # 8 | type | id=folderName | y
+    self.driver.find_element(By.ID, "folderName").send_keys("z")
+    # 9 | sendKeys | id=folderName | ${KEY_ENTER}
+    self._submit_folder_form()
+
     time.sleep(0.5)
 
     #---------------------------------------
@@ -71,28 +78,28 @@ class TestUniquenoteids(BrowserSetup):
     self.driver.find_element(By.XPATH, "//span[contains(.,\'y\')]").click()
     # 16 | type | id=title | asdf
     self.driver.find_element(By.ID, "title").send_keys("asdf")
+    # 15 | click | xpath=//span[contains(.,'z')] | 
+    self.driver.find_element(By.XPATH, "//span[contains(.,\'z\')]").click()
+    # 16 | type | id=title | asdf
+    self.driver.find_element(By.ID, "title").send_keys("asdf")
     # 17 | click | xpath=//span[contains(.,'All Notes')] | 
     self.driver.find_element(By.XPATH, "//span[contains(.,\'All Notes\')]").click()
     time.sleep(1)
 
     # ----------------------------
-    # now if they all have the same ID, clicking delete-note-0 will technically delete ALL notes with
-    # that ID, so it'll delete all 3 notes, and we can click on the "no notes" icon
+    # now if any share the same ID, clicking delete-note-0 3 times (4 notes total) will technically delete
+    # ALL notes with that ID, so it'll delete all 3 notes, and we can click on the "no notes" icon
     # 18 | click | id=delete-note-0 | 
+    
+    # 4 unique notes should exist
+    # if error, it's because 1 or more of these notes share the same ID, so when the delete button is pressed
+    # more than 1 note disappears!
+    self.driver.find_element(By.ID, "delete-note-3").click()
+    time.sleep(0.5)
+    self.driver.find_element(By.ID, "delete-note-2").click()
+    time.sleep(0.5)
+    self.driver.find_element(By.ID, "delete-note-1").click()
+    time.sleep(0.5)
     self.driver.find_element(By.ID, "delete-note-0").click()
-    # 19 | mouseOver | id=delete-note-0 | 
-    element = self.driver.find_element(By.ID, "delete-note-0")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element).perform()
-    # 20 | click | css=#empty-state-icon path | 
-    no_notes_found = True
-    time.sleep(1)
-    try:
-      # this should give an error. If not, then all 3 notes were deleted
-      self.driver.find_element(By.CSS_SELECTOR, "#empty-state-icon path").click()
-    except:
-      no_notes_found = False  # error means it couldn't find that CSS selector
-    if no_notes_found:
-      raise ValueError('no notes exist! We only deleted first note, but all 3 were deleted because they shared same ID')
-      
+    time.sleep(0.5)
   
