@@ -1,11 +1,13 @@
 import time
 import sys
+import os
 import subprocess
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 
 class PauseFox(webdriver.Firefox):
   ''' browser that pauses up to 1 second (configurable)
@@ -44,15 +46,21 @@ class BrowserSetup():
 
   def setup_method(self, method):
     options = Options()
+    # options.profile = os.path.expanduser('~') 
     # supply --headless=false when running pytest in order to see browser
-    options.headless = not '--headless=false' in sys.argv
+    if '--headless=false' not in sys.argv:
+       options.add_argument('-headless')
     service = Service()
     if self._ubuntu_version.startswith('Ubuntu 22.04'):
       # workaround for default install of firefox on ubuntu 22.04
       try:
           result = subprocess.check_output(["which", "geckodriver"], stderr=subprocess.STDOUT, text=True)
+          # needs to see /snap/bin/geckodriver
+          # or else it may pop up error about firefox profile not found
+          # and also I installed beta version of firefox: snap refresh --beta firefox
           geckodriver_path = result.strip()
           service = Service(executable_path=geckodriver_path)
+          # options.set_preference('profile', '/tmp')
       except subprocess.CalledProcessError as e:
           pass
 
