@@ -38,6 +38,7 @@ const Notes = React.memo(() => {
   const setCurrentNote = useStore((store) => store.setCurrentNote)
   const isNewNote = useStore((store) => store.isNewNote)
   const setIsNewNote = useStore((store) => store.setIsNewNote)
+  const setNewNoteID = useStore((store) => store.setNewNoteID)
   const selectedNoteID = useStore((store) => store.selectedNoteID)
   const setSelectedNoteID = useStore((store) => store.setSelectedNoteID)
   const selectedFolderID = useStore((store) => store.selectedFolderID)
@@ -53,6 +54,7 @@ const Notes = React.memo(() => {
   const lookupNote = useMemo(() => notes?.find(note => note?.id === noteID), [noteID, notes])
   const isLookupIdInList = useMemo(() => notes?.some(note => note?.id === noteID), [noteID, notes])
   const isCurrentIdInNotes = useMemo(() => notes?.some(note => note?.id === currentNote?.id), [currentNote?.id, notes])
+  const hasViewTransition = Boolean(document.startViewTransition)
 
   const isDesktop = screenSize === 'large' || screenSize === 'desktop'
   const drawerWidth = () => {
@@ -81,9 +83,12 @@ const Notes = React.memo(() => {
       ? createNote.mutate(values)
       : updateNote.mutate(values)
 
-    setSelectedNoteID(values.id)
-    setIsNewNote(false)
-  }, [createNote, isNewNote, setIsNewNote, setSelectedNoteID, updateNote])
+    if (isNewNote) {
+      setSelectedNoteID(values.id)
+      hasViewTransition && setNewNoteID(values.id)
+      setIsNewNote(false)
+    }
+  }, [createNote, hasViewTransition, isNewNote, setIsNewNote, setNewNoteID, setSelectedNoteID, updateNote])
 
   // console.log(
   //   '  [COMPONENT_SCOPE]',
