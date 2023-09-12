@@ -20,9 +20,7 @@ class InitVariablesDriver(webdriver.Firefox):
     super().__init__(*args, **kwargs)
     # defines wait_time for each command (before a failure to find an element throws an exception)
     self.wait_time = float(os.environ.get('WAIT', 1))  # this is time waiting for element to be ready
-    self.pause = float(os.environ.get('PAUSE', 0))  # pause between each action
-    self.after_click_pause = float(os.environ.get('AFTER_CLICK', 0))  # pause after clicking anything
-    self.before_click_pause = float(os.environ.get('BEFORE_CLICK', 0))  # pause BEFORE clicking anything
+    self.should_highlight_element = bool(int(os.environ.get('HIGHLIGHT', 0)))
 
 
 class HighlightElementDriver(InitVariablesDriver):
@@ -73,6 +71,7 @@ class Wait4ElementDriver(HighlightElementDriver):
   ''' browser that waits up to 1 second (configurable)
       waiting for element to show up before failing to find it
   '''
+  wait_time = 1
 
   def find_element(self, by, selector):
     start_time = time.time()
