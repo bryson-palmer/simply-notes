@@ -94,9 +94,9 @@ class RefetchStaleElement(WebElement):
 
   def click(self):
     time_begin = time.time()
-    # self._parent is the webdriver
-    element = super()
     val = None
+    element = super()
+    # self._parent is the webdriver
     while time.time() - time_begin < self._parent.wait_time:
       try:
         val = element.click()
@@ -104,12 +104,12 @@ class RefetchStaleElement(WebElement):
       except StaleElementReferenceException:
         # element failed because it became outdated before it got clicked. Generally, refetching
         # the element and re-clicking is the best course of action. So let's do that!
-        # revert elements to base element (so we don't fall into this function from THAT element)
+        # revert elements to base element (so we don't trigger THIS function from THAT element)
         # and ask webdriver parent to find element. Then try clicking it again!
-        self._parent._web_element_cls = super().__class__  # any found element will be base WebElement instance
+        self._parent._web_element_cls = WebElement  # any found element will be base WebElement instance
         element = self._parent.find_element(*self._find_by_args)
         continue
-    self._parent._web_element_cls = self.__class__  # restore element found to be this instance again
+    self._parent._web_element_cls = RefetchStaleElement  # restore element found to be this instance again
     return val
 
 
