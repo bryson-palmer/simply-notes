@@ -9,7 +9,7 @@ export default function useUpdateNote() {
     onSuccess: (newNote) => {
       console.log("🚀 ~ file: useUpdateNote.js:10 ~ useUpdateNote ~ note:", newNote)
       // Updating the cache key for the specific note
-      queryClient.setQueryData(['notes', newNote.folder, newNote.id], newNote )
+      queryClient.setQueryData(['note', newNote.id], newNote )
       // queryClient.setQueryData(['notes', newNote.folder], (previous) => {
       //   console.log("🚀 ~ file: useUpdateNote.js:14 ~ queryClient.setQueryData ~ previous:", previous)
       //   previous.map(oldNote => oldNote.id == newNote.id ? newNote : oldNote)

@@ -14,7 +14,7 @@ export default function useGetNotes() {
     onSuccess: (notes) => {
       console.log('notes', notes)
       notes.forEach(note => {
-        queryClient.setQueryData(['notes', note.folder, note.id], note)
+        queryClient.setQueryData(['note', note.id], note)
       })
     }
     // keepPreviousData: true,
