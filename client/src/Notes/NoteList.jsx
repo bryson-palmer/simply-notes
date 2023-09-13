@@ -16,7 +16,7 @@ import { INITIAL_NOTE } from '@/constants/constants'
 import useGetNotes from '@/hooks/useGetNotes'
 import useDeleteNote from '@/hooks/useDeleteNote'
 import ListHeader from '@/Notes/ListHeader'
-import  { useScreenSize, useStore } from '@/store/store'
+import  { useScreenSize, useStore, useStoreActions } from '@/store/store'
 import EmptyState from '@/ui/EmptyState'
 import NoteListItemText from './NoteListItemText'
 
@@ -31,13 +31,12 @@ const NoteList = React.memo(() => {
   
   // Store
   const screenSize = useScreenSize()
-  const setIsNewNote = useStore(store => store.setIsNewNote)
+  const { setCurrentNote, setNewNoteID, setIsNewNote, setNoteByFolderID, setSelectedNoteID } = useStoreActions()
   const isNewNote = useStore(store => store.isNewNote)
-  const setCurrentNote = useStore(store => store.setCurrentNote)
+  const newNoteID = useStore(store => store.newNoteID)
+  const currentNote = useStore(store => store.currentNote)
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const selectedNoteID = useStore(store => store.selectedNoteID)
-  const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
-  const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
   const noteByFolderID = useStore(store => store.noteByFolderID)
 
   // Api

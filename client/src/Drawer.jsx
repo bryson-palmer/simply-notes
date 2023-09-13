@@ -9,7 +9,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 
 import FolderList from '@/Folders/FolderList'
 import NoteList from '@/Notes/NoteList'
-import { useScreenSize, useStore } from '@/store/store'
+import { useScreenSize, useSelectedFolderID } from '@/store/store'
 
 const Drawer = React.memo(({
   drawerWidth,
@@ -18,7 +18,7 @@ const Drawer = React.memo(({
 }) => {
   const { palette } = useTheme()
   const screenSize = useScreenSize()
-  const selectedFolderID = useStore(store => store.selectedFolderID)
+  const selectedFolderID = useSelectedFolderID()
 
   const isDesktop = useMemo(() => screenSize === 'desktop' || screenSize === 'large', [screenSize])
 
