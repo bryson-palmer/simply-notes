@@ -11,8 +11,6 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import Typography from '@mui/material/Typography'
 
 import { INITIAL_NOTE } from '@/constants/constants'
 import useGetNotes from '@/hooks/useGetNotes'
@@ -20,6 +18,7 @@ import useDeleteNote from '@/hooks/useDeleteNote'
 import ListHeader from '@/Notes/ListHeader'
 import  { useScreenSize, useStore } from '@/store/store'
 import EmptyState from '@/ui/EmptyState'
+import NoteListItemText from './NoteListItemText'
 import './styles.css'
 
 const NoteList = React.memo(() => {
@@ -37,7 +36,6 @@ const NoteList = React.memo(() => {
   const isNewNote = useStore(store => store.isNewNote)
   const newNoteID = useStore(store => store.newNoteID)
   const setNewNoteID = useStore(store => store.setNewNoteID)
-  const currentNote = useStore(store => store.currentNote)
   const setCurrentNote = useStore(store => store.setCurrentNote)
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const selectedNoteID = useStore(store => store.selectedNoteID)
@@ -267,7 +265,7 @@ const NoteList = React.memo(() => {
             </ListItem>
           ) : null} */}
 
-          {notes?.map(({ id, title, body }, index) => {
+          {notes?.map(({ id }, index) => {
             const labelId = `note-${id}`;
             const isSelected = !isNewNote && id === selectedNoteID
 
@@ -340,25 +338,7 @@ const NoteList = React.memo(() => {
                     '&:hover': { backgroundColor: 'transparent' },
                   }}
                 >
-                  <ListItemText
-                    id={labelId}
-                    sx={{
-                      color: palette.secondary[400],
-                    }}
-                    primary={isSelected ? currentNote?.title : title}
-                    primaryTypographyProps={{ noWrap: true }}
-                    secondary={
-                      <Typography
-                        noWrap
-                        variant='h5'
-                        sx={{
-                          color: palette.grey[600],
-                        }}
-                      >
-                        {isSelected ? currentNote?.body : body}
-                      </Typography>
-                    }
-                  />
+                  <NoteListItemText id={id}/>
                 </ListItemButton>
               </ListItem>
             );
