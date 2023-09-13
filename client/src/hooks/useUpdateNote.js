@@ -6,15 +6,14 @@ export default function useUpdateNote() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: note => noteAPI.update(note),
-    onSuccess: (newNote) => {
+    onSuccess: async (newNote) => {
       console.log("🚀 ~ file: useUpdateNote.js:10 ~ useUpdateNote ~ note:", newNote)
-      // Updating the cache key for the specific note
-      queryClient.setQueryData(['note', newNote.id], newNote )
-      // queryClient.setQueryData(['notes', newNote.folder], (previous) => {
-      //   console.log("🚀 ~ file: useUpdateNote.js:14 ~ queryClient.setQueryData ~ previous:", previous)
-      //   previous.map(oldNote => oldNote.id == newNote.id ? newNote : oldNote)
-      // })
-      // queryClient.invalidateQueries({ queryKey: ['notes', note.folder, note.id] })
+      // Updating the note's value in the cache at its specific key
+      await queryClient.setQueryData(['note', newNote.id], newNote )
+
+      // Update the notes list cache at specefic note
+      await queryClient.setQueryData(['notes', newNote.folder],
+        (previous) => previous.map(oldNote => oldNote.id === newNote.id ? newNote : oldNote))
     }
   })
 }
