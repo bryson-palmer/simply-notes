@@ -24,7 +24,7 @@ const NoteListItemText = React.memo(({id}) => {
 
   const labelId = `note-${id}`;
   const isSelected = !isNewNote && id === selectedNoteID
-  console.log('NoteListItemText====', note, id)
+
   return (
     <ListItemText
       id={labelId}

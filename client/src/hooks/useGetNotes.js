@@ -12,7 +12,6 @@ export default function useGetNotes() {
     queryFn: () => noteAPI.getAll(selectedFolderID),
     enabled: Boolean(selectedFolderID),
     onSuccess: (notes) => {
-      console.log('notes', notes)
       notes.forEach(note => {
         queryClient.setQueryData(['note', note.id], note)
       })
