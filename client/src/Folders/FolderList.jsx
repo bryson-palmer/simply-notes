@@ -35,8 +35,8 @@ const FolderList = React.memo(() => {
   const screenSize = useScreenSize()
   const { setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedFolderID, setSelectedNoteID } = useStore()
   const selectedFolderID = useSelectedFolderID()
-  const selectedNoteID = useNoteByFolderID()
-  const noteByFolderID = useSelectedNoteID()
+  const selectedNoteID = useSelectedNoteID()
+  const noteByFolderID = useNoteByFolderID()
 
   // Api
   const deleteFolder = useDeleteFolder()
