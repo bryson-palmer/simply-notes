@@ -1,4 +1,4 @@
-# Simple-Notes
+# Simply-Notes
 ##### A simple yet intuitive note app for the web.
 
 ### The App

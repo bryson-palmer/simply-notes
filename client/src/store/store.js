@@ -59,7 +59,7 @@ export const useStore = create(
     }),
     {
       // Local Storage key name
-      name: 'simple-notes',
+      name: 'simply-notes',
     }
   )
 )
