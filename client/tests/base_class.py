@@ -75,6 +75,7 @@ class Wait4ElementDriver(HighlightElementDriver):
 
   def find_element(self, by, selector):
     start_time = time.time()
+    element = None
     while time.time() - start_time < self.wait_time:
       try:
         element = super().find_element(by, selector)
@@ -82,6 +83,8 @@ class Wait4ElementDriver(HighlightElementDriver):
         break  # element is ready!
       except:
         continue  # keep trying until timeout
+    if element is None:  # element was never found, throw error by retrying one last time
+        element = super().find_element(by, selector)
     return element
 
 
