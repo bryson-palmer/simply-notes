@@ -19,7 +19,6 @@ import ListHeader from '@/Notes/ListHeader'
 import  { useScreenSize, useStore } from '@/store/store'
 import EmptyState from '@/ui/EmptyState'
 import NoteListItemText from './NoteListItemText'
-import './styles.css'
 
 const NoteList = React.memo(() => {
   // Checkbox state for note list
@@ -34,9 +33,6 @@ const NoteList = React.memo(() => {
   const screenSize = useScreenSize()
   const setIsNewNote = useStore(store => store.setIsNewNote)
   const isNewNote = useStore(store => store.isNewNote)
-  const currentNote = useStore(store => store.currentNote)
-  const newNoteID = useStore(store => store.newNoteID)
-  const setNewNoteID = useStore(store => store.setNewNoteID)
   const setCurrentNote = useStore(store => store.setCurrentNote)
   const selectedFolderID = useStore(store => store.selectedFolderID)
   const selectedNoteID = useStore(store => store.selectedNoteID)

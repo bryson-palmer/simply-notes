@@ -7,7 +7,6 @@ import { PropTypes } from 'prop-types/prop-types'
 
 import useGetNote from '@/hooks/useGetNote'
 import  { useStore } from '@/store/store'
-import './styles.css'
 
 const NoteListItemText = React.memo(({id}) => {
   
