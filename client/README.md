@@ -12,24 +12,34 @@
 ###### Front End Stack
 - JavaScript
 - React
-- Axios
-- React Context Selector
-- Material UI
 - React Router Dom
+- Axios
+- React Query
+- Zustand
 - Formik
+- Material UI
 
 ### MVP Features
 ###### Completed
   - CRUD
-    - Create a note
-    - Get all notes
-    - Get a note by id
-    - Update note by id
-    - Delete many notes
-    - Delete a note by id
+    - Folders
+      - Get, Create/Update, & Delete
+    - Notes
+      - Create a note
+      - Get all notes
+      - Get a note by id
+      - Update note by id
+      - Delete a note by id
+      - Delete many notes
   - Selected note is always in the active form state
   - Set new note (create note) automatically when there are no notes
   - Refactor the form submit to be a debounced auto save
+  - Session cookie authentication
+  - React Query wraps all axios calls and handles server state
+  - Zustand store for client state
+  - Hosting
+    - App is hosted at fly.io
+      https://simple-notes.fly.dev/
 ###### Still ToDo
   Phase 1
   - Search notes(by title and/or body)

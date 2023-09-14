@@ -266,14 +266,14 @@ const NoteList = React.memo(() => {
                   <IconButton
                     disableRipple
                     onClick={() => handleDeleteNote(id)}
-                    aria-label={`delete-note -${id}`}
+                    aria-label={`delete-note-${id}`}
                     edge='end'
                     sx={{
                       color: palette.grey[300],
                       '&:hover': { color: palette.primary[200] },
                     }}
                   >
-                    <DeleteForeverIcon />
+                    <DeleteForeverIcon id={`delete-note-${index}`} />
                   </IconButton>
                 }
               >
