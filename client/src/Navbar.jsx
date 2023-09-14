@@ -68,7 +68,7 @@ const Navbar = React.memo(() => {
             }
           }}
         >
-          Simple-Notes
+          Simply-Notes
         </Button>
       </Link>
 
