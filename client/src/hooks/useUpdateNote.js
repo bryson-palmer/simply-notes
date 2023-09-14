@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { noteAPI } from '@/apis/noteAPI'
+import { ALL_NOTES_ID } from '@/constants/constants'
 
 export default function useUpdateNote() {
   const queryClient = useQueryClient()
@@ -13,7 +14,11 @@ export default function useUpdateNote() {
 
       // Update the notes list cache at specefic note
       await queryClient.setQueryData(['notes', newNote.folder],
-        (previous) => previous.map(oldNote => oldNote.id === newNote.id ? newNote : oldNote))
+        (previous) => previous?.map(oldNote => oldNote.id === newNote.id ? newNote : oldNote))
+
+      // Update the All Notes list as well
+      await queryClient.setQueryData(['notes', ALL_NOTES_ID],
+        (previous) => previous?.map(oldNote => oldNote.id === newNote.id ? newNote : oldNote))
     }
   })
 }
