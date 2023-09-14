@@ -38,13 +38,12 @@ def create_or_modify_note(note, user_id, is_new_note=False):
 
 @app.route('/notes', methods=['GET', 'POST'])
 def notes():
+    user_id = session.get('user_id')
     if request.method == 'POST':
         # rather than fetching notes, we are creating a new one
-        user_id = session.get('user_id')
         note = request.json
         return create_or_modify_note(note, user_id, is_new_note=True)  # force a new note; allows front-end to specify ID of note
 
-    user_id = session.get('user_id')
     folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
     # special 'All Notes' folder shows all notes
     if folder_id == str(DEFAULT_FOLDER_ID):  # have to compare strings, since folder_id is a str
@@ -76,11 +75,10 @@ def get_notes(folder_id, user_id):
 
 @app.route('/notes/<id>', methods=['GET', 'PUT'])
 def note(id):
+    user_id = session.get('user_id')
     if request.method == 'PUT':
-        user_id = session.get('user_id')
         note = request.json
         return create_or_modify_note(note, user_id)
-    user_id = session.get('user_id')
     return get_note(id, user_id)
     
 
