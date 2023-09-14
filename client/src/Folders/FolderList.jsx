@@ -21,7 +21,7 @@ import { ALL_NOTES_ID, INITIAL_NOTE } from '@/constants/constants'
 import FolderForm from '@/Folders/FolderForm'
 import useDeleteFolder from '@/hooks/useDeleteFolder'
 import useGetFolders from '@/hooks/useGetFolders'
-import { useScreenSize, useStore } from '@/store/store'
+import { useScreenSize, useStore, useNoteByFolderID, useSelectedFolderID, useSelectedNoteID } from '@/store/store'
 import StyledTooltip from '@/ui/StyledTooltip'
 
 const FolderList = React.memo(() => {
@@ -33,14 +33,10 @@ const FolderList = React.memo(() => {
 
   // Store
   const screenSize = useScreenSize()
-  const selectedFolderID = useStore(store => store.selectedFolderID)
-  const setSelectedFolderID = useStore(store => store.setSelectedFolderID)
-  const setCurrentNote = useStore(store => store.setCurrentNote)
-  const setIsNewNote = useStore(store => store.setIsNewNote)
-  const selectedNoteID = useStore(store => store.selectedNoteID)
-  const setSelectedNoteID = useStore(store => store.setSelectedNoteID)
-  const noteByFolderID = useStore(store => store.noteByFolderID)
-  const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
+  const { setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedFolderID, setSelectedNoteID } = useStore()
+  const selectedFolderID = useSelectedFolderID()
+  const selectedNoteID = useSelectedNoteID()
+  const noteByFolderID = useNoteByFolderID()
 
   // Api
   const deleteFolder = useDeleteFolder()

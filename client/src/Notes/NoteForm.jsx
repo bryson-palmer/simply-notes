@@ -6,7 +6,7 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 
 import useGetNotes from '@/hooks/useGetNotes'
-import { useStore } from '@/store/store'
+import { useCurrentNote, useIsNewNote, useStore } from '@/store/store'
 
 const NoteForm = React.memo(({ formik }) => {
   const { palette } = useTheme()
@@ -15,9 +15,9 @@ const NoteForm = React.memo(({ formik }) => {
   const { isLoading: notesIsLoading } = useGetNotes()
 
   // Store
-  const isNewNote = useStore(store => store.isNewNote)
-  const currentNote = useStore(store => store.currentNote)
-  const setCurrentNote = useStore(store => store.setCurrentNote)
+  const isNewNote = useIsNewNote()
+  const currentNote = useCurrentNote()
+  const { setCurrentNote } = useStore()
   const {dirty, isSubmitting, setValues, submitForm, values } = formik
 
   const form = document.getElementById('form')

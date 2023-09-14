@@ -14,7 +14,7 @@ import useCreateNote from '@/hooks/useCreateNote'
 import useGetNotes from '@/hooks/useGetNotes'
 import useUpdateNote from '@/hooks/useUpdateNote'
 import NoteForm from '@/Notes/NoteForm'
-import { useScreenSize, useStore } from '@/store/store'
+import { useCurrentNote, useIsNewNote, useNoteByFolderID, useScreenSize, useSelectedFolderID, useSelectedNoteID, useStore } from '@/store/store'
 
 const validationSchema = yup.object({
   id: yup
@@ -34,15 +34,12 @@ const Notes = React.memo(() => {
   
   // Store
   const screenSize = useScreenSize()
-  const currentNote = useStore((store) => store.currentNote)
-  const setCurrentNote = useStore((store) => store.setCurrentNote)
-  const isNewNote = useStore((store) => store.isNewNote)
-  const setIsNewNote = useStore((store) => store.setIsNewNote)
-  const selectedNoteID = useStore((store) => store.selectedNoteID)
-  const setSelectedNoteID = useStore((store) => store.setSelectedNoteID)
-  const selectedFolderID = useStore((store) => store.selectedFolderID)
-  const setNoteByFolderID = useStore(store => store.setNoteByFolderID)
-  const noteByFolderID = useStore(store => store.noteByFolderID)
+  const { setCurrentNote, setIsNewNote, setNewNoteID, setSelectedNoteID, setNoteByFolderID } = useStore()
+  const currentNote = useCurrentNote()
+  const isNewNote = useIsNewNote()
+  const selectedNoteID = useSelectedNoteID()
+  const selectedFolderID = useSelectedFolderID()
+  const noteByFolderID = useNoteByFolderID()
   
   // Api query
   const { data: notes, isFetching: notesIsFetching, isLoading: notesIsLoading } = useGetNotes()
