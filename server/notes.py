@@ -5,10 +5,8 @@ from constants import DB_FILE, DEFAULT_FOLDER_ID
 from app_setup import app
 
 
-def create_or_modify_note(request, is_new_note=False):
+def create_or_modify_note(note, user_id, is_new_note=False):
     # read in existing notes
-    user_id = session.get('user_id')
-    note = request.json
     id = note.get('id') # ID from post request, if updating note
     if id is None or id == '':
         id = uuid.uuid4().hex # a 32-character lowercase hexadecimal string
@@ -42,7 +40,9 @@ def create_or_modify_note(request, is_new_note=False):
 def notes():
     if request.method == 'POST':
         # rather than fetching notes, we are creating a new one
-        return create_or_modify_note(request, is_new_note=True)  # force a new note; allows front-end to specify ID of note
+        user_id = session.get('user_id')
+        note = request.json
+        return create_or_modify_note(note, user_id, is_new_note=True)  # force a new note; allows front-end to specify ID of note
 
     user_id = session.get('user_id')
     folder_id = request.args.get('folder')  # url just needs a ?folder=<id> appended
@@ -50,6 +50,10 @@ def notes():
     if folder_id == str(DEFAULT_FOLDER_ID):  # have to compare strings, since folder_id is a str
         folder_id = None
 
+    return get_notes(folder_id, user_id)
+
+
+def get_notes(folder_id, user_id):
     # if we get here, we are fetching all notes
     connection = sqlite3.connect(DB_FILE)
     connection.row_factory = sqlite3.Row  # results come back as dictionaries
@@ -73,9 +77,14 @@ def notes():
 @app.route('/notes/<id>', methods=['GET', 'PUT'])
 def note(id):
     if request.method == 'PUT':
-        return create_or_modify_note(request)
-    
+        user_id = session.get('user_id')
+        note = request.json
+        return create_or_modify_note(note, user_id)
     user_id = session.get('user_id')
+    return get_note(id, user_id)
+    
+
+def get_note(id, user_id):
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM NOTES WHERE user_id=? and id=?', (user_id, id))
@@ -90,17 +99,21 @@ def note(id):
 
 @app.route('/notes/<id>', methods=['DELETE'])
 def note_delete(id):
-    tuple_ids = tuple(id.split(','))
+    ids = tuple(id.split(','))
     user_id = session.get('user_id')
 
+    return delete_notes(ids, user_id)
+
+
+def delete_notes(ids, user_id):
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
 
-    if len(tuple_ids) == 1:
-        cursor.execute('DELETE FROM NOTES WHERE user_id=? and id=?', (user_id, tuple_ids[0]))
+    if len(ids) == 1:
+        cursor.execute('DELETE FROM NOTES WHERE user_id=? and id=?', (user_id, ids[0]))
     else:
-        question_marks = ', '.join('?' for _ in tuple_ids)  # aka '?, ?, ?' if 3 id's passed
-        cursor.execute(f'DELETE FROM NOTES WHERE user_id=? and id IN ({question_marks})', (user_id, *tuple_ids))
+        question_marks = ', '.join('?' for _ in ids)  # aka '?, ?, ?' if 3 id's passed
+        cursor.execute(f'DELETE FROM NOTES WHERE user_id=? and id IN ({question_marks})', (user_id, *ids))
 
     connection.commit()
     connection.close()
