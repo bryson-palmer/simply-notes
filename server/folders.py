@@ -14,22 +14,8 @@ def folders():
     create_new_user_if_uninitialized(session)
     user_id = session.get('user_id')
 
-    connection = sqlite3.connect(DB_FILE)
-    cursor = connection.cursor()
     if request.method == 'GET':
-        cursor.execute('SELECT * FROM FOLDERS WHERE user_id=?', (user_id,))
-        results = cursor.fetchall()
-
-        folders=[]
-        for result in results:
-            (id, folderName) = result[:2]  # next two entries are user_id, last_modified, in that order
-            folder = dict(id=id, folderName=folderName)
-            folders.append(folder)
-        if not folders:
-            folders = [create_default_all_notes_folder()]
-        
-        connection.close()
-        return folders
+        return get_folders(user_id)
     
     if request.method == 'POST':
         folder = request.json
@@ -41,16 +27,38 @@ def folders():
             id = uuid.uuid4().hex # a 32-character lowercase hexadecimal string
             folder['id'] = id
             is_new_folder = True
-
-        if is_new_folder:
-            cursor.execute('INSERT INTO FOLDERS (id, folderName, user_id) VALUES (?, ?, ?)', (id, folder_name, user_id))
-        if not is_new_folder:
-            cursor.execute('UPDATE FOLDERS SET folderName=? where id=? and user_id=?', (folder_name, id, user_id))
-        connection.commit()
         
-        connection.close()
+        return create_folder(id, folder_name, user_id, is_new_folder)
 
-        return id
+
+def create_folder(id, folder_name, user_id, is_new_folder=True):
+    connection = sqlite3.connect(DB_FILE)
+    cursor = connection.cursor()
+    if is_new_folder:
+        cursor.execute('INSERT INTO FOLDERS (id, folderName, user_id) VALUES (?, ?, ?)', (id, folder_name, user_id))
+    if not is_new_folder:
+        cursor.execute('UPDATE FOLDERS SET folderName=? where id=? and user_id=?', (folder_name, id, user_id))
+    connection.commit()
+    connection.close()
+    return id
+
+
+def get_folders(user_id):
+    connection = sqlite3.connect(DB_FILE)
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM FOLDERS WHERE user_id=?', (user_id,))
+    results = cursor.fetchall()
+
+    folders=[]
+    for result in results:
+        (id, folderName) = result[:2]  # next two entries are user_id, last_modified, in that order
+        folder = dict(id=id, folderName=folderName)
+        folders.append(folder)
+    if not folders:
+        folders = [create_default_all_notes_folder()]
+    
+    connection.close()
+    return folders
 
 
 def create_default_all_notes_folder():
@@ -71,17 +79,21 @@ def create_default_all_notes_folder():
 
 @app.route('/folders/<id>', methods=['DELETE'])
 def folder_delete(id):
-    tuple_ids = tuple(id.split(','))
+    ids = tuple(id.split(','))
     user_id = session.get('user_id')
 
+    return delete_folders(ids, user_id)
+
+
+def delete_folders(ids, user_id):
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
 
-    if len(tuple_ids) == 1:
-        cursor.execute('DELETE FROM FOLDERS WHERE user_id=? and id = ?', (user_id, tuple_ids[0]))
+    if len(ids) == 1:
+        cursor.execute('DELETE FROM FOLDERS WHERE user_id=? and id = ?', (user_id, ids[0]))
     else:
-        question_marks = ', '.join('?' for _ in tuple_ids)  # aka '?, ?, ?' if 3 id's passed
-        cursor.execute(f'DELETE FROM FOLDERS WHERE user_id=? and id IN ({question_marks})', (user_id, tuple_ids))
+        question_marks = ', '.join('?' for _ in ids)  # aka '?, ?, ?' if 3 id's passed
+        cursor.execute(f'DELETE FROM FOLDERS WHERE user_id=? and id IN ({question_marks})', (user_id, ids))
     
     connection.commit()
     connection.close()
