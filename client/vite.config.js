@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: 'https://simple-notes-gamma.vercel.app',
+  base: 'https://simply-notes-gamma.vercel.app',
   plugins: [react()],
   resolve: {
     alias: [{ find: "@", replacement: path.resolve(__dirname, 'src') }]

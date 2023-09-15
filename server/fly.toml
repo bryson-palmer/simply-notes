@@ -1,22 +1,20 @@
-# fly.toml app configuration file generated for simple-notes on 2023-07-13T10:56:41-07:00
+# fly.toml app configuration file generated for simply-notes on 2023-09-14T13:59:33-07:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "simple-notes"
+app = "simply-notes"
 primary_region = "lax"
 
 [build]
   builder = "paketobuildpacks/builder:full"
 
-# needed to run fly volume create simple_notes_data -r lax --size 1
-# in order to get a 1gb volume, in region lax (las angeles)
-[mounts]
-  source="simple_notes_data"
-  destination="/data"
-
 [env]
   PORT = "8080"
+
+[[mounts]]
+  source = "simple_notes_data"
+  destination = "/data"
 
 [http_service]
   internal_port = 8080

@@ -31,13 +31,13 @@ def frontend_bootstrap():
 		<head>
 			<meta charset="UTF-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-			<link rel="apple-touch-icon" sizes="180x180" href="https://simple-notes-gamma.vercel.app/apple-touch-icon.png">
-			<link rel="icon" type="image/png" sizes="32x32" href="https://simple-notes-gamma.vercel.app/favicon-32x32.png">
-			<link rel="icon" type="image/png" sizes="16x16" href="https://simple-notes-gamma.vercel.app/favicon-16x16.png">
-			<link rel="manifest" href="https://simple-notes-gamma.vercel.app/site.webmanifest">
-			<title>Simple-Notes</title>
-			<script type="module" crossorigin src="https://simple-notes-gamma.vercel.app/assets/index.js"></script>
-			<link rel="stylesheet" href="https://simple-notes-gamma.vercel.app/assets/index.css">
+			<link rel="apple-touch-icon" sizes="180x180" href="https://simply-notes-gamma.vercel.app/apple-touch-icon.png">
+			<link rel="icon" type="image/png" sizes="32x32" href="https://simply-notes-gamma.vercel.app/favicon-32x32.png">
+			<link rel="icon" type="image/png" sizes="16x16" href="https://simply-notes-gamma.vercel.app/favicon-16x16.png">
+			<link rel="manifest" href="https://simply-notes-gamma.vercel.app/site.webmanifest">
+			<title>Simply-Notes</title>
+			<script type="module" crossorigin src="https://simply-notes-gamma.vercel.app/assets/index.js"></script>
+			<link rel="stylesheet" href="https://simply-notes-gamma.vercel.app/assets/index.css">
 		</head>
 		<body>
 			<div id="root"></div>

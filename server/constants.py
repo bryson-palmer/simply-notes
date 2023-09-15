@@ -1,7 +1,7 @@
 import os
 import sqlite3
 
-DEFAULT_FOLDER_ID = 'undefined'  # keyword id for a 'default' folder
+DEFAULT_FOLDER_ID = 'ALL_NOTES'  # keyword id for a 'default' folder
 DEFAULT_FOLDER_NAME = 'All Notes'
 
 DIRNAME = os.path.dirname(__file__)  # removes filename from path to just get directory

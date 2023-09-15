@@ -39,7 +39,7 @@
   - Zustand store for client state
   - Hosting
     - App is hosted at fly.io
-      https://simple-notes.fly.dev/
+      https://simply-notes.fly.dev/
 ###### Still ToDo
   Phase 1
   - Search notes(by title and/or body)
