@@ -55,19 +55,18 @@ def get_folders(user_id):
         folder = dict(id=id, folderName=folderName)
         folders.append(folder)
     if not folders:
-        folders = [create_default_all_notes_folder()]
+        folders = [create_default_all_notes_folder(user_id)]
     
     connection.close()
     return folders
 
 
-def create_default_all_notes_folder():
+def create_default_all_notes_folder(user_id):
     ''' a folder with null ID. But we create it so the user can rename it.
         Will be regenerated if user deletes all folders. This folder is
         special because of the null ID -- allows user to see ALL notes
     '''
     id = DEFAULT_FOLDER_ID
-    user_id = session.get('user_id')
     folder_name = DEFAULT_FOLDER_NAME
     connection = sqlite3.connect(DB_FILE)
     cursor = connection.cursor()
