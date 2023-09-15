@@ -92,7 +92,7 @@ def delete_folders(ids, user_id):
         cursor.execute('DELETE FROM FOLDERS WHERE user_id=? and id = ?', (user_id, ids[0]))
     else:
         question_marks = ', '.join('?' for _ in ids)  # aka '?, ?, ?' if 3 id's passed
-        cursor.execute(f'DELETE FROM FOLDERS WHERE user_id=? and id IN ({question_marks})', (user_id, ids))
+        cursor.execute(f'DELETE FROM FOLDERS WHERE user_id=? and id IN ({question_marks})', (user_id, *ids))
     
     connection.commit()
     connection.close()
