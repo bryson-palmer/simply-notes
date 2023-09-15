@@ -69,7 +69,7 @@ def test_create_get_delete_folder():
     folders = Folders.get_folders(USER)
     # we may or may not have default folders, so just filter out the default folder if so
     our_folder = [f for f in folders if f['id'] == id]  # it's a list
-    assert our_folder[0]['foldeName'] == name
+    assert our_folder[0]['folderName'] == name
     Folders.delete_folders([id], USER)
     # verify folder is gone
     folders = Folders.get_folders(USER)
