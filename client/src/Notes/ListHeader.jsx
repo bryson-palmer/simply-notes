@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { PropTypes } from 'prop-types/prop-types'
 
@@ -18,6 +18,7 @@ const ListHeader = ({ listState, setListState }) => {
   const deleteNote = useDeleteNote()
   const { data: notes = [] } = useGetNotes()
   const { checkedIds, isAllChecked} = listState
+  const folderIdRef = useRef(notes[0]?.folder)
   
   const handleAllNotesChecked = useCallback(() => setListState(prevListState => ({
     ...prevListState,
@@ -27,7 +28,7 @@ const ListHeader = ({ listState, setListState }) => {
   
   const handleDeleteCheckedNotes = useCallback(() => {
     if (!Array.isArray(checkedIds) || checkedIds.length < 1) return
-    deleteNote.mutate(checkedIds)
+    deleteNote.mutate({ folder: folderIdRef.current, id: checkedIds})
 
   }, [checkedIds, deleteNote])
 
