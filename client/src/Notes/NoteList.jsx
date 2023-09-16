@@ -80,13 +80,13 @@ const NoteList = React.memo(() => {
     setIsNewNote(false)
   }, [notes, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID])
 
-  const handleDeleteNote = useCallback(id => {
+  const handleDeleteNote = useCallback(({ folder, id }) => {
     console.log('[NOTE_DELETE]')
     // listIsEmpty if the deleted note will make the notes list empty
     const listIsEmpty = (notes?.length <= 1)
     const notesCopy = [...notes]
 
-    deleteNote.mutate(id)
+    deleteNote.mutate({ folder, id })
 
     // If deleting the selectedNoteID
     if (id === selectedNoteID) {
@@ -242,7 +242,7 @@ const NoteList = React.memo(() => {
             </ListItem>
           ) : null} */}
 
-          {notes?.map(({ id }, index) => {
+          {notes?.map(({ folder, id }, index) => {
             const labelId = `note-${id}`;
             const isSelected = !isNewNote && id === selectedNoteID
 
@@ -264,7 +264,7 @@ const NoteList = React.memo(() => {
                 secondaryAction={
                   <IconButton
                     disableRipple
-                    onClick={() => handleDeleteNote(id)}
+                    onClick={() => handleDeleteNote({ folder, id })}
                     aria-label={`delete-note-${id}`}
                     edge='end'
                     sx={{
