@@ -74,7 +74,7 @@ const Notes = React.memo(() => {
   const handleSubmit = useCallback(values => {
     console.log('[SUBMIT]')
     console.log('[values]:', values)
-    // For a new note either, submit immediatley or wait a much longer period to submit.
+
     isNewNote && values?.id
       ? createNote.mutate(values)
       : updateNote.mutate(values)

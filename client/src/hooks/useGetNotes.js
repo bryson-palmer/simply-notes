@@ -1,11 +1,11 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { noteAPI } from '@/apis/noteAPI'
-import { useStore } from '@/store/store'
+import { useSelectedFolderID } from '@/store/store'
 
 export default function useGetNotes() {
   const queryClient = useQueryClient()
-  const selectedFolderID = useStore(store => store.selectedFolderID)
+  const selectedFolderID = useSelectedFolderID()
   
   return useQuery({
     queryKey: ['notes', selectedFolderID],
@@ -16,6 +16,5 @@ export default function useGetNotes() {
         queryClient.setQueryData(['note', note.id], note)
       })
     }
-    // keepPreviousData: true,
   })
 }
