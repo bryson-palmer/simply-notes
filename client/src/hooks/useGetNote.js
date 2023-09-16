@@ -7,6 +7,5 @@ export default function useGetNote(noteId) {
     queryKey: ['note', noteId],
     queryFn: () => noteAPI.get(noteId),
     enabled: Boolean(noteId)
-    // keepPreviousData: true,
   })
 }
