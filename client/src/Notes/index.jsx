@@ -34,7 +34,7 @@ const Notes = React.memo(() => {
   
   // Store
   const screenSize = useScreenSize()
-  const { setCurrentNote, setIsNewNote, setNewNoteID, setSelectedNoteID, setNoteByFolderID } = useStore()
+  const { setCurrentNote, setIsNewNote, setSelectedNoteID, setNoteByFolderID } = useStore()
   const currentNote = useCurrentNote()
   const isNewNote = useIsNewNote()
   const selectedNoteID = useSelectedNoteID()

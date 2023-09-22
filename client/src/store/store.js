@@ -27,13 +27,11 @@ export const useStore = create(
     (set) => ({
       currentNote: null,
       isNewNote: false,
-      newNoteID: null,
       selectedFolderID: null,
       selectedNoteID: null,
       noteByFolderID: {},
       setCurrentNote: (note) => set(() => ({ currentNote: { ...note } })),
       setIsNewNote: (bool) => set(() => ({ isNewNote: bool })),
-      setNewNoteID: (id) => set(() => ({ newNoteID: id })),
       setSelectedFolderID: (folderID) =>
         set(() => ({ selectedFolderID: folderID })),
       setSelectedNoteID: (id) => set(() => ({ selectedNoteID: id })),
@@ -66,7 +64,6 @@ export const useStore = create(
 
 export const useCurrentNote = () => useStore(state => state.currentNote)
 export const useIsNewNote = () => useStore(state => state.isNewNote)
-export const useNewNoteID = () => useStore(state => state.newNoteID)
 export const useSelectedFolderID = () => useStore(state => state.selectedFolderID)
 export const useSelectedNoteID = () => useStore(state => state.selectedNoteID)
 export const useNoteByFolderID = () => useStore(state => state.noteByFolderID)
