@@ -18,18 +18,15 @@ const NoteListItemText = React.memo(({id}) => {
   const selectedNoteID = useSelectedNoteID()
 
   // Api
-  const { data: note = {}, /* isFetching: noteIsFetching, isLoading: noteIsLoading */} = useGetNote(id)
+  const { data: note = {} } = useGetNote(id)
   
-
-  const labelId = `note-${id}`;
+  const labelId = `note-${id}-text`
   const isSelected = !isNewNote && id === selectedNoteID
 
   return (
     <ListItemText
       id={labelId}
-      sx={{
-        color: palette.secondary[400],
-      }}
+      sx={{ color: palette.secondary[400] }}
       primary={isSelected ? currentNote?.title : note?.title}
       primaryTypographyProps={{ noWrap: true }}
       secondary={

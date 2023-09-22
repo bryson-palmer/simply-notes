@@ -277,7 +277,6 @@ const Notes = React.memo(() => {
         }}
       >
         <Formik
-          enableReinitialize
           key={currentNote?.id}
           initialValues={selectedFolderID && {...currentNote}}
           onSubmit={handleSubmit}

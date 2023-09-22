@@ -325,6 +325,7 @@ const NoteList = React.memo(() => {
                 </IconButton>
                 <ListItemButton
                   disableRipple
+                  id={`${labelId}-button`}
                   role={undefined}
                   onClick={handleSelectNote(id)}
                   sx={{
@@ -336,7 +337,7 @@ const NoteList = React.memo(() => {
                   <NoteListItemText id={id}/>
                 </ListItemButton>
               </ListItem>
-            );
+            )
           })}
         </List>
       ) : null}
@@ -357,8 +358,8 @@ const NoteList = React.memo(() => {
 
       {notesIsLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress sx={{ color: palette.secondary[400] }} />
-      </Box>
+          <CircularProgress sx={{ color: palette.secondary[400] }} />
+        </Box>
       ) : null}
     </div>
   );
