@@ -7,6 +7,7 @@ import { PropTypes } from 'prop-types/prop-types'
 
 import useGetNote from '@/hooks/useGetNote'
 import  { useCurrentNote, useIsNewNote, useSelectedNoteID } from '@/store/store'
+import './styles.css'
 
 const NoteListItemText = React.memo(({id}) => {
   
@@ -26,6 +27,7 @@ const NoteListItemText = React.memo(({id}) => {
   return (
     <ListItemText
       id={labelId}
+      style={{ viewTransitionName: labelId }}
       sx={{ color: palette.secondary[400] }}
       primary={isSelected ? currentNote?.title : note?.title}
       primaryTypographyProps={{ noWrap: true }}
