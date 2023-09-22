@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DescriptionIcon from '@mui/icons-material/Description'
@@ -42,7 +42,6 @@ const NoteList = React.memo(() => {
   const { data: notes = [], isFetching: notesIsFetching, isLoading: notesIsLoading } = useGetNotes()
   const deleteNote = useDeleteNote()
   
-  const hasViewTransition = Boolean(document.startViewTransition)
   const isDesktop = useMemo(() => screenSize === 'large' || screenSize === 'desktop', [screenSize])
   const notesListWidth = useMemo(() => {
     if (screenSize === 'large') return 350
@@ -145,23 +144,6 @@ const NoteList = React.memo(() => {
     }
   }, [deleteNote, noteByFolderID, notes, selectedFolderID, selectedNoteID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID])
 
-  useEffect(() => {
-    /*
-      This side effect is for handling the animation for a new note being added to the list.
-    */
-   if (hasViewTransition && newNoteID && newNoteID === notes[0]?.id) {
-      const listItemEl = document.querySelector(`#note-${newNoteID}`)
-      const transition = document.startViewTransition(() => {
-        listItemEl.classList.add('incoming')
-        listItemEl.style.viewTransitionName = `#note-${newNoteID}`
-      })
-
-      transition.updateCallbackDone.then(() => {
-          setNewNoteID(null)
-      })
-    }
-  }, [hasViewTransition, newNoteID, notes, setNewNoteID])
-
   return (
     <div
       style={{
@@ -172,7 +154,7 @@ const NoteList = React.memo(() => {
     >
       <ListHeader listState={listState} setListState={setListState} />
 
-      {notes?.length && !notesIsLoading && !notesIsFetching ? (
+      {notes?.length && !notesIsLoading ? (
         <List
           sx={{
             height: '88vh',
@@ -270,15 +252,11 @@ const NoteList = React.memo(() => {
                 disablePadding
                 id={labelId}
                 key={labelId}
-                style={{ viewTransitionName: labelId }}
                 sx={{
                   width: 'calc(100% - 0.5rem)',
                   borderRadius: '0.5rem',
                   paddingLeft: '1rem',
                   marginLeft: '0.5rem',
-                  visibility: hasViewTransition && newNoteID === id
-                    ? 'hidden'
-                    : 'visible',
                   backgroundColor: isSelected
                     ? palette.background.light
                     : 'inherit',
