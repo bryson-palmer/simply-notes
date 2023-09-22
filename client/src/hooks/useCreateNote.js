@@ -15,7 +15,6 @@ const handleInsertion = ({ newNote, previous }) => {
 const addNoteAnimation = async newNoteID => {
   const listItemEl = document.querySelector(`#note-${newNoteID}`)
   listItemEl.classList.add('incoming')
-  console.log('listItemEl 1', listItemEl)
 }
 
 const addQueryKeys = async ({ newNote, queryClient}) => {
