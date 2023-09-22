@@ -6,16 +6,16 @@ import Typography from '@mui/material/Typography'
 import { PropTypes } from 'prop-types/prop-types'
 
 import useGetNote from '@/hooks/useGetNote'
-import  { useStore } from '@/store/store'
+import  { useCurrentNote, useIsNewNote, useSelectedNoteID } from '@/store/store'
 
 const NoteListItemText = React.memo(({id}) => {
   
   const { palette } = useTheme()
 
   // Store
-  const isNewNote = useStore(store => store.isNewNote)
-  const currentNote = useStore(store => store.currentNote)
-  const selectedNoteID = useStore(store => store.selectedNoteID)
+  const currentNote = useCurrentNote()
+  const isNewNote = useIsNewNote()
+  const selectedNoteID = useSelectedNoteID()
 
   // Api
   const { data: note = {}, /* isFetching: noteIsFetching, isLoading: noteIsLoading */} = useGetNote(id)
