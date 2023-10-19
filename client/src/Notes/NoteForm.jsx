@@ -47,10 +47,6 @@ const NoteForm = React.memo(({ formik }) => {
     */
     if (!dirty || isSubmitting || notesIsLoading) return
 
-    // if (isNewNote && Boolean(values?.id)) {
-    //   submitForm() 
-    // }
-
     const handleKeyPress = () => clearTimeout(timer.current)
 
     const handleKeyUp = () => {
@@ -62,7 +58,7 @@ const NoteForm = React.memo(({ formik }) => {
       form.addEventListener('keypress', () => handleKeyPress(timer))
       form.addEventListener('keyup', () => handleKeyUp(timer))
     }
-  }, [dirty, form, notesIsLoading, isNewNote, isSubmitting, submitForm, values?.id])
+  }, [dirty, form, notesIsLoading, isSubmitting, submitForm])
 
   // Focus the title input if we have a new note
   useEffect(() => {

@@ -34,7 +34,7 @@ const Notes = React.memo(() => {
   
   // Store
   const screenSize = useScreenSize()
-  const { setCurrentNote, setIsNewNote, setNewNoteID, setSelectedNoteID, setNoteByFolderID } = useStore()
+  const { setCurrentNote, setIsNewNote, setSelectedNoteID, setNoteByFolderID } = useStore()
   const currentNote = useCurrentNote()
   const isNewNote = useIsNewNote()
   const selectedNoteID = useSelectedNoteID()
@@ -79,7 +79,9 @@ const Notes = React.memo(() => {
       : updateNote.mutate(values)
 
     setSelectedNoteID(values.id)
-    setIsNewNote(false)
+    if (isNewNote) {
+      setIsNewNote(false)
+    }
   }, [createNote, isNewNote, setIsNewNote, setSelectedNoteID, updateNote])
 
   // console.log(
@@ -273,7 +275,6 @@ const Notes = React.memo(() => {
         }}
       >
         <Formik
-          enableReinitialize
           key={currentNote?.id}
           initialValues={selectedFolderID && {...currentNote}}
           onSubmit={handleSubmit}

@@ -16,9 +16,10 @@ import { INITIAL_NOTE } from '@/constants/constants'
 import useGetNotes from '@/hooks/useGetNotes'
 import useDeleteNote from '@/hooks/useDeleteNote'
 import ListHeader from '@/Notes/ListHeader'
-import { useIsNewNote, useNewNoteID, useNoteByFolderID, useScreenSize, useSelectedFolderID, useSelectedNoteID, useStore } from '@/store/store'
+import { useIsNewNote, useNoteByFolderID, useScreenSize, useSelectedFolderID, useSelectedNoteID, useStore } from '@/store/store'
 import EmptyState from '@/ui/EmptyState'
 import NoteListItemText from './NoteListItemText'
+import './styles.css'
 
 const NoteList = React.memo(() => {
   // Checkbox state for note list
@@ -31,9 +32,8 @@ const NoteList = React.memo(() => {
   
   // Store
   const screenSize = useScreenSize()
-  const { setCurrentNote, setNewNoteID, setIsNewNote, setNoteByFolderID, setSelectedNoteID } = useStore()
+  const { setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID } = useStore()
   const isNewNote = useIsNewNote()
-  const newNoteID = useNewNoteID()
   const selectedFolderID = useSelectedFolderID()
   const selectedNoteID = useSelectedNoteID()
   const noteByFolderID = useNoteByFolderID()
@@ -154,7 +154,7 @@ const NoteList = React.memo(() => {
     >
       <ListHeader listState={listState} setListState={setListState} />
 
-      {notes?.length && !notesIsLoading && !notesIsFetching ? (
+      {notes?.length && !notesIsLoading ? (
         <List
           sx={{
             height: '88vh',
@@ -170,13 +170,14 @@ const NoteList = React.memo(() => {
             <ListItem
               dense
               disablePadding
+              id='new-note'
+              key={`note-${currentNote?.id}`}
               sx={{
                 width: 'calc(100% - 0.5rem)',
                 height: '3rem',
                 borderRadius: '0.5rem',
                 paddingLeft: '1rem',
                 marginLeft: '0.5rem',
-                transition: 'all 1s ease-in-out',
                 backgroundColor: palette.background.light,
               }}
               secondaryAction={
@@ -224,7 +225,7 @@ const NoteList = React.memo(() => {
                 sx={{
                   color: palette.secondary[400],
                 }}
-                primary={values?.title}
+                primary={currentNote?.title}
                 primaryTypographyProps={{ noWrap: true }}
                 secondary={
                   <Typography
@@ -234,7 +235,7 @@ const NoteList = React.memo(() => {
                       color: palette.grey[600],
                     }}
                   >
-                    {values?.body}
+                    {currentNote?.body}
                   </Typography>
                 }
               />
@@ -249,6 +250,7 @@ const NoteList = React.memo(() => {
               <ListItem
                 dense
                 disablePadding
+                id={labelId}
                 key={labelId}
                 sx={{
                   width: 'calc(100% - 0.5rem)',
@@ -265,6 +267,7 @@ const NoteList = React.memo(() => {
                     disableRipple
                     onClick={() => handleDeleteNote({ folder, id })}
                     aria-label={`delete-note-${id}`}
+                    id={`delete-note-${id}`}
                     edge='end'
                     sx={{
                       color: palette.grey[300],
@@ -301,6 +304,7 @@ const NoteList = React.memo(() => {
                 </IconButton>
                 <ListItemButton
                   disableRipple
+                  id={`${labelId}-button`}
                   role={undefined}
                   onClick={handleSelectNote(id)}
                   sx={{
@@ -312,7 +316,7 @@ const NoteList = React.memo(() => {
                   <NoteListItemText id={id}/>
                 </ListItemButton>
               </ListItem>
-            );
+            )
           })}
         </List>
       ) : null}
@@ -333,8 +337,8 @@ const NoteList = React.memo(() => {
 
       {notesIsLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress sx={{ color: palette.secondary[400] }} />
-      </Box>
+          <CircularProgress sx={{ color: palette.secondary[400] }} />
+        </Box>
       ) : null}
     </div>
   );
