@@ -257,6 +257,7 @@ const NoteList = React.memo(() => {
                   borderRadius: '0.5rem',
                   paddingLeft: '1rem',
                   marginLeft: '0.5rem',
+                  transition: 'all 1s ease-in-out',
                   backgroundColor: isSelected
                     ? palette.background.light
                     : 'inherit',

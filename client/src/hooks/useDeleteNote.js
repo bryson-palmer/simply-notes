@@ -68,11 +68,11 @@ export default function useDeleteNote() {
       const { folder, id: noteID } = data
 
       if (!document.startViewTransition) {
-        updateQueryKeys({ folder, noteID, queryClient })
+        return updateQueryKeys({ folder, noteID, queryClient })
       }
 
       if (transition.finished) {
-        updateQueryKeys({ folder, noteID, queryClient })
+        return updateQueryKeys({ folder, noteID, queryClient })
       }
     }
   })
