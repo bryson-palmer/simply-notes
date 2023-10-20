@@ -149,7 +149,6 @@ const NoteList = React.memo(() => {
       style={{
         width: notesListWidth,
         paddingTop: '0.5rem',
-        transition: 'all 1s ease-in-out',
       }}
     >
       <ListHeader listState={listState} setListState={setListState} />
@@ -257,7 +256,6 @@ const NoteList = React.memo(() => {
                   borderRadius: '0.5rem',
                   paddingLeft: '1rem',
                   marginLeft: '0.5rem',
-                  transition: 'all 1s ease-in-out',
                   backgroundColor: isSelected
                     ? palette.background.light
                     : 'inherit',
@@ -308,7 +306,6 @@ const NoteList = React.memo(() => {
                   role={undefined}
                   onClick={handleSelectNote(id)}
                   sx={{
-                    transition: 'all 1s ease-in-out',
                     padding: '0 38px 0 0 !important',
                     '&:hover': { backgroundColor: 'transparent' },
                   }}
