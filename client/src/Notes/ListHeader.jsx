@@ -10,13 +10,19 @@ import IconButton from '@mui/material/IconButton'
 import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 
+import { INITIAL_NOTE } from '@/constants/constants'
+import { useSelectedFolderID, useStore } from '@/store/store'
 import useDeleteNote from '@/hooks/useDeleteNote'
 import useGetNotes from '@/hooks/useGetNotes'
 
 const ListHeader = ({ listState, setListState }) => {
   const { palette } = useTheme()
+
+  const { setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID } = useStore()
+
   const deleteNote = useDeleteNote()
   const { data: notes = [] } = useGetNotes()
+  const selectedFolderID = useSelectedFolderID()
   const { checkedIds, isAllChecked} = listState
   const folderIdRef = useRef(notes[0]?.folder)
   
@@ -29,8 +35,12 @@ const ListHeader = ({ listState, setListState }) => {
   const handleDeleteCheckedNotes = useCallback(() => {
     if (!Array.isArray(checkedIds) || checkedIds.length < 1) return
     deleteNote.mutate({ folder: folderIdRef.current, id: checkedIds})
+    setSelectedNoteID(null)
+    setCurrentNote(INITIAL_NOTE)
+    setNoteByFolderID(selectedFolderID, null)
+    setIsNewNote(true)
 
-  }, [checkedIds, deleteNote])
+  }, [checkedIds, deleteNote, selectedFolderID, setCurrentNote, setIsNewNote, setNoteByFolderID, setSelectedNoteID])
 
   useEffect(() => {
     if (!notes?.length) {  

@@ -46,9 +46,9 @@ const Notes = React.memo(() => {
   const createNote = useCreateNote()
   const updateNote = useUpdateNote()
 
-  const noteID = useMemo(() => noteByFolderID[selectedFolderID], [noteByFolderID, selectedFolderID])
-  const lookupNote = useMemo(() => notes?.find(note => note?.id === noteID), [noteID, notes])
-  const isLookupIdInList = useMemo(() => notes?.some(note => note?.id === noteID), [noteID, notes])
+  const prevNoteID = useMemo(() => noteByFolderID[selectedFolderID], [noteByFolderID, selectedFolderID])
+  const lookupNote = useMemo(() => notes?.find(note => note?.id === prevNoteID), [prevNoteID, notes])
+  const isLookupIdInList = useMemo(() => notes?.some(note => note?.id === prevNoteID), [prevNoteID, notes])
   const isCurrentIdInNotes = useMemo(() => notes?.some(note => note?.id === currentNote?.id), [currentNote?.id, notes])
 
   const isDesktop = screenSize === 'large' || screenSize === 'desktop'
@@ -92,7 +92,7 @@ const Notes = React.memo(() => {
   //     'isLookupIdInList': isLookupIdInList,
   //     'isNewNote': isNewNote,
   //     'noteByFolderID': noteByFolderID,
-  //     'noteID': noteID,
+  //     'prevNoteID': prevNoteID,
   //     'notes': notes,
   //     'notesIsFetching': notesIsFetching,
   //     'notesIsLoading': notesIsLoading,
@@ -126,8 +126,8 @@ const Notes = React.memo(() => {
       })
 
       setCurrentNote(isCurrentIdInNotes ? currentNote : lookupNote ?? firstNote)
-      setSelectedNoteID(isCurrentIdInNotes ? currentNote?.id : noteID ?? firstNote?.id)
-      setNoteByFolderID(selectedFolderID, (isCurrentIdInNotes ? currentNote?.id : noteID ?? firstNote?.id))
+      setSelectedNoteID(isCurrentIdInNotes ? currentNote?.id : prevNoteID ?? firstNote?.id)
+      setNoteByFolderID(selectedFolderID, (isCurrentIdInNotes ? currentNote?.id : prevNoteID ?? firstNote?.id))
       return
     }
 
@@ -143,7 +143,7 @@ const Notes = React.memo(() => {
         'isSelectedIdInNotes': isSelectedIdInNotes,
       })
       setCurrentNote(lookupNote)
-      setSelectedNoteID(noteID)
+      setSelectedNoteID(lookupNote?.id)
     }
 
     /*
@@ -164,7 +164,7 @@ const Notes = React.memo(() => {
         setNoteByFolderID(selectedFolderID, selectedNoteID)
       }
     }
-  }, [currentNote, isCurrentIdInNotes, isLookupIdInList, isNewNote, lookupNote, noteID, notes, notesIsFetching, notesIsLoading, selectedFolderID, selectedNoteID, setCurrentNote, setNoteByFolderID, setSelectedNoteID])
+  }, [currentNote, isCurrentIdInNotes, isLookupIdInList, isNewNote, lookupNote, prevNoteID, notes, notesIsFetching, notesIsLoading, selectedFolderID, selectedNoteID, setCurrentNote, setNoteByFolderID, setSelectedNoteID])
 
   useEffect(() => {
     /*
