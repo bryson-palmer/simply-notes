@@ -53,10 +53,12 @@ export default function useDeleteNote() {
         return noteAPI.delete(noteID)
       }
 
-      const listItemEl = document.querySelector(`#note-${noteID}`)
-      listItemEl.classList.remove('incoming')
-      const listItemTextEl = document.querySelector(`#note-${noteID}-text`)
-      listItemTextEl.style.viewTransitionName = 'outgoing'
+      if (!Array.isArray(noteID)) {
+        const listItemEl = document.querySelector(`#note-${noteID}`)
+        listItemEl.classList.remove('incoming')
+        const listItemTextEl = document.querySelector(`#note-${noteID}-text`)
+        listItemTextEl.style.viewTransitionName = 'outgoing'
+      }
       
       transition = document.startViewTransition(() => {
         flushSync(() => {
